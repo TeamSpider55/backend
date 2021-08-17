@@ -22,3 +22,7 @@ db.on("error", (err) => {
   console.error(err);
   process.exit(1);
 });
+
+require("../models/client");
+require("../models/tags");
+require("../models/users");

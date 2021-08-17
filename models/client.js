@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const clientSchema = new mongoose.Schema({
-  userId: { type: String, unique: true }, //Foreign key only unique within the user(?)
+  clientId: { type: String, required: true, unique: true },
   nickName: { type: String },
   familyName: { type: String, required: true },
   middleName: { type: String },

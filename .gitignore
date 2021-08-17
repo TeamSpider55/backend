@@ -1,2 +1,6 @@
-/node_modules
 .env
+genKeyPair.js
+test.js
+*.pem
+/node_modules
+*.txt
