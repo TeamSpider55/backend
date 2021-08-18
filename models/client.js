@@ -10,6 +10,7 @@ const clientSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   address: { type: String },
   description: { type: String, required: true },
+  note: { type: String},
   tags: [{ type: String }],
 });
 
