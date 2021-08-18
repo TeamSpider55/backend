@@ -6,13 +6,11 @@ const userRouter = require("./routes/user-router");
 require("./config/db");
 const mongoose = require("mongoose");
 
-require("./config/passport")(passport);
-
-// initialize the passport object on every request
-app.use(passport.initialize());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+require("./config/passport")(passport);
+// initialize the passport object on every request
+app.use(passport.initialize());
 app.use("/", authRouter);
 app.use("/user/", userRouter);
 

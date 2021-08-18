@@ -9,15 +9,6 @@ const createUser = async (o) => {
   }
 };
 
-const findUserByConfirmationCode = async (confirmationCode) => {
-  try {
-    const user = await User.findOne({ confirmationCode: confirmationCode });
-    return user;
-  } catch (err) {
-    return null;
-  }
-};
-
 const findUserByEmail = async (email) => {
   try {
     const user = await User.findOne({ email: email });
@@ -37,14 +28,15 @@ const findUserById = async (userId) => {
 };
 
 const activateUser = async (confirmationCode) => {
-  const user = findUserByConfirmationCode;
+  const user = await User.findOne({ confirmationCode: confirmationCode });
   if (!user) {
     return;
   }
   try {
-    user.status = "ACTIVE";
-    user.confirmationCode = null;
-    user.save();
+    await User.updateOne(
+      { confirmationCode: confirmationCode },
+      { $set: { status: "ACTIVE" }, $unset: { confirmationCode: "" } }
+    );
   } catch (err) {
     console.log(err);
   }
@@ -52,7 +44,6 @@ const activateUser = async (confirmationCode) => {
 
 module.exports = {
   createUser,
-  findUserByConfirmationCode,
   findUserByEmail,
   findUserById,
   activateUser,

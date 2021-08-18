@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
   familyName: { type: String, required: true },
   middleName: { type: String },
   givenName: { type: String, required: true },
-  password: { type: String, required: true },
   phone: { type: String, required: true },
   address: { type: String, required: true }, //maybe we can pull weather information?
   status: {

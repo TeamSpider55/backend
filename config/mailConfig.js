@@ -1,23 +1,24 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-const email = process.env.EMAIL;
+const user = process.env.EMAIL;
 const pw = process.env.EMAIL_PW;
 
 const transport = nodemailer.createTransport({
-  service: "Gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    email: email,
+    user: user,
     pass: pw,
   },
 });
 
-const sendConfirmationEmail = (name, destEmail, confirmationCode) => {
-  console.log("Check");
+const sendConfirmationEmail = (name, email, confirmationCode) => {
   transport
     .sendMail({
-      from: email,
-      to: destEmail,
+      from: user,
+      to: email,
       subject: "Confirm your OneThread account registration",
       html: `<h1>Email Confirmation</h1>
         <h2>Hello ${name}</h2>
