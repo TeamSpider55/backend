@@ -8,27 +8,41 @@ const scheduleSchema = new mongoose.Schema({
     date: { type: Date, unique: true, required: true},
 
     events: [
-        { eventId: { type: String, unique: true, required: true},
-        schedule: {
-            start:  {type: Date, required: true},
-            end: { type: Date, required: true }
-        },
-        title: { type: String, required: true},
-        note: { type: String},
+        { 
+            _eventId: { type: String, unique: true, required: true},
+            schedule: {
+                start:  {type: Date, required: true},
+                end: { type: Date, required: true }
+            },
+            title: { type: String, required: true},
+            note: { type: String},
     
-        // this can be use to tell short story about this meeting,
-        // in search engine
-        // -> i want to use enum but does not enforce ( from my research)
-        category: {
-            tag: { 
+            // this can be use to tell short story about this meeting,
+            // in search engine
+            // -> i want to use enum but does not enforce ( from my research)
+            type: {
+                tag: String,
+                kind: {
+                    enum: ('personal', 'collaborate'),
+                    required: true,
+                }
+            },
+        
+            // listed: is allocated by the user to be confirm by the contact
+            // allocated: is the listed and got confirm by the contact person
+            // free: is the request to be cancel and not yet be confirm by user
+            category: {
                 type: String,
-                required: true,
-            }
-        },
-        // potetntially member involve in this meeting 
-        contacts: [
-            { type: String, required: true}
-        ]}
+                enum: ('listed', 'allocated', 'free'),
+                required: true
+            },
+
+            // potetntially member involve in this meeting 
+            // This is strictly
+            contacts: [
+                { type: String, required: true}
+            ]
+        }
     ]
 });
 
