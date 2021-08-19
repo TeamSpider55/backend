@@ -10,8 +10,8 @@ const scheduleSchema = new mongoose.Schema({
     events: [
         { eventId: { type: String, unique: true, required: true},
         schedule: {
-            start:  {type: Date, requried: true},
-            end: { type: Data, required: true }
+            start:  {type: Date, required: true},
+            end: { type: Date, required: true }
         },
         title: { type: String, required: true},
         note: { type: String},
@@ -26,7 +26,7 @@ const scheduleSchema = new mongoose.Schema({
             }
         },
         // potetntially member involve in this meeting 
-        client: [
+        contacts: [
             { type: String, required: true}
         ]}
     ]
