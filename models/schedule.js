@@ -18,9 +18,12 @@ const scheduleSchema = new mongoose.Schema({
     
         // this can be use to tell short story about this meeting,
         // in search engine
-        // -> i want to use enum but does not
+        // -> i want to use enum but does not enforce ( from my research)
         category: {
-            tag: { type: String, required: true}
+            tag: { 
+                type: String,
+                required: true,
+            }
         },
         // potetntially member involve in this meeting 
         client: [
