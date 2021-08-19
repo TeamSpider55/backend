@@ -4,15 +4,16 @@ const passport = require("passport");
 const authRouter = require("./routes/auth-router");
 const userRouter = require("./routes/user-router");
 require("./config/db");
-const mongoose = require("mongoose");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 require("./config/passport")(passport);
+
 // initialize the passport object on every request
 app.use(passport.initialize());
-app.use("/", authRouter);
-app.use("/user/", userRouter);
+app.use("/auth", authRouter);
+app.use("/user", userRouter);
 
 const port = process.env.PORT || 8080;
 

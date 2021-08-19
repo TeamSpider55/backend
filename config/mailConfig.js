@@ -29,6 +29,22 @@ const sendConfirmationEmail = (name, email, confirmationCode) => {
     .catch((err) => console.log(err));
 };
 
+const sendPasswordResetEmail = (name, email, link) => {
+  transport
+    .sendMail({
+      from: user,
+      to: email,
+      subject: "Confirm your OneThread account registration",
+      html: `<h1>Password Reset</h1>
+        <h2>G'day ${name}</h2>
+        <p>Please follow the link below to reset your password</p>
+        <a href=http://localhost:8081/password-reset/${link}> Reset Password</a>
+        </div>`,
+    })
+    .catch((err) => console.log(err));
+};
+
 module.exports = {
   sendConfirmationEmail,
+  sendPasswordResetEmail,
 };

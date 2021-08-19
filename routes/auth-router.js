@@ -3,6 +3,10 @@ const utils = require("../lib/auth-util");
 const userController = require("../controllers/userController");
 const mailConfig = require("../config/mailConfig");
 const User = require("../models/users");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
+const PUBLIC_KEY = process.env.PUBLIC_KEY;
 
 // Handles login
 router.post("/login", async (req, res, next) => {
@@ -14,7 +18,7 @@ router.post("/login", async (req, res, next) => {
     // User exist, check if password correct
     // Sends a object that is handled by frontend, success = login success or not
     if (user) {
-      if (validPassword(password, user.hash, user.salt)) {
+      if (utils.validPassword(password, user.hash, user.salt)) {
         // Account has not been verified yet
         if (user.status !== "ACTIVE") {
           return res.status(401).json({
@@ -31,6 +35,11 @@ router.post("/login", async (req, res, next) => {
           success: true,
           msg: "login successful!",
         });
+      } else {
+        return res.status(401).json({
+          success: false,
+          msg: "password incorrect or user not found!!",
+        });
       }
     } else {
       // Password incorrect
@@ -40,6 +49,7 @@ router.post("/login", async (req, res, next) => {
       });
     }
   } catch (err) {
+    console.log(err);
     return res.status(401).json({
       success: false,
       msg: "password incorrect or user not found!!",
@@ -89,6 +99,7 @@ router.post("/register", async (req, res) => {
     address,
     confirmationCode,
   };
+  console.log(credentials);
 
   // create an user with the credentials
   const user = await User.create({ ...credentials });
@@ -110,7 +121,7 @@ router.post("/register", async (req, res) => {
 });
 
 // update user status after clicking on verification link
-router.get("/api/auth/verify/:confirmationCode", async (req, res, next) => {
+router.get("/verify/:confirmationCode", async (req, res, next) => {
   const user = await User.findOne({
     confirmationCode: req.params.confirmationCode,
   });
@@ -120,6 +131,74 @@ router.get("/api/auth/verify/:confirmationCode", async (req, res, next) => {
   }
   userController.activateUser(req.params.confirmationCode);
   return res.status(200).json({ success: true });
+});
+
+// send a magic link to reset password
+router.post("/forget-password", async (req, res) => {
+  // find user with the email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return res.status(200).json({ sucess: false, msg: "user not found!" });
+  }
+  if (user.status === "PENDING") {
+    return res.status(200).json({
+      sucess: false,
+      msg: "unverified user, check your email for verification!",
+    });
+  }
+
+  // generate a string that would comprise the path of magic link
+  const token = utils.generateForgetPasswordLink(user);
+  mailConfig.sendPasswordResetEmail(user.givenName, user.email, token);
+  return res.status(200).json({
+    sucess: true,
+    msg: "an email will be sent to reset your password!",
+    token: token,
+  });
+});
+
+// magic link for resetting password
+router.get("/reset-password/:token", async (req, res) => {
+  try {
+    const verify = jwt.verify(req.params.token, PUBLIC_KEY, {
+      algorithms: ["RS256"],
+    });
+    const user = await User.findOne({ _id: verify.sub });
+    // link is valid if the user has not changed the password
+    if (user && user.hash === verify.random) {
+      return res.status(200).json({ success: true });
+    }
+    return res.status(404).json({ success: false });
+  } catch (err) {
+    console.log(err);
+    return res.status(404).json({ success: false });
+  }
+});
+
+// submitting post data in the magic link for resetting password
+router.post("/reset-password/:token", async (req, res) => {
+  const password = req.body.password;
+
+  try {
+    // Verify the token
+    const verify = jwt.verify(req.params.token, PUBLIC_KEY, {
+      algorithms: ["RS256"],
+    });
+    const user = await User.findOne({ _id: verify.sub });
+    // if the user has already changed the password, invalidate the link
+    if (user && user.hash !== verify.random) {
+      return res.status(401).json({ success: false, msg: "invalide link" });
+    }
+    // update user's hash and salt
+    const { salt, hash } = utils.generatePassword(password);
+    user.salt = salt;
+    user.hash = hash;
+    await user.save();
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({ success: false, msg: "link timed out!" });
+  }
 });
 
 module.exports = router;
