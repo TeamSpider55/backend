@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const scheduleSchema = new mongoose.Schema({
 
     // date can be key since each user's account's day is unique
-    date: { type: Date, unique: true, required: true},
+    _id: { type: Date, unique: true, required: true},
 
     events: [
         { 
@@ -23,8 +23,10 @@ const scheduleSchema = new mongoose.Schema({
             type: {
                 tag: String,
                 kind: {
-                    enum: ('personal', 'collaborate'),
-                    required: true,
+                    type: String,
+                    enum: ['personal', 'collaborate'],
+                    default: 'personal',
+                    required: true
                 }
             },
         
@@ -33,7 +35,8 @@ const scheduleSchema = new mongoose.Schema({
             // free: is the request to be cancel and not yet be confirm by user
             category: {
                 type: String,
-                enum: ('listed', 'allocated', 'free'),
+                enum: ['listed', 'allocated', 'free' ,'available', 'pending'],
+                default: 'listed',
                 required: true
             },
 
