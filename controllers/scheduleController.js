@@ -1,4 +1,4 @@
-const Schedule = require("../models/schedule.js");
+const Schedule = require("../models/schedule");
 
 // validate method
 const setCategory = (cur, next) => {
