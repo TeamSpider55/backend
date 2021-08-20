@@ -28,7 +28,7 @@ router.post("/login", async (req, res, next) => {
         }
         // Issue the token upon successful login
         // Frontend will store token in the cookie and handles redirect
-        const token = utils.issueJWT(user, "10h");
+        const token = utils.issueJWT(user, "1h");
         return res.status(200).json({
           token: token.token,
           expiresIn: token.expiresIn,
@@ -99,12 +99,10 @@ router.post("/register", async (req, res) => {
     address,
     confirmationCode,
   };
-  console.log(credentials);
 
   // create an user with the credentials
   const user = await User.create({ ...credentials });
   if (!user) {
-    console.log(user);
     return res.json({ success: false, msg: "something went wrong..." });
   }
 
@@ -175,10 +173,9 @@ router.get("/reset-password/:token", async (req, res) => {
   }
 });
 
-// submitting post data in the magic link for resetting password
+// submitting post data in the magic link to reset password
 router.post("/reset-password/:token", async (req, res) => {
   const password = req.body.password;
-
   try {
     // Verify the token
     const verify = jwt.verify(req.params.token, PUBLIC_KEY, {
@@ -187,7 +184,7 @@ router.post("/reset-password/:token", async (req, res) => {
     const user = await User.findOne({ _id: verify.sub });
     // if the user has already changed the password, invalidate the link
     if (user && user.hash !== verify.random) {
-      return res.status(401).json({ success: false, msg: "invalide link" });
+      return res.status(401).json({ success: false, msg: "invalid link" });
     }
     // update user's hash and salt
     const { salt, hash } = utils.generatePassword(password);
@@ -196,7 +193,6 @@ router.post("/reset-password/:token", async (req, res) => {
     await user.save();
     res.status(200).json({ success: true });
   } catch (err) {
-    console.log(err);
     return res.status(401).json({ success: false, msg: "link timed out!" });
   }
 });

@@ -16,16 +16,16 @@ const options = {
                             the req param ie verify(req,payload,done)*/,
 };
 
-const strategy = new JwtStrategy(options, (payload, done) => {
+const strategy = new JwtStrategy(options, (req, payload, done) => {
   // Extract user id from the token in the sub field
   const userId = payload.sub;
 
   // Find user from the database by id
   User.findOne({ _id: userId })
     .then((user) => {
-      // User found successfully, tell passport the user object
+      // user found successfully, tell passport the user object
       if (user) {
-        // Put info into request object for protected routes to retrive info
+        // put info into request object for protected routes to retrive info
         // of specific user
         req.authResult = {
           user: user,

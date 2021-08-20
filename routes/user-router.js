@@ -4,15 +4,33 @@ const utils = require("../lib/auth-util");
 
 // Will call the callback parameter in ../config/passport.js/JwtStrategy to verify jwt token
 // Use this on every protected routes
-router.post(
-  "/protected",
+
+// all user-related path should be protected
+router.use(passport.authenticate("jwt", { session: false }));
+
+router.get(
+  "/change-password",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    if (!req.result.success) {
-      // redirect if fail to authenticate
-      res.redirect("/login");
+    res.json({ success: req.authResult.success });
+  }
+);
+
+router.post(
+  "/change-password",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const newPassowrd = req.body.password;
+    const { salt, hash } = utils.generatePassword(newPassowrd);
+    try {
+      // reset the user password
+      user.salt = salt;
+      user.hash = hash;
+      await user.save();
+      res.json({ success: true });
+    } catch (err) {
+      res.json({ success: false });
     }
-    const user = req.user;
   }
 );
 
