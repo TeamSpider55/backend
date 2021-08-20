@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema({
   tags: [{ type: String }],
   salt: { type: String, required: true },
   hash: { type: String, required: true },
+  blacklistTokens: [String],
 });
 
 const User = mongoose.model("User", userSchema);

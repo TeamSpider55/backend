@@ -28,7 +28,7 @@ router.post("/login", async (req, res, next) => {
         }
         // Issue the token upon successful login
         // Frontend will store token in the cookie and handles redirect
-        const token = utils.issueJWT(user, "1h");
+        const token = utils.issueJWT(user, "20m");
         return res.status(200).json({
           token: token.token,
           expiresIn: token.expiresIn,

@@ -26,3 +26,4 @@ db.on("error", (err) => {
 require("../models/client");
 require("../models/tags");
 require("../models/users");
+require("../models/blacklist");
