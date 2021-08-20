@@ -5,15 +5,12 @@ const mongoose = require("mongoose");
 const scheduleSchema = new mongoose.Schema({
 
     // date can be key since each user's account's day is unique
-    _id: { type: Date, unique: true, required: true},
+    date: { type: Date, unique: true, required: true},
 
     events: [
         { 
             _eventId: { type: String, unique: true, required: true},
-            schedule: {
-                start:  {type: Date, required: true},
-                end: { type: Date, required: true }
-            },
+            
             title: { type: String, required: true},
             note: { type: String},
     
@@ -21,13 +18,11 @@ const scheduleSchema = new mongoose.Schema({
             // in search engine
             // -> i want to use enum but does not enforce ( from my research)
             type: {
-                tag: String,
-                kind: {
-                    type: String,
-                    enum: ['personal', 'collaborate'],
-                    default: 'personal',
-                    required: true
-                }
+                type: String,
+                enum: ['personal', 'collaborate'],
+                default: 'personal',
+                required: true
+
             },
         
             // listed: is allocated by the user to be confirm by the contact
@@ -39,7 +34,10 @@ const scheduleSchema = new mongoose.Schema({
                 default: 'listed',
                 required: true
             },
-
+            
+            tags: [
+                String
+            ],
             // potetntially member involve in this meeting 
             // This is strictly
             contacts: [
