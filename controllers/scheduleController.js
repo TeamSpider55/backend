@@ -1,5 +1,5 @@
-const Schedule = require("../models/schedule");
-
+const Schedule = require("../models/schedules");
+require("../models/index");
 // validate method
 const setCategory = (cur, next) => {
     if((next == "free" || cur != "allocated"))
@@ -25,6 +25,7 @@ const createSchedule  = async (date) => {
         const schedule = await Schedule.create({date: date});
         return schedule;
     } catch (err){
+        console.log("Error");
         return null;
     }
 };
@@ -32,3 +33,5 @@ const createSchedule  = async (date) => {
 // for now put the auto mail here(just a shell)
 // if user want to start a meeting, and wait for participator to vote for a time
 const autoMailCallBack = (contacts, title) => {};
+
+let sche = createSchedule(Date.now);

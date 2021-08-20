@@ -23,3 +23,4 @@ db.on("error", (err) => {
   process.exit(1);
 });
 
+require('../models/schedules');
