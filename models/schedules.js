@@ -5,15 +5,21 @@ const mongoose = require("mongoose");
 const scheduleSchema = new mongoose.Schema({
 
     // date can be key since each user's account's day is unique
-    date: { type: Date, unique: true, required: true},
+    // Date will only be "YYYY-MM_DD"
+    
+    // let the day be store as a Unix time
+    // combination of date + user must be unique
+    date: { type: Number, required: true},
+    user: { type: String, required: true},
+    
 
     events: [
         { 
-            _eventId: { type: String, unique: true, required: true},
-            
+    
             title: { type: String, required: true},
             note: { type: String},
-    
+            start: { type: Number, required: true},
+            end: { type: Number, required: true},
             // this can be use to tell short story about this meeting,
             // in search engine
             // -> i want to use enum but does not enforce ( from my research)
@@ -42,10 +48,11 @@ const scheduleSchema = new mongoose.Schema({
             // This is strictly
             contacts: [
                 { type: String, required: true}
-            ]
+            ]  
         }
     ]
 });
-
+// ensure the combination of date + user is unique
+scheduleSchema.index({ date:1, user:1}, {unique: true});
 const Schedule = mongoose.model("Schedule", scheduleSchema);
 module.exports = Schedule;
