@@ -23,8 +23,9 @@ let eventController = {
     },
 
     /* use to sort the 2 event according to its scheduled time
-     * @param: {Object} event id
-     *
+     * @param: {Object} event 
+     * @pram: {Object} event
+     * @return: {Int}   
      */
     compare: (eventA, eventB) => {
         if(eventA.end < eventB.start){
@@ -142,7 +143,7 @@ let eventController = {
         if(schedule == null){
             return null;
         }
-        console.log(Util.extractUnixOfYYYY_MM_DD_HH_MM(start));
+
         for(var event of schedule.events){
             if(event.start == Util.extractUnixOfYYYY_MM_DD_HH_MM(start)
              && event.end == Util.extractUnixOfYYYY_MM_DD_HH_MM(end)){
@@ -260,5 +261,8 @@ let eventController = {
             }
         }return false;
     }
+
+    // Require: function to calculate free time.
+
 };
 module.exports = eventController;

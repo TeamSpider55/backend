@@ -145,7 +145,6 @@ let scheduleController = {
      * @return {Int} number of deleted document -> incase we want to do further loging
      */
     removeAllSchedule: async (concreteUser) => {
-        console.log("here");
         let report = await Schedule.deleteMany({
             user: concreteUser
         });
