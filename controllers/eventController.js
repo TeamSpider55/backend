@@ -1,4 +1,4 @@
-const ScheduleController = require("./scheduleController1");
+const ScheduleController = require("./scheduleController");
 const Util = require("../util");
 
 let eventController = {
