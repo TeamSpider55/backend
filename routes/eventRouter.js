@@ -55,4 +55,35 @@ router.get("/retrieve/many/:date/:user", (req, res) => {
 });
 
 
+
+router.post("/reschedule", (req, res) => {
+    let unixStart = parseInt(req.body.start);
+    let unixEnd = parseInt(req.body.end);
+    let unixNewStart = parseInt(req.body.newStart);
+    let unixNewEnd = parseInt(req.body.newEnd);
+    let user = req.body.user;
+
+    if(eventController.rescheduleEvent(unixStart, unixEnd, unixNewStart, unixNewEnd, user))
+        console.log("Reschedule evnet successfully");
+});
+
+router.post("/modify/content", (req, res) => {
+    let oldEvent = {
+        title: req.body.title,
+        note: req.body.note,
+        start: parseInt(req.body.start),
+        end: parseInt(req.body.end),
+        type: req.body.type,
+        category: req.body.category,
+        tags: [],
+        contacts: []
+    };
+
+    let newEvent = req.body.event;
+    let user = req.body.user;
+
+    if(eventController.modifyEventContent(newEvent, oldEvent, user))
+        console.log("Modify Event successfully!!!");
+});
+
 module.exports = router;
