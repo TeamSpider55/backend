@@ -1,16 +1,17 @@
-const express = require("express");
-const app = express();
-require('./models'); 
+const Propose = require("../backend/controllers/proposeEventController");
+const Util = require("../backend/util");
 
-const mongoose = require("mongoose");
-
-app.get("/", (req, res) => {
-    res.send("Big Martin is watching you");
-})
-
-const port = process.env.PORT || 8080;
+const test = async () => {
 
 
-app.listen(port, () => {
-  console.log(`The app is listening on port ${port}!`);
-});
+  let propose = {
+    title: "test",
+    user: "10.0154",
+    note: "tester",
+    duration: Util.
+  };
+
+};
+
+
+test();

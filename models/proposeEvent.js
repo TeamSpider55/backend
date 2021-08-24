@@ -3,15 +3,18 @@ const mongoose = require("mongoose");
 
 const proposeEventSchema = new mongoose.Schema({
 
-    proposeEventId = { type: String, require: true, unique: true},
-
     title: { type: String, required: true},
+    user: { type: String, required: true},
     note: String,
     duration: Number,
     link: { type: String, required: true},
 
     contacts: [
-        {type: String, required: true}
+        {
+            email: {type: String, required: true},
+            vote: {type: Boolean, required: true, default: false},
+            idInGrp: { type: Integer, required: true}
+        }
     ],
 
     // each time a time is allocated, its vote number increase by 1
@@ -25,11 +28,16 @@ const proposeEventSchema = new mongoose.Schema({
             
             numVote: { type: Number, required: true, default: 1},
             by: [ {
-                type: String, required: true
+                // use intege instead of email, to save time of string compare
+                type: Integer, required: true
             }]
         }
-    ]
-});
+    ],
 
+    deloyState: { type: Boolean, required: true, default: false},
+
+    round: { type: Number, required: true, default: 1}
+});
+proposeEventSchema.index({ title: 1, user: 1}, {unique: true});
 const ProposeEvent = mongoose.model("ProposeEvent", proposeEventSchema);
 module.exports = ProposeEvent;

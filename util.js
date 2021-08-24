@@ -18,5 +18,14 @@ let Util = {
     extractUnixOfYYYY_MM_DD_HH_MM: (unixTime) => {
         return Math.floor(unixTime / 60000) * 60000; 
     },
+
+    /* Turn the hour:,  minute into milis second valur
+     * @param: {Int} 
+     * @param: {Int}
+     * @return: {Int} milisecond value
+     */
+    extractUnixOfTime: (hour, minute) => {
+        return hour * 60 *60 * 1000 + miniute * 60 * 1000;
+    }
 }
 module.exports = Util;
