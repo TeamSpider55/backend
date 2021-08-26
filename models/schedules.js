@@ -31,15 +31,6 @@ const scheduleSchema = new mongoose.Schema({
 
             },
         
-            // listed: is allocated by the user to be confirm by the contact
-            // allocated: is the listed and got confirm by the contact person
-            // free: is the request to be cancel and not yet be confirm by user
-            category: {
-                type: String,
-                enum: ['listed', 'allocated', 'free' ,'available', 'pending'],
-                default: 'listed',
-                required: true
-            },
             
             tags: [
                 String

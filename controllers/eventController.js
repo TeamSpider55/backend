@@ -62,13 +62,15 @@ let eventController = {
      * @return: {bool} true if adding is successfully
      */
     AddEventUseSchedule: async (event, schedule) => {
-        event.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(event.start);
-        event.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(event.end);
+        let adjustEvent = event;
+        adjustEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjustEvent.start);
+        adjustEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjustEvent.end);
         if(eventController.ValidateEvent(event, schedule.events)){
-            await schedule.events.push(event);
+            await schedule.events.push(adjustEvent);
             await schedule.save();
             return true;
-        } return false;
+        } console.log("Propose Event is overlapse with an existed event!!!");
+        return false;
     },
 
     /* Given a new event is create, find the collection where it potential be added to
@@ -114,7 +116,7 @@ let eventController = {
                     await schedule.save();
                 return true;
             }
-        } return false;
+        }return false;
     },
 
     /* Remove an event belong to a user
@@ -122,12 +124,16 @@ let eventController = {
      * @param: {String} id of the user
      */
     removeEvent: async (event, user) => {
+        let standardisedEvent = event;
+        standardisedEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(event.start);
+        standardisedEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(event.end);
         // find the schedule 
-        let date = Util.extractUnixOfYYYY_MM_DD(event.start);
+        let date = Util.extractUnixOfYYYY_MM_DD(standardisedEvent.start);
         let schedule = await ScheduleController.retrieveSchedule(date, user);
-        if(schedule == null)
+        if(schedule == null){
             return false;
-        return await eventController.removeEventUseSchedule(event, schedule);
+        }
+        return await eventController.removeEventUseSchedule(standardisedEvent, schedule);
     },
 
     /* Retrieve the even of a user with the match start and end 
@@ -207,8 +213,10 @@ let eventController = {
                 event.start = newStart;
                 event.end = newEnd;
                 if(await eventController.AddEvent(event, user)){
+                    console.log("add");
                     return true;
                 }else{
+                    console.log("add");
                     event.start = start;
                     event.end = start;
                     await eventController.AddEvent(event, user);
@@ -239,11 +247,13 @@ let eventController = {
      * @param: {String} id of the user
      * @return: {bool} true if we able to modify the document
      */
-    modifyEventContent: async (newEvent, oldEvent, user) => {
+    modifyEventContent: async (newEvent, user) => {
 
         // retrieve the schedule
-        let date = Util.extractUnixOfYYYY_MM_DD(oldEvent.start);
+        let date = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
         let schedule = await ScheduleController.retrieveSchedule(date, user);
+        newEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.start);
+        newEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.end);
         if(schedule == null){
             return false;
         }
@@ -251,7 +261,7 @@ let eventController = {
         // find the event
         for(var i=0; i < schedule.events.length; i++){
 
-            if(schedule.events[i].start == oldEvent.start && schedule.events[i].end == oldEvent.end){
+            if(schedule.events[i].start == newEvent.start && schedule.events[i].end == newEvent.end){
                 schedule.events[i].title = (newEvent.title != null) ? newEvent.title : schedule.events[i].title;
                 schedule.events[i].note = (newEvent.note != null) ? newEvent.note : schedule.events[i].note;
                 schedule.events[i].type = (newEvent.type != null) ? newEvent.type : schedule.events[i].type;

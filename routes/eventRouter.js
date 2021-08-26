@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const eventController = require("../controllers/eventController");
+const Util = require("../util");
 
-router.post("/add", (req, res) => {
+router.post("/add", async (req, res) => {
     let user = req.body.user;
-
     // create the template for that event
     let event = {
         title: req.body.title,
@@ -12,63 +12,78 @@ router.post("/add", (req, res) => {
         start: parseInt(req.body.start),
         end: parseInt(req.body.end),
         type: req.body.type,
-        category: req.body.category,
         tags: [],
         contacts: []
     };
-
-    if(eventController.AddEvent(event, user))
-        console.log("Add event to collection successfully");
+    let eventStatus =  await eventController.AddEvent(event, user);
+    console.log(eventStatus);
+    res.json({
+        date: (eventStatus) ?   "Add event successfully" : "Fail to add Event" ,
+        status: eventStatus
+    });
 });
 
 
 
-router.post("/remove", (req, res) => {
+router.post("/remove", async (req, res) => {
     let user = req.body.user;
     let event = {
         start: parseInt(req.body.start),
         end: parseInt(req.body.end)
     };
-
-    if(eventController.removeEvent(event, user))
-        console.log("Remove event successfully!!!");
+    let removeStatus = await eventController.removeEvent(event, user);
+    res.json({
+        data: (removeStatus) ? "Remove event successfully!!!" : "Fail to remove event!!!",
+        status: (removeStatus)
+    });
 });
 
 
 
-router.get("/retrieve/single/:start/:end/:user", (req, res) => {
+router.get("/retrieve/single/:start/:end/:user", async (req, res) => {
     let start = parseInt(req.params.start);
     let end = parseInt(req.params.end);
 
     let user = req.params.user;
-    let event = eventController.retrieveEvent(start, end, user);
-    res.json((event == null) ? {} : event);
+    let event = await eventController.retrieveEvent(start, end, user);
+    res.json({
+        date: (event == null) ? {} : event,
+        status: (event != null)
+    });
 });
 
 
 
-router.get("/retrieve/many/:date/:user", (req, res) => {
+router.get("/retrieve/many/:date/:user", async (req, res) => {
     let unixTime = parseInt(req.params.date);
     let user = req.params.user;
-
-    res(eventController.retrieveSortedEventsInDay(unixTime, user, true));
+    let eventList = await eventController.retrieveSortedEventsInDay(unixTime, user, true);
+    console.log(eventList);
+    res.json({
+        data: eventList,
+        status: eventList != []
+    });
 });
 
 
 
-router.post("/reschedule", (req, res) => {
+router.post("/reschedule", async (req, res) => {
     let unixStart = parseInt(req.body.start);
     let unixEnd = parseInt(req.body.end);
     let unixNewStart = parseInt(req.body.newStart);
     let unixNewEnd = parseInt(req.body.newEnd);
     let user = req.body.user;
+    let reScheduleStatus = await eventController.rescheduleEvent(unixStart, unixEnd, unixNewStart, unixNewEnd, user);
 
-    if(eventController.rescheduleEvent(unixStart, unixEnd, unixNewStart, unixNewEnd, user))
-        console.log("Reschedule evnet successfully");
+    res.json({
+        data: (reScheduleStatus) ? "Reschedule the event successfully!!!" : "Fail to reschedule the event!!!",
+        status: (reScheduleStatus)
+    });
 });
 
-router.post("/modify/content", (req, res) => {
-    let oldEvent = {
+router.post("/modify/content", async (req, res) => {
+    console.log("here");
+    let newEvent = {
         title: req.body.title,
         note: req.body.note,
         start: parseInt(req.body.start),
@@ -78,12 +93,15 @@ router.post("/modify/content", (req, res) => {
         tags: [],
         contacts: []
     };
-
-    let newEvent = req.body.event;
+    console.log(newEvent);
     let user = req.body.user;
 
-    if(eventController.modifyEventContent(newEvent, oldEvent, user))
-        console.log("Modify Event successfully!!!");
+    let modifyStatus = await eventController.modifyEventContent(newEvent, user);
+
+    res.json({
+        data: (modifyStatus) ? "Modify Event successfully!!!" : "Fail to modify data",
+        status: (modifyStatus)
+    });
 });
 
 module.exports = router;

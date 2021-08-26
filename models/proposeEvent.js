@@ -24,7 +24,7 @@ const proposeEventSchema = new mongoose.Schema({
     // at round 4+, user will be the one to initiate the new round
     proposeTime: [
         {
-            start: { type: date, required: true, unique: true},
+            start: { type: Number, required: true, unique: true},
             
             numVote: { type: Number, required: true, default: 1},
             by: [ {
