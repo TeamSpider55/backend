@@ -4,6 +4,8 @@ const passport = require("passport");
 const authRouter = require("./routes/auth-router");
 const userRouter = require("./routes/user-router");
 require("./config/db");
+const scheduleRouter = require("./routes/scheduleRouter");
+const eventRouter = require("./routes/eventRouter");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -14,6 +16,8 @@ require("./config/passport")(passport);
 app.use(passport.initialize());
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
+app.use("/schedule", scheduleRouter);
+app.use("/event", eventRouter);
 
 const port = process.env.PORT || 8080;
 
