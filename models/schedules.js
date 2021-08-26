@@ -20,6 +20,12 @@ const scheduleSchema = new mongoose.Schema({
             note: { type: String},
             start: { type: Number, required: true},
             end: { type: Number, required: true},
+            notificationPeriod: {
+                type: String,
+                // right now , only allow notification a day before till communicate with team mate
+                enum: ['No notification', 'a day before'],
+                required: true, 
+                default: false},
             // this can be use to tell short story about this meeting,
             // in search engine
             // -> i want to use enum but does not enforce ( from my research)

@@ -1,4 +1,5 @@
 const ScheduleController = require("./scheduleController");
+const cron = require('node-cron');
 const Util = require("../lib/util");
 
 let eventController = {
@@ -300,6 +301,56 @@ let eventController = {
     }
     return false;
   },
+
+  /* Set the notification value in the data base.
+   * server automator will perform the find and send email
+   */
+  setNotification: async (period, unixStart, unixEnd, user) => {
+
+    if(!(period in ['No notification', 'a day before', 'an hour before'])){
+      return false;
+    }
+    // retrieve the schedule
+    let date = Util.extractUnixOfYYYY_MM_DD(unixStart);
+    let schedule = await ScheduleController.retrieveSchedule(date, user);
+    if(schedule != null){
+      let targetEvent = {
+        start: Util.extractUnixOfYYYY_MM_DD_HH_MM(unixStart),
+        end: Util.extractUnixOfYYYY_MM_DD_HH_MM(unixEnd)
+      };
+
+      for(var i = 0; i < schedule.events.length; i++){
+
+        if(isEqual(targetEvent, schedule.events[i])){
+          schedule.events[i].notificationPeriod = period;
+          schedule.save();
+          return true;
+        }
+      }
+
+    }return false;
+  },
+
+  autoNotification: async () => {
+    let currentDate = Util.extractUnixOfYYYY_MM_DD(Date.now());
+
+    let tmr = Util.getTomorrow(currentDate);
+    let tmrSchedule = await ScheduleController._retrieveSchedule(tmr);
+
+    if(tmrSchedule == null)
+      return [];
+    
+    let notificatedEvents = [];
+
+    for(var e of tmrSchedule.events){
+      if(e.notificationPeriod == "a day before")
+        notificatedEvents.push({
+          event:e,
+          user: tmrSchedule.user
+        });
+    }
+    return notificatedEvents;
+  }
 
   // Require: function to calculate free time.
 };

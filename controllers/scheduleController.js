@@ -35,6 +35,24 @@ let scheduleController = {
     return null;
   },
 
+  /* This method is intendend to use internally only
+   *
+   */
+  _retrieveSchedule: async (unixTime) => {
+    let schedules = null;
+    try{
+      schedules = await Schedule.find({
+        date: Util.extractUnixOfYYYY_MM_DD(unixTime)
+      });
+
+      if(schedules == null){
+        consolse.log(`No schedules on ${new Date(unixTime)}!!!!`);
+      }
+    } catch (err){
+      console.log(err.message);
+    } return (schedules == null)? [] : schedules;
+  },
+
   /* [done]Retrieve the schedules document using date and user
    * @param {Number} time in millis second that is between 0:0:0 -> 23:59:59.999 of the scheduled day
    * @param {String} the user id where this schedule belong to

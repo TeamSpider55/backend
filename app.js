@@ -6,6 +6,7 @@ const userRouter = require("./routes/user-router");
 require("./config/db");
 const scheduleRouter = require("./routes/scheduleRouter");
 const eventRouter = require("./routes/eventRouter");
+require('./config/automator');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -44,7 +44,20 @@ const sendPasswordResetEmail = (name, email, link) => {
     .catch((err) => console.log(err));
 };
 
+const sendEventNotification = (email, start, end, userMail, title) => {
+  transport
+    .sendMail({
+      from: user,
+      to: email,
+      subjectL: "Event reminder!!!",
+      html: `<h1>Scheduled Event of ${userMail} will occur @${new Date(start)}-${new Date(end)}</h1>
+        <p>Please attend at the right time.</p>
+        </div>`,
+    })
+    .catch((err) => console.log(err));
+};
 module.exports = {
   sendConfirmationEmail,
   sendPasswordResetEmail,
+  sendEventNotification,
 };
