@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const ScheduleController = require("../controllers/scheduleController");
 
-
+/* Send the path with URL parameter to indicate that we want to retrieve
+ * a single schedule with the date and belong to a user
+ */
 router.get("/retrieve/single/:date/:user",(req, res) => {
     let unixTime = parseInt(req.params.date);
     let user = req.params.user;
@@ -15,6 +17,8 @@ router.get("/retrieve/single/:date/:user",(req, res) => {
 });
 
 
+/*
+ */
 router.get("/retrieve/many/:user", (req, res) => {
     let user = req.params.user;
     let schedules = ScheduleController.retrieveAllScheduleByUser(user);
