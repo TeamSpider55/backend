@@ -1,11 +1,11 @@
-const { model } = require("mongoose");
+require("../config/db");
+const os = require("os");
 const scheduleController = require("./scheduleController");
 const eventController = require("./eventController");
 const userController = require('./userController');
 const Contact = require("../models/contacts");
 
 let contactController = {
-    
     /* Add the contact to the data base
      */
     addContact: async (contact) => {
@@ -17,27 +17,35 @@ let contactController = {
     },
 
     modifyContact: async (mod, contact) => {
-        for(var attribute of Object.getOwnPropertyNames(contact)){
-            // ensure it not override _id
-            if(attribute === "_id")
-                continue;
-
-            if(attribute in mod)
-                contact[attribute] = (mod[attribute]!= null) ? mod[attribute] : contact[attribute];
-        } try{
-            contact.save();
-        } catch (err){
-            console.log(`Fail to modify contact: ${err.message}!!!`);
+        if(mod == null || contact == null ){
+            console.log(`Fail to modify contact: error paramater!!!`);
+            return false;
         }
+        contact.nickName = (mod.nickName != null && mod.nickName != undefined ) ? mod.nickName : contact.nickName; 
+        contact.familyName = (mod.familyName != undefined && mod.familyName != null) ? mod.familyName : contact.familyName; 
+        contact.middleName = (mod.middleName != undefined && mod.middleName != null) ? mod.middleName : contact.middleName; 
+        contact.givenName = (mod.givenName != undefined && mod.givenName != null) ? mod.givenName : contact.givenName; 
+        contact.email = (mod.email != undefined && mod.email != null) ? mod.email : contact.email; 
+        contact.phone = (mod.phone != undefined && mod.phone != null) ? mod.phone : contact.phone; 
+        contact.address = (mod.address!= undefined && mod.address != null) ? mod.address : contact.address; 
+        contact.description = (mod.description!= undefined && mod.description != null) ? mod.description : contact.description; 
+        
+        contact.save()
+            .catch((err) =>{
+                console.log(`Fail to modify contact: ${err.message}!!!`)
+                return false;
+            }); 
+        return true;
     },
 
     addParticipatedEvent: async (eventId, contact) => {
-        contact.push(eventId);
-        try{
-            contact.save();
-        }catch (err){
-            console.log(`Add Event reference to contact Fail: ${err.message}`);
-        }
+        contact.participateEvent.push(eventId);
+        await contact.save()
+            .catch(err => {
+                console.log(`Add Event reference to contact Fail: ${err.message}`);
+                return false
+            });
+        return true;
     },
 
     removeParticipatedEvent: async (eventId, contact) => {
@@ -45,29 +53,29 @@ let contactController = {
             if(contact.participateEvent[i].match(eventId)){
                 contact.participateEvent.splice(i,1);
             }
-        }contact.save();
+        }await contact.save()
+        .catch(err => {
+            console.log(`Remove Event reference from contact Fail: ${err.message}`);
+            return false
+        });
+        return true;
         
+    },
+
+    retrieveContact: async (id) => {
+        let contact = await contact.findOne({_id:id})
+            .catch(err => {
+            console.log(`Fail to retrieve contact: ${err.message}!!!`);
+            return null;
+
+        }); return contact;
+    },
+
+    retrieveContactEvent: async (contactId) => {
+        let contact = await contactController.retrieveContact(contactId);
+        return (contact!=null)? contact.participateEvent : [];
     }
 
 };
 
-let test = async () => {
-    /*let variable = await contactController.addContact({
-        nickName: "june",
-        familyName: "Trinh",
-        middleName: "Thanh",
-        givenName: "Xuan",
-        email: "me@me.com",
-        phone: "000000000",
-        address:"000000000",
-        description: "000000000",
-        note: "000000000",
-        tags: [],
-        participateEvent: []
-    });*/
-    let variable = await scheduleController.addSchedule(Date.now(), "me");
-    console.log(variable);
-};
-
-test();
 module.exports = contactController;
