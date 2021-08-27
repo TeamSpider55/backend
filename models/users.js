@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt-nodejs");
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt-nodejs')
 
 const userSchema = new mongoose.Schema({
   userId: { type: String, required: true, unique: true },
@@ -11,13 +11,11 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   phone: { type: String, required: true },
   address: { type: String, required: true }, //maybe we can pull weather information?
-
   client: [{ type: String }], //pull from clientSchema of client are we doing 1 guy login or?
-
   //what if we specified here with bool that client is also a user? then if so we know which schemas to pull from?
-
   tags: [{ type: String }],
-});
+  memo: [{ type: String }],
+})
 
 // // customerSchema password hash
 // customerSchema.methods.generateHash = function (password) {
@@ -29,5 +27,5 @@ const userSchema = new mongoose.Schema({
 //   return bcrypt.compareSync(password, this.password);
 // };
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+const User = mongoose.model('User', userSchema)
+module.exports = User

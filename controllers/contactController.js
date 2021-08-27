@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const Contact = require('../models/contact')
-const User = require('../models/user')
+const Contact = require('../models/contacts')
+const User = require('../models/users')
 
 // find all contacts for specific user
 const getContactsForUser = async (req, res) => {
