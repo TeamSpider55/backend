@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const contactSchema = new mongoose.Schema({
-  contactId: { type: String, required: true, unique: true },
   nickName: { type: String },
   familyName: { type: String, required: true },
   middleName: { type: String },
@@ -12,6 +11,8 @@ const contactSchema = new mongoose.Schema({
   description: { type: String },
   note: { type: String },
   tags: [{ type: String }],
+
+  participateEvent: [ String]
 });
 
 const Contact = mongoose.model("Contact", contactSchema);
