@@ -225,7 +225,6 @@ let eventController = {
     if (event == null) {
       return false;
     }
-    console.log(event);
 
     if (
       Util.extractUnixOfYYYY_MM_DD(start) ==
@@ -236,10 +235,8 @@ let eventController = {
         event.start = newStart;
         event.end = newEnd;
         if (await eventController.AddEvent(event, user)) {
-          console.log("add");
           return true;
         } else {
-          console.log("add");
           event.start = start;
           event.end = start;
           await eventController.AddEvent(event, user);
