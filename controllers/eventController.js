@@ -206,7 +206,7 @@ let eventController = {
    * @param: {String} id of the user
    * @return {bool} true if the re-schedulling is successful
    */
-  rescheduleEvent: async (
+  modifedEventTime: async (
     unixStart,
     unixEnd,
     unixNewStart,
@@ -261,6 +261,22 @@ let eventController = {
     return false;
   },
 
+  /* Same as modify time of the event. But the newStart and newEnd must be in the future
+   */
+  rescheduleEvent: async  (
+    unixStart,
+    unixEnd,
+    unixNewStart,
+    unixNewEnd,
+    user
+  ) => {
+    if(unixNewStart < Date.now() || unixNewEnd < Date.now()){
+      console.log("Invalid Rescheduling time, Must be in the future!!!");
+      return await this.modifedEventTime(unixStart, unixEnd, unixNewStart, unixNewEnd, user);
+    }
+    return false;
+  },
+  
   /* [not tested] content is {tittle, note, type, category}
    * tag will have the whole set of method dealing with it. So does contacts
    * @param: {Object} consist of field indicate above. for which one of them is not needed to modied, set to null
