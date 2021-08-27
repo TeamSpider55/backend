@@ -11,13 +11,13 @@ const getContactsForUser = async (req, res) => {
 
     const contact = await Promise.all(
       user.contact.map(async (id) => {
-        var contact = await Order.findOne({ contactId: id }).lean()
+        var contact = await User.findOne({ contactId: id }).lean()
         return contact
       })
     )
     contact.reverse()
 
-    if (user === null) {
+    if (contact === null) {
       // no user found in database: 404
       res.status(404)
       return res.render('error', {
