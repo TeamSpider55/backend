@@ -23,7 +23,8 @@ db.on("error", (err) => {
   process.exit(1);
 });
 
-require("../models/client");
+require("../models/contacts");
 require("../models/tags");
 require("../models/users");
 require("../models/blacklist");
+require("../models/schedules");
