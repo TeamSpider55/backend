@@ -1,30 +1,57 @@
 const mongoose = require('mongoose')
 const Contact = require('../models/contacts')
 const User = require('../models/users')
-// const { v4: uuidv4 } = require('uuid')
+
+// find all contacts for specific user
+const getContactsForUser = async (req, res) => {
+  const userName = req.body.userName
+  try {
+    const user = await User.findOne({
+      userName: userName,
+    })
+    //id is contactId in this context
+    const contacts = await Promise.all(
+      user.contacts.map(async (id) => {
+        var contact = await Contact.findOne({ _id: id }).lean()
+        return contact
+      })
+    )
+
+    if (contacts === null) {
+      // no user found in database: 404
+      res.status(404)
+      return null
+    }
+    // user was found, return as response
+    return contacts
+  } catch (err) {
+    console.log(err)
+    // error occurred
+    res.status(400)
+    return null
+  }
+}
 
 // add a contact, given their email, family name, given name
 const addContact = async (req, res) => {
-  const contact = req.body
-  Contact.create(
-    {
-      //contactId: uuidv4(), //if we aren't using uuidv4 need somethign else
-      email: contact.email,
-      familyName: contact.familyName,
-      givenName: contact.givenName,
+  const email = req.body.email
+  const familyName = req.body.familyName
+  const givenName = req.body.givenName
+  try {
+    const contact = await Contact.create({
+      email: email,
+      familyName: familyName,
+      givenName: givenName,
       tags: [],
-    },
-    (err, contact) => {
-      if (err) {
-        res.status(400)
-        return res.json('Database query failed')
-      } else {
-        return res.json(contact)
-      }
-    }
-  )
+    })
+    return contact
+  } catch (e) {
+    console.log(e)
+    return null
+  }
 }
 
 module.exports = {
+  getContactsForUser,
   addContact,
 }

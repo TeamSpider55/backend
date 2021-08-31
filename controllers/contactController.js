@@ -2,45 +2,55 @@ const mongoose = require('mongoose')
 const Contact = require('../models/contacts')
 const User = require('../models/users')
 
-// find all contacts for specific user
-const getContactsForUser = async (req, res) => {
+// find one contact by their id
+const getOneContact = async (req, res) => {
+  const userName = req.body.userName
+  const id = req.body.id
   try {
     const user = await User.findOne({
-      userName: req.session.userName,
+      userName: userName,
     })
-    //id is contactId in this context
-    const contact = await Promise.all(
-      user.contact.map(async (id) => {
-        var contact = await Contact.findOne({ _id: id }).lean()
-        return contact
-      })
-    )
-    contact.reverse()
+    // const contact = await Promise.all(
+    //   user.contact.map(async (id) => {
+    //     var contact = await Contact.findOne({ _id: id }).lean()
+    //     return contact
+    //   })
+    // )
+    const oneContact = await Contact.findOne({ _id: id }).lean()
 
-    if (contact === null) {
-      // no user found in database: 404
+    if (oneContact === null) {
+      // no contact found in database
       res.status(404)
       return res.json({
         errorCode: 404,
-        message: 'Database query failed',
+        message: `Contact not found.`,
         backTo: '/user',
       })
     }
-    // user was found, return as response
+    if (user === null) {
+      // no Contact found in database
+      res.status(404)
+      return res.json({
+        errorCode: 404,
+        message: `User not found.`,
+        backTo: '/user',
+      })
+    }
+    // contact was found, return as response
     return res.json({
-      contact: contact,
+      contact: oneContact,
     })
   } catch (err) {
+    console.log(err)
     // error occurred
     res.status(400)
-    return res.json({
+    return res.render('error', {
       errorCode: 400,
       message: 'Database query failed',
       backTo: '/user',
     })
   }
 }
-
 module.exports = {
-  getContactsForUser,
+  getOneContact,
 }

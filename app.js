@@ -1,15 +1,26 @@
-const express = require("express");
-const app = express();
-require('./models'); 
+const express = require('express')
+const app = express()
+require('./models')
+//const contactRouter = require('./routes/contactRouter')
+const userRouter = require('./routers/userRouter')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+app.use(express.urlencoded({ extended: true }))
 
-const mongoose = require("mongoose");
+app.use('/user', userRouter)
 
-app.get("/", (req, res) => {
-    res.send("Big Martin is watching you");
-})
+// app.get('/', (req, res) => {
+//   res.redirect('/user')
+// })
 
-const port = process.env.PORT || 8080;
+// app.get('/contact', (req, res) => {
+//   res.redirect('/contact')
+// })
+
+const port = process.env.PORT || 8080
 
 app.listen(port, () => {
-  console.log(`The app is listening on port ${port}!`);
-});
+  console.log(`The app is listening on port ${port}!`)
+})
+
+module.exports = app
