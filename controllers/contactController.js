@@ -10,44 +10,33 @@ const getOneContact = async (req, res) => {
     const user = await User.findOne({
       userName: userName,
     })
-    // const contact = await Promise.all(
-    //   user.contact.map(async (id) => {
-    //     var contact = await Contact.findOne({ _id: id }).lean()
-    //     return contact
-    //   })
-    // )
     const oneContact = await Contact.findOne({ _id: id }).lean()
-
     if (oneContact === null) {
       // no contact found in database
       res.status(404)
       return res.json({
-        errorCode: 404,
-        message: `Contact not found.`,
-        backTo: '/user',
+        statusCode: 404,
       })
     }
     if (user === null) {
-      // no Contact found in database
+      // no User found in database
       res.status(404)
       return res.json({
-        errorCode: 404,
-        message: `User not found.`,
-        backTo: '/user',
+        statusCode: 404,
       })
     }
     // contact was found, return as response
     return res.json({
-      contact: oneContact,
+      statusCode: 200,
+      data: oneContact,
     })
   } catch (err) {
     console.log(err)
     // error occurred
     res.status(400)
-    return res.render('error', {
-      errorCode: 400,
-      message: 'Database query failed',
-      backTo: '/user',
+    return res.json({
+      statusCode: 400,
+      data: err,
     })
   }
 }

@@ -20,15 +20,23 @@ const getContactsForUser = async (req, res) => {
     if (contacts === null) {
       // no user found in database: 404
       res.status(404)
-      return null
+      return res.json({
+        statusCode: 404,
+      })
     }
     // user was found, return as response
-    return contacts
+    return res.json({
+      statusCode: 200,
+      data: contacts,
+    })
   } catch (err) {
     console.log(err)
     // error occurred
     res.status(400)
-    return null
+    return res.json({
+      statusCode: 400,
+      data: err,
+    })
   }
 }
 
@@ -44,10 +52,19 @@ const addContact = async (req, res) => {
       givenName: givenName,
       tags: [],
     })
-    return contact
+    //contact added successfully
+    return res.json({
+      statusCode: 200,
+      data: contact,
+    })
   } catch (e) {
     console.log(e)
-    return null
+    //error occured with adding contact
+    res.status(400)
+    return res.json({
+      statusCode: 400,
+      data: err,
+    })
   }
 }
 
