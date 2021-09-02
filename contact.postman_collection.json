@@ -1,0 +1,126 @@
+{
+	"info": {
+		"_postman_id": "76ee0bc4-5b01-43c4-9188-47a0dcc8d906",
+		"name": "contact",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "add a contact",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "contacttest2@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "familyName",
+							"value": "Family",
+							"type": "text"
+						},
+						{
+							"key": "givenName",
+							"value": "Given",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/user/contacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retrieve all contacts for user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userName",
+							"value": "spidertest55",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/user/allContacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"allContacts"
+					]
+				},
+				"description": "retrieves all contacts for a user"
+			},
+			"response": []
+		},
+		{
+			"name": "get one contact",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "612e20f5e67c51b4ed06a030",
+							"type": "text"
+						},
+						{
+							"key": "userName",
+							"value": "spidertest55",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/user/oneContacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"oneContacts"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
