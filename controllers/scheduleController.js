@@ -1,4 +1,3 @@
-const { model } = require("mongoose");
 const Schedule = require("../models/schedules");
 const Util = require("../lib/util");
 
@@ -42,25 +41,29 @@ let scheduleController = {
    */
   retrieveSchedule: async (unixTime, concreteUser) => {
     try {
-      let schedule = await Schedule.findOne({
+      var returnVal = {
+        schedule:null,
+        errorMessage: ""
+      };
+      
+      returnVal.schedule = await Schedule.findOne({
         date: Util.extractUnixOfYYYY_MM_DD(unixTime),
-        user: concreteUser,
+        user: concreteUser
       });
-
+      
       // log case targetted date is not in database
-      if (schedule == null)
-        console.log(
-          "Missing document: scheduled day {" +
-            new Date(unixTime) +
-            "}, for id: '" +
-            concreteUser +
-            "' is missing from Collection{Schedules}~!!!"
-        );
-      return schedule;
+      if (schedule == null){
+        returnVal.errorMessage =  "Missing document: scheduled day {" +
+        new Date(unixTime) +
+        "}, for id: '" +
+        concreteUser +
+        "' is missing from Collection{Schedules}~!!!";
+      }  
+      return returnVal;
     } catch (err) {
-      console.log(err);
+      returnVal.errorMessage = err.message; 
     }
-    return null;
+    return returnVal;
   },
 
   /* Retrieve all the schedule belong to a user
@@ -69,24 +72,26 @@ let scheduleController = {
    */
   retrieveAllScheduleByUser: async (concreteUser) => {
     try {
-      let schedule = await Schedule.find({
+      var returnVal = {
+        schedule: null,
+        errorMessage: ""
+      };
+      returnVal.schedule = await Schedule.find({
         user: concreteUser,
       });
 
       // log case targetted date is not in database
-      if (schedule == null)
-        console.log(
-          "Missing document: scheduled day {" +
+      if (returnVal.schedule == null)
+        returnVal.errorMessage = "Missing document: scheduled day {" +
             new Date(unixTime) +
             "}, for id: '" +
             concreteUser +
-            "' is missing from Collection{Schedules}~!!!"
-        );
-      return schedule;
+            "' is missing from Collection{Schedules}~!!!";
+      return returnVal;
     } catch (err) {
-      console.log(err);
+      returnVal.errorMessage = err.message;
     }
-    return null;
+    return returnVal;
   },
 
   /* Retrieve all the schedules that is between a indicated period of a user
@@ -97,7 +102,12 @@ let scheduleController = {
    */
   retrieveAllScheduleBetween: async (concreteUser, start, end) => {
     try {
-      let schedules = await Schedule.find({
+      var returnVal = {
+        schedules : [],
+        errorMessage: ""
+      };
+
+      returnVal.schedules = await Schedule.find({
         $and: [
           { date: { $gte: Util.extractUnixOfYYYY_MM_DD(start) } },
           { date: { $lte: Util.extractUnixOfYYYY_MM_DD(end) } },
@@ -105,21 +115,20 @@ let scheduleController = {
         user: concreteUser,
       });
 
-      if (schedules == null || schedules.length == 0) {
-        console.log(
+      if (returnVal.schedules == null || returnVal.schedules.length == 0) {
+        returnVal.errorMessage = 
           "No document: scheduled day that between:{" +
             new Date(Util.extractUnixOfYYYY_MM_DD(start)) +
             "} -> {" +
             new Date(Util.extractUnixOfYYYY_MM_DD(end)) +
             "}, for id: '" +
             concreteUser +
-            "' contain no document~!!!"
-        );
+            "' contain no document~!!!";
       }
-      return schedules;
+      return returnVal;
     } catch (err) {
-      console.log(err);
-    }
+      returnVal.errorMessage = err.message;
+    }return returnVal;
   },
 
   /* Remove a schedule from the collection using time+ user
@@ -132,19 +141,25 @@ let scheduleController = {
       date: Util.extractUnixOfYYYY_MM_DD(unixTime),
       user: concreteUser,
     });
+    var returnVal = {
+      status: true,
+      errorMessage: ""
+    };
 
-    if (report.n == 1) return true;
+    if (report.n == 1) return returnVal;
 
+    
     if (report.ok != 1)
-      console.log(
+      returnVal.status = false;
+      returnVal.errorMessage =
         "Error: occur when delete schedule at {" +
           new Date(Util.extractUnixOfYYYY_MM_DD(unixTime))
-      ) +
+       +
         ", of id:" +
         concreteUser +
         "!!!!";
 
-    return false;
+    return returnVal;
   },
 
   /* Remove all the schedule that belong to a user
@@ -156,11 +171,13 @@ let scheduleController = {
     let report = await Schedule.deleteMany({
       user: concreteUser,
     });
-
+    var returnVal = {
+      count: report.deletedCount,
+      errorMessage: ""
+    };
     if (report.ok != 1) {
-      console.log(
-        "Error: occur when delete schedule, of id:" + concreteUser + "!!!!"
-      );
+      returnVal.errorMessage =
+        "Error: occur when delete schedule, of id:" + concreteUser + "!!!!";
     }
     return report.deletedCount;
   },
@@ -180,16 +197,20 @@ let scheduleController = {
       ],
       user: concreteUser,
     });
+    
+    var returnVal = {
+      count: report.deletedCount,
+      errorMessage: ""
+    };
     if (report.ok != 1) {
-      console.log(
+      returnVal.errorMessage =
         "Error: occur when delete schedule that is betwen {" +
           new Date(Util.extractUnixOfYYYY_MM_DD(start)) +
           "} to {" +
           +new Date(Util.extractUnixOfYYYY_MM_DD(end)) +
           "}, of id:" +
           concreteUser +
-          "!!!!"
-      );
+          "!!!!";
     }
     return report.deletedCount;
   },

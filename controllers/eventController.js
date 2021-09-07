@@ -67,15 +67,20 @@ let eventController = {
    */
   AddEventUseSchedule: async (event, schedule) => {
     let adjustEvent = event;
+    var returnVal = {
+      status: true,
+      errorMessage: ""
+    }
     adjustEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjustEvent.start);
     adjustEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjustEvent.end);
     if (eventController.ValidateEvent(event, schedule.events)) {
       await schedule.events.push(adjustEvent);
       await schedule.save();
-      return true;
+      return returnVal;
     }
-    console.log("Propose Event is overlapse with an existed event!!!");
-    return false;
+    returnVal.errorMessage = "Propose Event is overlapse with an existed event!!!";
+    returnVal.status = false;
+    return returnVal;
   },
 
   /* Given a new event is create, find the collection where it potential be added to
@@ -87,15 +92,12 @@ let eventController = {
     let date = Util.extractUnixOfYYYY_MM_DD(event.start);
 
     // retrieve the schedule where the event belong to
-    let schedule = await ScheduleController.retrieveSchedule(date, user);
+    let schedule = (await ScheduleController.retrieveSchedule(date, user)).schedule;
     if (schedule == null) {
       schedule = await ScheduleController.addSchedule(date, user);
     }
-
-    if (schedule != null) {
-      return await eventController.AddEventUseSchedule(event, schedule);
-    }
-    return false;
+  
+    return await eventController.AddEventUseSchedule(event, schedule);
   },
 
   /* Remove the event from the schedule.
@@ -107,22 +109,26 @@ let eventController = {
   removeEventUseSchedule: async (event, schedule) => {
     // check if schedule contain any event
     if (schedule.events.length == 0) {
-      await ScheduleController.removeSchedule(schedule.date, schedule.user);
-      return false;
+      return await ScheduleController.removeSchedule(schedule.date, schedule.user);
     }
+    var returnVal = {
+      status: true,
+      errorMessage: ""
+    };
 
     for (var i = 0; i < schedule.events.length; i++) {
       // if the event match, remove it
       if (eventController.isEqual(event, schedule.events[i])) {
-        let size = schedule.events.splice(i, 1);
 
         if (schedule.events.length == 0)
           await ScheduleController.removeSchedule(schedule.date, schedule.user);
         else await schedule.save();
-        return true;
+        return returnVal;
       }
     }
-    return false;
+    returnVal.status = false;
+    returnVal.errorMessage = "The targetted event does not exist!!!";
+    return returnVal;
   },
 
   /* Remove an event belong to a user
@@ -135,9 +141,12 @@ let eventController = {
     standardisedEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(event.end);
     // find the schedule
     let date = Util.extractUnixOfYYYY_MM_DD(standardisedEvent.start);
-    let schedule = await ScheduleController.retrieveSchedule(date, user);
+    let schedule = (await ScheduleController.retrieveSchedule(date, user)).schedule;
     if (schedule == null) {
-      return false;
+      return {
+        status: false,
+        errorMessage: "The event does not existed!!!"
+      };
     }
     return await eventController.removeEventUseSchedule(
       standardisedEvent,
@@ -152,10 +161,14 @@ let eventController = {
    */
   retrieveEvent: async (start, end, user) => {
     // retrieve the schedule
+    var returnVal = {
+      event: null,
+      errorMessage:"Event does not exist!!!"
+    }
     let date = Util.extractUnixOfYYYY_MM_DD(start);
-    let schedule = await ScheduleController.retrieveSchedule(date, user);
+    let schedule = (await ScheduleController.retrieveSchedule(date, user)).schedule;
     if (schedule == null) {
-      return null;
+      return returnVal;
     }
 
     for (var event of schedule.events) {
@@ -163,10 +176,12 @@ let eventController = {
         event.start == Util.extractUnixOfYYYY_MM_DD_HH_MM(start) &&
         event.end == Util.extractUnixOfYYYY_MM_DD_HH_MM(end)
       ) {
-        return event;
+        returnVal.event = event;
+        returnVal.errorMessage = "";
+        return returnVal;
       }
     }
-    return null;
+    return returnVal;
   },
 
   /* given that we have the reference to the schedule, find all event store in it and sortit
@@ -177,7 +192,11 @@ let eventController = {
   retrieveSortedEventsInSchedule: async (schedule, isSort) => {
     let list = schedule.events;
 
-    return !isSort ? list : list.sort(eventController.compare);
+    list = !isSort ? list : list.sort(eventController.compare);
+    return {
+      events: list,
+      errorMessage: (list.length == 0) ? "There are no scheduled event in that day!!!": ""
+    };
   },
 
   /* retrieve all the event of a day
@@ -187,14 +206,17 @@ let eventController = {
    */
   retrieveSortedEventsInDay: async (unixTime, user, isSort) => {
     let date = Util.extractUnixOfYYYY_MM_DD(unixTime);
-    let schedule = await ScheduleController.retrieveSchedule(date, user);
+    let schedule =( await ScheduleController.retrieveSchedule(date, user)).schedule;
 
     if (schedule != null)
       return await eventController.retrieveSortedEventsInSchedule(
         schedule,
         isSort
       );
-    else return [];
+    else return {
+      events: [],
+      errorMessage: "There are no scheduled event in that day!!!"
+    };
   },
 
   /* Move a event to another time slot -> this will need to be optimise
@@ -219,10 +241,12 @@ let eventController = {
     let newEnd = Util.extractUnixOfYYYY_MM_DD_HH_MM(unixNewEnd);
 
     // retrieve the event
-    let event = await eventController.retrieveEvent(unixStart, unixEnd, user);
+    let event = (await eventController.retrieveEvent(unixStart, unixEnd, user)).event;
     // if event == null, then we should expect that the event is not in the database
     if (event == null) {
-      return false;
+      return {
+        
+      };
     }
     console.log(event);
 
