@@ -5,7 +5,7 @@ const ScheduleController = require("../controllers/scheduleController");
 /* Send the path with URL parameter to indicate that we want to retrieve
  * a single schedule with the date and belong to a user
  */
-router.get("/retrieve/single/:date/:user",(req, res) => {
+router.get("/retrieve/single/:date/:user", async (req, res) => {
     let unixTime = parseInt(req.params.date);
     let user = req.params.user;
     res.json(await ScheduleController.retrieveSchedule(unixTime, user));
@@ -14,14 +14,14 @@ router.get("/retrieve/single/:date/:user",(req, res) => {
 
 /*
  */
-router.get("/retrieve/many/:user", (req, res) => {
+router.get("/retrieve/many/:user", async(req, res) => {
     let user = req.params.user;
     res.json( await ScheduleController.retrieveAllScheduleByUser(user));
 });
 
 
 
-router.get("/retrieve/many/:user/:start/:end", (req, res) => {
+router.get("/retrieve/many/:user/:start/:end", async(req, res) => {
     let concreteUser = req.params.user;
     let start = req.params.start;
     let end = req.params.end;
@@ -32,7 +32,7 @@ router.get("/retrieve/many/:user/:start/:end", (req, res) => {
 
 
 
-router.post("/add", async (req, res) => {
+router.post("/add", async(req, res) => {
     let unixTime = parseInt(req.body.date);
     let concreteUser = req.body.user;
     res.json( await ScheduleController.addSchedule(unixTime, concreteUser));
@@ -41,7 +41,7 @@ router.post("/add", async (req, res) => {
 
 
 
-router.post("/remove/single", async (req, res) => {
+router.post("/remove/single", async(req, res) => {
     let unixTime = parseInt(req.body.date);
     let concreteUser = req.body.user;
 
@@ -50,7 +50,7 @@ router.post("/remove/single", async (req, res) => {
 
 
 
-router.post("/remove/many/user", async (req, res) => {
+router.post("/remove/many/user", async(req, res) => {
     let concreteUser = req.body.user;
 
     res.json(await ScheduleController.removeAllSchedule(concreteUser));
@@ -64,6 +64,5 @@ router.post("/remove/many/user/between", async (req, res) => {
 
     
     res.json( await ScheduleController.removeAllScheduleBetween(concreteUser, start, end));
-    
-
+});
 module.exports = router;
