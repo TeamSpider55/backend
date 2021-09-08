@@ -3,7 +3,6 @@ const Util = require("../lib/util");
 
 /* Controll I/O from schedule collection ****************************************************************************************************
  */
-
 let scheduleController = {
 
     /**Add schedule of the user to the data base (schedule collection)
@@ -27,6 +26,7 @@ let scheduleController = {
             ? { data:errMess , status: false}
             : { data:schedule, status: true};
     },
+
 
     /* [done]Retrieve the schedules document using date and user
     * @param {Number} time in millis second that is between 0:0:0 -> 23:59:59.999 of the scheduled day
@@ -67,6 +67,7 @@ let scheduleController = {
             : { data:errMess , status: false};
     },
 
+
     /* Retrieve all the schedules that is between a indicated period of a user
     * @param {String} the id of the user
     * @param {Int} the unix time of the starting period
@@ -92,6 +93,7 @@ let scheduleController = {
         
     },
 
+
     /* Remove all the schedule that belong to a user
     * useful when we want to remove a user.
     * @param {String} id of the user
@@ -111,6 +113,7 @@ let scheduleController = {
             ? {data:errMess, status:false} 
             : {data:report.deletedCount, status: true};
     },
+
 
     /* Remove all the schedule that belong to a user between the start and end period
     * useful when we want to clear schedule day
@@ -160,5 +163,6 @@ let scheduleController = {
             : {data:report.deletedCount, status: true};
     }
 }
+
 
 module.exports = scheduleController;
