@@ -1,12 +1,23 @@
 const express = require("express");
 const app = express();
-require('./models'); 
+const passport = require("passport");
+const authRouter = require("./routes/auth-router");
+const userRouter = require("./routes/user-router");
+require("./config/db");
+const scheduleRouter = require("./routes/scheduleRouter");
+const eventRouter = require("./routes/eventRouter");
 
-const mongoose = require("mongoose");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-    res.send("Big Martin is watching you");
-})
+require("./config/passport")(passport);
+
+// initialize the passport object on every request
+app.use(passport.initialize());
+app.use("/auth", authRouter);
+app.use("/user", userRouter);
+app.use("/schedule", scheduleRouter);
+app.use("/event", eventRouter);
 
 const port = process.env.PORT || 8080;
 
