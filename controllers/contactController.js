@@ -41,7 +41,7 @@ const getOneContact = async (req, res) => {
   }
 }
 
-// change an order (POST)
+// change a contact (POST)
 const updateContact = async (req, res) => {
   try {
     const newContact = req.body //this has all the attributes
