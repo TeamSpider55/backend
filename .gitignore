@@ -20,7 +20,8 @@ test2.js
 .env.development.local
 .env.test.local
 .env.production.local
-
+package-lock.json
+package.json
 npm-debug.log
 yarn-debug.log
 yarn-error.log
