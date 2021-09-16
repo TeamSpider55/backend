@@ -28,6 +28,7 @@ router.post("/remove", async (req, res) => {
   res.json(await eventController.removeEvent(event, user));
 });
 
+
 router.get("/retrieve/single/:start/:end/:user", async (req, res) => {
   let start = parseInt(req.params.start);
   let end = parseInt(req.params.end);
@@ -35,6 +36,7 @@ router.get("/retrieve/single/:start/:end/:user", async (req, res) => {
   let user = req.params.user;
   res.json( await eventController.retrieveEvent(start, end, user));
 });
+
 
 router.get("/retrieve/many/:date/:user", async (req, res) => {
   let unixTime = parseInt(req.params.date);
@@ -62,7 +64,6 @@ router.post("/reschedule", async (req, res) => {
 });
 
 router.post("/modify/content", async (req, res) => {
-  console.log("here");
   let newEvent = {
     title: req.body.title,
     note: req.body.note,
@@ -73,7 +74,6 @@ router.post("/modify/content", async (req, res) => {
     tags: [],
     contacts: [],
   };
-  console.log(newEvent);
   let user = req.body.user;
 
   res.json( await eventController.modifyEventContent(newEvent, user));
