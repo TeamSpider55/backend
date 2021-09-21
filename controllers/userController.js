@@ -4,7 +4,7 @@ const User = require('../models/users')
 
 // find all contacts for specific user
 const getContactsForUser = async (req, res) => {
-  const userName = req.body.userName
+  const userName = req.params.userId
   try {
     const user = await User.findOne({
       userName: userName,

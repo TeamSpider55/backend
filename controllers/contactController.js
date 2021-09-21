@@ -4,8 +4,8 @@ const User = require('../models/users')
 
 // find one contact by their id
 const getOneContact = async (req, res) => {
-  const userName = req.body.userName
-  const id = req.body.id
+  const userName = req.params.userId
+  const id = req.params.contactId
   try {
     const user = await User.findOne({
       userName: userName,
@@ -63,14 +63,15 @@ const updateContact = async (req, res) => {
     oneContact.address = newContact.address
     oneContact.description = newContact.description
     oneContact.note = newContact.note
-    oneContact.tags = newContact.tags.map((tag) => ({
-      //Do we map for tags array? how do we do it if they are changing the other stuff
-      _id: mongoose.Types.ObjectId(),
-      tagId: tag.tagId,
-      description: tag.description,
-      color: tag.color,
-      priority: tag.priority,
-    }))
+    oneContact.tags = newContact.tags
+    // oneContact.tags = newContact.tags.map((tag) => ({
+    //   //Do we map for tags array? how do we do it if they are changing the other stuff
+    //   _id: mongoose.Types.ObjectId(),
+    //   tagId: tag.tagId,
+    //   description: tag.description,
+    //   color: tag.color,
+    //   priority: tag.priority,
+    // }))
     let result = await oneContact.save()
     // contact was found, return as response
     return res.json({
@@ -110,7 +111,8 @@ const deleteOneContact = async (req, res) => {
         statusCode: 404,
       })
     }
-    user.contacts.deleteOne({ _id: id }).lean()
+    //use filter to delete it by setting the id as the filter then save it back to the user array. use await for the array
+    Contact.deleteOne({ _id: id }).lean()
     //Does this delete? or only the linked in array
 
     // contact was deleted successfully
