@@ -8,6 +8,8 @@ test2.js
 /.pnp
 .pnp.js
 
+/design
+
 # testing
 /coverage
 

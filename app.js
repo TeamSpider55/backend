@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const passport = require("passport");
-const authRouter = require("./routes/auth-router");
-const userRouter = require("./routes/user-router");
+const authRouter = require("./routes/authRouter");
+const userRouter = require("./routes/userRouter");
 require("./config/db");
 const scheduleRouter = require("./routes/scheduleRouter");
 const eventRouter = require("./routes/eventRouter");

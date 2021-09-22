@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const eventController = require("../controllers/eventController");
-const Util = require("../lib/util");
+const Util = require("../lib/timeUtil");
 
 router.post("/add", async (req, res) => {
   let user = req.body.user;
@@ -15,8 +15,7 @@ router.post("/add", async (req, res) => {
     tags: [],
     contacts: [],
   };
-  res.json( await eventController.AddEvent(event, user));
-  
+  res.json(await eventController.AddEvent(event, user));
 });
 
 router.post("/remove", async (req, res) => {
@@ -28,24 +27,20 @@ router.post("/remove", async (req, res) => {
   res.json(await eventController.removeEvent(event, user));
 });
 
-
 router.get("/retrieve/single/:start/:end/:user", async (req, res) => {
   let start = parseInt(req.params.start);
   let end = parseInt(req.params.end);
 
   let user = req.params.user;
-  res.json( await eventController.retrieveEvent(start, end, user));
+  res.json(await eventController.retrieveEvent(start, end, user));
 });
-
 
 router.get("/retrieve/many/:date/:user", async (req, res) => {
   let unixTime = parseInt(req.params.date);
   let user = req.params.user;
-  res.json(await eventController.retrieveSortedEventsInDay(
-    unixTime,
-    user,
-    true
-  ));
+  res.json(
+    await eventController.retrieveSortedEventsInDay(unixTime, user, true)
+  );
 });
 
 router.post("/reschedule", async (req, res) => {
@@ -54,13 +49,15 @@ router.post("/reschedule", async (req, res) => {
   let unixNewStart = parseInt(req.body.newStart);
   let unixNewEnd = parseInt(req.body.newEnd);
   let user = req.body.user;
-  res.json( await eventController.rescheduleEvent(
-    unixStart,
-    unixEnd,
-    unixNewStart,
-    unixNewEnd,
-    user
-  ));
+  res.json(
+    await eventController.rescheduleEvent(
+      unixStart,
+      unixEnd,
+      unixNewStart,
+      unixNewEnd,
+      user
+    )
+  );
 });
 
 router.post("/modify/content", async (req, res) => {
@@ -76,7 +73,7 @@ router.post("/modify/content", async (req, res) => {
   };
   let user = req.body.user;
 
-  res.json( await eventController.modifyEventContent(newEvent, user));
+  res.json(await eventController.modifyEventContent(newEvent, user));
 });
 
 module.exports = router;

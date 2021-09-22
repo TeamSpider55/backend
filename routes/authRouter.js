@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const utils = require("../lib/auth-util");
+const utils = require("../lib/authUtil");
 const userController = require("../controllers/userController");
 const mailConfig = require("../config/mailConfig");
 const User = require("../models/users");
