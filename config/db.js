@@ -34,6 +34,6 @@ require("../models/tags");
 require("../models/users");
 require("../models/blacklist");
 require("../models/schedules");
-require("../models/image");
+require("../models/images");
 
 module.exports = { gfs };

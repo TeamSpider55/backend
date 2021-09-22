@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const passport = require("passport");
-const utils = require("../lib/auth-util");
+const utils = require("../lib/authUtil");
 const User = require("../models/users");
 const Blacklist = require("../models/blacklist");
 const { authenticate } = require("passport");

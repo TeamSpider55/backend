@@ -6,7 +6,7 @@ const multipleUpload = util.promisify(
   require("../lib/imageUtil").array("multi-files", 10)
 );
 
-const Image = require("../models/image");
+const Image = require("../models/images");
 
 const imageController = {
   // upload a single image to mongodb

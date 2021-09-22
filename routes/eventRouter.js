@@ -175,11 +175,7 @@ router.post("/tag/addTag", async (req, res) => {
 });
 
 // get tags for a event
-router.post("/tag/getTags", (req, res) => {
-  const eventStart = req.body.eventStart;
-  const eventEnd = req.body.eventEnd;
-  const userId = req.body.userId;
-
+router.post("/tag/getTags", async (req, res) => {
   // Unix time from req.body
   const eventStart = req.body.eventStart;
   const eventEnd = req.body.eventEnd;
@@ -201,7 +197,7 @@ router.post("/tag/getTags", (req, res) => {
 });
 
 // delete a tag
-res.delete("/tag/deleteTag", (req, res) => {
+router.delete("/tag/deleteTag", async (req, res) => {
   // Unix time from req.body
   const eventStart = req.body.eventStart;
   const eventEnd = req.body.eventEnd;

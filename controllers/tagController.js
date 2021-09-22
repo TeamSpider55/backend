@@ -14,7 +14,6 @@ let tagController = {
 
   // Get all tags from an array of tag ids
   getMultipleTags: async (tagIds) => {
-    const tagIds = req.body.tagIds;
     const tags = [];
     try {
       // find tag via objectId one by one
