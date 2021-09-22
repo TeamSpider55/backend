@@ -23,8 +23,17 @@ db.on("error", (err) => {
   process.exit(1);
 });
 
+// Create buckets for file uploads
+let gfs;
+db.once("open", () => {
+  gfs = new mongoose.mongo.GridFSBucket(db.db, { bucketName: "uploads" });
+});
+
 require("../models/contacts");
 require("../models/tags");
 require("../models/users");
 require("../models/blacklist");
 require("../models/schedules");
+require("../models/image");
+
+module.exports = { gfs };

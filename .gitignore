@@ -3,6 +3,7 @@ test.js
 test2.js
 *.pem
 *.txt
+.env
 # dependencies
 /node_modules
 /.pnp

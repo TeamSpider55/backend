@@ -1,5 +1,5 @@
 const ScheduleController = require("./scheduleController");
-const Util = require("../lib/util");
+const Util = require("../lib/timeUtil");
 
 let eventController = {
   /* Check if the event overlapse with any event in the existEvents
@@ -294,6 +294,8 @@ let eventController = {
           newEvent.category != null
             ? newEvent.category
             : schedule.events[i].category;
+        schedule.events[i].tags =
+          newEvent.tags != null ? newEvent.tags : schedule.events[i].tags;
         await schedule.save();
         return true;
       }

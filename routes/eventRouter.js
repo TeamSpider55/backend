@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const eventController = require("../controllers/eventController");
-const Util = require("../lib/util");
+const scheduleController = require("../controllers/scheduleController");
+const tagController = require("../controllers/tagController");
+const Util = require("../lib/timeUtil");
 
 router.post("/add", async (req, res) => {
   let user = req.body.user;
@@ -107,6 +109,73 @@ router.post("/modify/content", async (req, res) => {
   res.json({
     data: modifyStatus ? "Modify Event successfully!!!" : "Fail to modify data",
     status: modifyStatus,
+  });
+});
+
+// get all tags of a event
+router.post("/tag/tags", async (req, res) => {
+  const tags = await tagController.getMultipleTags(req.tagIds);
+  if (tags) {
+    return res.json({
+      data: tags,
+      status: 200,
+    });
+  }
+  // Internal server error
+  return res.json({
+    data: null,
+    status: 500,
+  });
+});
+
+// update a tag of a event
+router.post("/tag/updateTag", async (req, res) => {
+  const tag = await tagController.updateTag(req.body.tagId, req.body.tagInfo);
+  if (tag) {
+    return res.json({
+      data: "succesfully updated tag!!!",
+      status: 200,
+    });
+  }
+  res.json({
+    data: "server failure!!!",
+    status: 500,
+  });
+});
+
+// create a tag to a event
+// TODO: Complete this
+router.post("/tag/addTag", async (req, res) => {
+  // Unix time from req.body
+  const eventStart = req.body.eventStart;
+  const eventEnd = req.body.eventEnd;
+  const userId = req.body.userId;
+
+  // Find the event to update tag
+  const event = await eventController.retrieveEvent(
+    eventStart,
+    eventEnd,
+    userId
+  );
+  // Create a tag
+  const tag = await tagController.createTag(req.body.tagInfo);
+  // Put the new tag to the exisitng array of tags of the event
+  const newTagsArr = event.tags.push(tag._id);
+  const newEvent = { start: event.start, end: event.end, tags: newTagsArr };
+  // Modify the event
+  const modifySuccess = await eventController.modifyEventContent(
+    newEvent,
+    userId
+  );
+  if (modifySuccess) {
+    return res.json({
+      data: "succesfully added tag!!!",
+      status: 200,
+    });
+  }
+  return res.json({
+    data: "failed to add tag!!!",
+    status: 500,
   });
 });
 
