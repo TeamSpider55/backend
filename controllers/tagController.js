@@ -1,4 +1,5 @@
 const Tag = require("../models/tags");
+const User = require("../models/users");
 
 let tagController = {
   // Get a single tag via object id
@@ -10,6 +11,7 @@ let tagController = {
       return null;
     }
   },
+
   // Get all tags from an array of tag ids
   getMultipleTags: async (tagIds) => {
     const tagIds = req.body.tagIds;
@@ -25,16 +27,22 @@ let tagController = {
       return null;
     }
   },
+
   // create a single tag
-  createTag: async (tagInfo) => {
+  createTag: async (tagInfo, userId) => {
     // expect tagInfo inside the body
     try {
       const tag = await Tag.create({ ...tagInfo });
+      // update inventory of tags for the user
+      const user = await User.findOne({ _id: userId });
+      user.tags.push(tag._id);
+      await User.save();
       return tag;
     } catch (err) {
       return null;
     }
   },
+
   // update a single tag
   updateTag: async (tagId, tagInfo) => {
     try {
@@ -45,12 +53,17 @@ let tagController = {
     }
   },
   // delete a tag
-  deleteTag: async (tagId) => {
+  deleteTag: async (tagId, userId) => {
     try {
-      const tag = await Tag.deleteOne({ _id: tagId });
-      return tag;
+      // update inventory of tags for the user
+      const user = await User.findOne({ _id: userId });
+      user.tags.filter((id) => id !== tagId);
+      await User.save();
+      // delete the tag collection
+      await Tag.deleteOne({ _id: tagId });
+      return true;
     } catch (err) {
-      return null;
+      return false;
     }
   },
 };
