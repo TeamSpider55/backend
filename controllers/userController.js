@@ -16,9 +16,15 @@ const getContactsForUser = async (req, res) => {
         return contact
       })
     )
-
+    if (user === null) {
+      // no User found in database
+      res.status(404)
+      return res.json({
+        statusCode: 404,
+      })
+    }
     if (contacts === null) {
-      // no user found in database: 404
+      // no contact found in database: 404
       res.status(404)
       return res.json({
         statusCode: 404,
@@ -39,17 +45,7 @@ const getContactsForUser = async (req, res) => {
     })
   }
 }
-/*
-
-Add a function that calls the contact controller create contact.
-Inserts it into the user contact array
-updates it via POST then returns status code for front end.
-This version of the function is the one front-end will call
-
-*/
-
 
 module.exports = {
   getContactsForUser,
-  
 }

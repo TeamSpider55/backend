@@ -18,7 +18,6 @@ contactRouter.post('/updateContact', contactController.updateContact);
 contactRouter.post('/addContact', contactController.addContact);
 contactRouter.delete('/deleteContact', contactController.deleteOneContact);
 
-
 module.exports = contactRouter
 
 

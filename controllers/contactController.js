@@ -45,6 +45,7 @@ const getOneContact = async (req, res) => {
 const updateContact = async (req, res) => {
   try {
     const newContact = req.body //this has all the attributes
+    const id = req.body.contactId
     const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
     if (oneContact === null) {
       // no contact found in database
@@ -71,8 +72,9 @@ const updateContact = async (req, res) => {
     //   description: tag.description,
     //   color: tag.color,
     //   priority: tag.priority,
-    // }))
-    let result = await oneContact.save()
+    // })) let result = 
+
+    await Contact.save()
     // contact was found, return as response
     return res.json({
       statusCode: 200,
@@ -111,10 +113,10 @@ const deleteOneContact = async (req, res) => {
         statusCode: 404,
       })
     }
-    //use filter to delete it by setting the id as the filter then save it back to the user array. use await for the array
-    Contact.deleteOne({ _id: mongoose.Types.ObjectId(id) }).lean()
-    //Does this delete? or only the linked in array
-
+    await Contact.deleteOne({_id: mongoose.Types.ObjectId(oneContact._id)})
+    const result = user.contacts.filter(contact => contact !== id)
+    user.contacts = result
+    await user.save()
     // contact was deleted successfully
     return res.json({
       statusCode: 200,
@@ -133,21 +135,31 @@ const deleteOneContact = async (req, res) => {
 
 // add a contact, given their email, family name, given name
 const addContact = async (req, res) => {
-  // const userName = req.body.userName
+  const userName = req.body.userName
   const email = req.body.email
   const familyName = req.body.familyName
   const givenName = req.body.givenName
   try {
-    
+    const user = await User.findOne({
+      userName: userName,
+    })
+    if (user === null) {
+      // no User found in database
+      res.status(404)
+      return res.json({
+        statusCode: 404,
+      })
+    }
     const contact = await Contact.create({
       email: email,
       familyName: familyName,
       givenName: givenName,
       tags: [],
     })
-    
+    user.contacts.push(contact._id)
+    await user.save()
+
     //contact added successfully
-    //just return the contactId that you created 
     return res.json({
       statusCode: 200,
       data: contact,
