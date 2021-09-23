@@ -10,7 +10,7 @@ const getOneContact = async (req, res) => {
     const user = await User.findOne({
       userName: userName,
     })
-    const oneContact = await Contact.findOne({ _id: id }).lean()
+    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
     if (oneContact === null) {
       // no contact found in database
       res.status(404)
@@ -45,7 +45,7 @@ const getOneContact = async (req, res) => {
 const updateContact = async (req, res) => {
   try {
     const newContact = req.body //this has all the attributes
-    const oneContact = await Contact.findOne({ _id: id }).lean()
+    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
     if (oneContact === null) {
       // no contact found in database
       res.status(404)
@@ -91,12 +91,12 @@ const updateContact = async (req, res) => {
 
 const deleteOneContact = async (req, res) => {
   const userName = req.body.userName
-  const id = req.body.id
+  const id = req.body.contactId
   try {
     const user = await User.findOne({
       userName: userName,
     })
-    const oneContact = await Contact.findOne({ _id: id }).lean()
+    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
     if (oneContact === null) {
       // no contact found in database
       res.status(404)
@@ -112,7 +112,7 @@ const deleteOneContact = async (req, res) => {
       })
     }
     //use filter to delete it by setting the id as the filter then save it back to the user array. use await for the array
-    Contact.deleteOne({ _id: id }).lean()
+    Contact.deleteOne({ _id: mongoose.Types.ObjectId(id) }).lean()
     //Does this delete? or only the linked in array
 
     // contact was deleted successfully
@@ -130,9 +130,43 @@ const deleteOneContact = async (req, res) => {
     })
   }
 }
+// add a contact, given their email, family name, given name
+const addContact = async (req, res) => {
+  //const userName = req.body.userName
+  const email = req.body.email
+  const familyName = req.body.familyName
+  const givenName = req.body.givenName
+  try {
+    const contact = await Contact.create({
+      //_id: mongoose.Types.ObjectId(id),
+      email: email,
+      familyName: familyName,
+      givenName: givenName,
+      tags: [],
+    })
+    // db.contacts.insertOne(
+    //   { _id: mongoose.Types.ObjectId(id), email: email, familyName: familyName, givenName: givenName, tags: []}
+    // )
+    //db.
+    //contact added successfully
+    return res.json({
+      statusCode: 200,
+      data: contact,
+    })
+  } catch (err) {
+    console.log(err)
+    //error occured with adding contact
+    res.status(400)
+    return res.json({
+      statusCode: 400,
+      data: err,
+    })
+  }
+}
 
 module.exports = {
   getOneContact,
   updateContact,
   deleteOneContact,
+  addContact,
 }

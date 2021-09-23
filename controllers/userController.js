@@ -12,7 +12,7 @@ const getContactsForUser = async (req, res) => {
     //id is contactId in this context
     const contacts = await Promise.all(
       user.contacts.map(async (id) => {
-        var contact = await Contact.findOne({ _id: id }).lean()
+        var contact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
         return contact
       })
     )
@@ -40,40 +40,9 @@ const getContactsForUser = async (req, res) => {
   }
 }
 
-// add a contact, given their email, family name, given name
-const addContact = async (req, res) => {
-  //const userName = req.body.userName
-  const email = req.body.email
-  const familyName = req.body.familyName
-  const givenName = req.body.givenName
-  try {
-    const contact = await Contact.create({
-      email: email,
-      familyName: familyName,
-      givenName: givenName,
-      tags: [],
-    })
-    db.contacts.insertOne(
-      { email: email, familyName: familyName, givenName: givenName, tags: []}
-    )
-    //db.
-    //contact added successfully
-    return res.json({
-      statusCode: 200,
-      data: contact,
-    })
-  } catch (err) {
-    console.log(err)
-    //error occured with adding contact
-    res.status(400)
-    return res.json({
-      statusCode: 400,
-      data: err,
-    })
-  }
-}
+
 
 module.exports = {
   getContactsForUser,
-  addContact,
+  
 }

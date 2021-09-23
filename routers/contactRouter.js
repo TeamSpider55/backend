@@ -15,7 +15,7 @@ const userController = require('../controllers/userController')
 contactRouter.get('/getContact/:userId/:contactId', contactController.getOneContact);
 contactRouter.get('/getAllContacts/:userId', userController.getContactsForUser);
 contactRouter.post('/updateContact', contactController.updateContact);
-contactRouter.post('/addContact', userController.addContact);
+contactRouter.post('/addContact', contactController.addContact);
 contactRouter.delete('/deleteContact', contactController.deleteOneContact);
 
 
