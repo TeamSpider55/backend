@@ -110,7 +110,7 @@ router.post("/modify/content", async (req, res) => {
 
 // get all tags of a event
 router.post("/tag/tags", async (req, res) => {
-  const tags = await tagController.getMultipleTags(req.tagIds);
+  const tags = await tagController.getMultipleTags(req.body.tagIds);
   if (tags) {
     return res.json({
       data: tags,
@@ -124,22 +124,28 @@ router.post("/tag/tags", async (req, res) => {
   });
 });
 
-// update a tag of a event
+// update a tag of a event **
 router.post("/tag/updateTag", async (req, res) => {
-  const tag = await tagController.updateTag(req.body.tagId, req.body.tagInfo);
+  const tagInfo = {
+    description: req.body.tagDescription,
+    color: req.body.tagColor,
+    priority: req.tagPriority,
+  };
+  // change the tag
+  const tag = await tagController.updateTag(req.body.tagId, tagInfo);
   if (tag) {
     return res.json({
       data: "succesfully updated tag!!!",
-      status: 200,
+      statusCode: 200,
     });
   }
   res.json({
     data: "server failure!!!",
-    status: 500,
+    statusCode: 500,
   });
 });
 
-// create a tag to a event
+// create a tag to a event **
 router.post("/tag/addTag", async (req, res) => {
   // Unix time from req.body
   const eventStart = req.body.eventStart;
@@ -153,9 +159,15 @@ router.post("/tag/addTag", async (req, res) => {
     userId
   );
   // Create a tag
-  const tag = await tagController.createTag(req.body.tagInfo, userId);
+  const tagInfo = {
+    description: req.body.tagDescription,
+    color: req.body.tagColor,
+    priority: req.tagPriority,
+  };
+  const tag = await tagController.createTag(tagInfo, userId);
   // Put the new tag to the exisitng array of tags of the event
-  const newTagsArr = event.tags.push(tag._id);
+  const newTagsArr = event.tags ? event.tags : [];
+  newTagsArr.push(tag._id);
   const newEvent = { start: event.start, end: event.end, tags: newTagsArr };
   // Modify the event
   const modifySuccess = await eventController.modifyEventContent(
@@ -174,7 +186,7 @@ router.post("/tag/addTag", async (req, res) => {
   });
 });
 
-// get tags for a event
+// get tags for a event **
 router.post("/tag/getTags", async (req, res) => {
   // Unix time from req.body
   const eventStart = req.body.eventStart;
@@ -204,7 +216,7 @@ router.delete("/tag/deleteTag", async (req, res) => {
   const userId = req.body.userId;
 
   // The id for the tag to delete
-  const tagId = res.body.tagId;
+  const tagId = req.body.tagId;
 
   // Find the event to update tag
   const event = await eventController.retrieveEvent(
@@ -226,9 +238,9 @@ router.delete("/tag/deleteTag", async (req, res) => {
   );
 
   // delete the tag from the collection
-  await tagController.deleteTag(tagId, userId);
+  const deleteSuccess = await tagController.deleteTag(tagId, userId);
 
-  if (modifySuccess) {
+  if (modifySuccess && deleteSuccess) {
     return res.json({
       data: "succesfully deleted tag!!!",
       statusCode: 200,
