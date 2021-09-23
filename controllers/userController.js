@@ -42,6 +42,7 @@ const getContactsForUser = async (req, res) => {
 
 // add a contact, given their email, family name, given name
 const addContact = async (req, res) => {
+  //const userName = req.body.userName
   const email = req.body.email
   const familyName = req.body.familyName
   const givenName = req.body.givenName
@@ -52,13 +53,17 @@ const addContact = async (req, res) => {
       givenName: givenName,
       tags: [],
     })
+    db.contacts.insertOne(
+      { email: email, familyName: familyName, givenName: givenName, tags: []}
+    )
+    //db.
     //contact added successfully
     return res.json({
       statusCode: 200,
       data: contact,
     })
-  } catch (e) {
-    console.log(e)
+  } catch (err) {
+    console.log(err)
     //error occured with adding contact
     res.status(400)
     return res.json({

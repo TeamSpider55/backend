@@ -16,7 +16,7 @@ contactRouter.get('/getContact/:userId/:contactId', contactController.getOneCont
 contactRouter.get('/getAllContacts/:userId', userController.getContactsForUser);
 contactRouter.post('/updateContact', contactController.updateContact);
 contactRouter.post('/addContact', userController.addContact);
-contactRouter.delete('/deleteContact', deleteOneContact);
+contactRouter.delete('/deleteContact', contactController.deleteOneContact);
 
 
 module.exports = contactRouter

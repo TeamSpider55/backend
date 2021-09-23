@@ -2,12 +2,12 @@ const express = require('express')
 const app = express()
 require('./models')
 //const contactRouter = require('./routes/contactRouter')
-const userRouter = require('./routers/userRouter')
+const contactRouter = require('./routers/contactRouter')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 app.use(express.urlencoded({ extended: true }))
 
-app.use('/user', userRouter)
+app.use('/user', contactRouter)
 
 // app.get('/', (req, res) => {
 //   res.redirect('/user')
