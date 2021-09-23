@@ -130,25 +130,24 @@ const deleteOneContact = async (req, res) => {
     })
   }
 }
+
 // add a contact, given their email, family name, given name
 const addContact = async (req, res) => {
-  //const userName = req.body.userName
+  // const userName = req.body.userName
   const email = req.body.email
   const familyName = req.body.familyName
   const givenName = req.body.givenName
   try {
+    
     const contact = await Contact.create({
-      //_id: mongoose.Types.ObjectId(id),
       email: email,
       familyName: familyName,
       givenName: givenName,
       tags: [],
     })
-    // db.contacts.insertOne(
-    //   { _id: mongoose.Types.ObjectId(id), email: email, familyName: familyName, givenName: givenName, tags: []}
-    // )
-    //db.
+    
     //contact added successfully
+    //just return the contactId that you created 
     return res.json({
       statusCode: 200,
       data: contact,

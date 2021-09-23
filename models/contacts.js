@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 const contactSchema = new mongoose.Schema({
-  //contactId: { type: String, unique: true }, //Foreign key only unique within the user(?)
   nickName: { type: String },
   familyName: { type: String, required: true },
   middleName: { type: String },
