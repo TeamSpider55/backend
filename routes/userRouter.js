@@ -45,4 +45,12 @@ router.post("/logout", async (req, res) => {
   res.json({ success: false, redirect: true });
 });
 
+// get detail of a user
+router.get("/profile", async (req, res) => {
+  if (req.authResult.success) {
+    return res.json({ success: true, data: req.user });
+  }
+  res.json({ success: false, data: null });
+});
+
 module.exports = router;
