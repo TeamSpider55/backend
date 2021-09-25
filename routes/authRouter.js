@@ -10,11 +10,11 @@ const PUBLIC_KEY = process.env.PUBLIC_KEY;
 
 // Handles login
 router.post("/login", async (req, res, next) => {
-  const userId = req.body.userId;
+  const userName = req.body.userName;
   const password = req.body.password;
 
   try {
-    const user = await User.findOne({ userId: userId });
+    const user = await User.findOne({ userName: userName });
     // User exist, check if password correct
     // Sends a object that is handled by frontend, success = login success or not
     if (user) {
@@ -62,7 +62,7 @@ router.post("/login", async (req, res, next) => {
 router.post("/register", async (req, res) => {
   // get all form data
   const email = req.body.email;
-  const userId = req.body.userId;
+  const userName = req.body.userName;
   const familyName = req.body.familyName;
   const givenName = req.body.givenName;
   const password = req.body.password;
@@ -72,7 +72,7 @@ router.post("/register", async (req, res) => {
   // get the confimation code
   const confirmationCode = utils.generateConfirmationCode(email);
 
-  // User with same email or userId found, decline registration request
+  // User with same email or userName found, decline registration request
   const userWithSameEmail = await User.findOne({ email: email });
   if (userWithSameEmail) {
     return res.json({
@@ -80,7 +80,7 @@ router.post("/register", async (req, res) => {
       msg: "email is taken, try another email please!",
     });
   }
-  const userWithSameId = await User.findOne({ userId: userId });
+  const userWithSameId = await User.findOne({ userName: userName });
   if (userWithSameId) {
     return res.json({
       success: false,
@@ -90,7 +90,7 @@ router.post("/register", async (req, res) => {
   const { salt, hash } = utils.generatePassword(password);
   const credentials = {
     email,
-    userId,
+    userName,
     familyName,
     givenName,
     salt,

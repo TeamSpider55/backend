@@ -68,8 +68,8 @@ const imageController = {
 
       // The file is an image, so pipe the stream to frontend
       if (
-        files[0].contentType === "imagejpeg" ||
-        files[0].contentType === "imagepng"
+        files[0].contentType === "image/jpeg" ||
+        files[0].contentType === "image/png"
       ) {
         gfs.openDownloadStreamByName(filename).pipe(res);
       } else {
@@ -84,9 +84,9 @@ const imageController = {
     const id = await Image.findOne({ filename: filename }).fileId;
     gfs.delete(new mongoose.Types.ObjectId(id), (err, data) => {
       if (err) {
-        res.json({ data: null, statusCode: 404 });
+        res.json({ data: "something is wrong!!!", statusCode: 404 });
       }
-      res.json({ data: null, statusCode: 200 });
+      res.json({ data: "image deleted", statusCode: 200 });
     });
   },
 };

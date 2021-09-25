@@ -108,23 +108,7 @@ router.post("/modify/content", async (req, res) => {
   });
 });
 
-// get all tags of a event
-router.post("/tag/tags", async (req, res) => {
-  const tags = await tagController.getMultipleTags(req.body.tagIds);
-  if (tags) {
-    return res.json({
-      data: tags,
-      status: 200,
-    });
-  }
-  // Internal server error
-  return res.json({
-    data: null,
-    status: 500,
-  });
-});
-
-// update a tag of a event **
+// update a tag of a event
 router.post("/tag/updateTag", async (req, res) => {
   const tagInfo = {
     description: req.body.tagDescription,
@@ -135,17 +119,17 @@ router.post("/tag/updateTag", async (req, res) => {
   const tag = await tagController.updateTag(req.body.tagId, tagInfo);
   if (tag) {
     return res.json({
-      data: "succesfully updated tag!!!",
+      data: tag,
       statusCode: 200,
     });
   }
   res.json({
-    data: "server failure!!!",
+    data: null,
     statusCode: 500,
   });
 });
 
-// create a tag to a event **
+// create a tag to a event
 router.post("/tag/addTag", async (req, res) => {
   // Unix time from req.body
   const eventStart = req.body.eventStart;
@@ -174,19 +158,19 @@ router.post("/tag/addTag", async (req, res) => {
     newEvent,
     userId
   );
-  if (modifySuccess) {
+  if (modifySuccess && tag) {
     return res.json({
-      data: "succesfully added tag!!!",
+      data: tag,
       statusCode: 200,
     });
   }
   return res.json({
-    data: "failed to add tag!!!",
+    data: null,
     statusCode: 500,
   });
 });
 
-// get tags for a event **
+// get tags for a event
 router.post("/tag/getTags", async (req, res) => {
   // Unix time from req.body
   const eventStart = req.body.eventStart;
@@ -242,12 +226,12 @@ router.delete("/tag/deleteTag", async (req, res) => {
 
   if (modifySuccess && deleteSuccess) {
     return res.json({
-      data: "succesfully deleted tag!!!",
+      data: tags,
       statusCode: 200,
     });
   }
   return res.json({
-    data: "failed to delete tag!!!",
+    data: null,
     statusCode: 500,
   });
 });

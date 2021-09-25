@@ -14,12 +14,12 @@ const updateContactTag = async (req, res) => {
   const tag = await tagController.updateTag(req.body.tagId, tagInfo);
   if (tag) {
     return res.json({
-      data: "succesfully updated tag!!!",
+      data: tag,
       statusCode: 200,
     });
   }
   res.json({
-    data: "server failure!!!",
+    data: null,
     statusCode: 500,
   });
 };
@@ -48,12 +48,12 @@ const addTagToContact = async (req, res) => {
     await contact.save();
 
     return res.json({
-      data: "succesfully added tag!!!",
+      data: contact.tags,
       statusCode: 200,
     });
   }
   return res.json({
-    data: "failed to add tag!!!",
+    data: null,
     statusCode: 500,
   });
 };
@@ -102,18 +102,18 @@ const deleteTagFromContact = async (req, res) => {
     // return message upon deletion
     if (deleteSuccess) {
       returnObj = {
-        data: "succesfully deleted tag!!!",
+        data: tags,
         statusCode: 200,
       };
     } else {
       returnObj = {
-        data: "failed to delete tag!!!",
+        data: null,
         statusCode: 500,
       };
     }
   }
   returnObj = {
-    data: "contact not found!!!",
+    data: null,
     statusCode: 404,
   };
   res.json(returnObj);
