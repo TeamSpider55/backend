@@ -4,13 +4,13 @@ const User = require('../models/users')
 
 // find one contact by their id
 const getOneContact = async (req, res) => {
-  const userName = req.params.userId
-  const id = req.params.contactId
+  const userName = req.params.userName
+  const contactId = req.params.contactId
   try {
     const user = await User.findOne({
       userName: userName,
     })
-    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
+    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(contactId) }).lean()
     if (oneContact === null) {
       // no contact found in database
       res.status(404)
@@ -44,10 +44,10 @@ const getOneContact = async (req, res) => {
 // change a contact (POST)
 const updateContact = async (req, res) => {
   const newContact = req.body //this has all the attributes
-  const id = req.body.contactId
+  const contactId = req.body.contactId
   try {
     
-    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) })
+    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(contactId) })
     if (oneContact === null) {
       // no contact found in database
       res.status(404)
@@ -94,12 +94,12 @@ const updateContact = async (req, res) => {
 
 const deleteOneContact = async (req, res) => {
   const userName = req.body.userName
-  const id = req.body.contactId
+  const contactId = req.body.contactId
   try {
     const user = await User.findOne({
       userName: userName,
     })
-    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
+    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(contactId) }).lean()
     if (oneContact === null) {
       // no contact found in database
       res.status(404)
@@ -115,7 +115,7 @@ const deleteOneContact = async (req, res) => {
       })
     }
     await Contact.deleteOne({_id: mongoose.Types.ObjectId(oneContact._id)})
-    const result = user.contacts.filter(contact => contact !== id)
+    const result = user.contacts.filter(contact => contact !== contactId)
     user.contacts = result
     await user.save()
     // contact was deleted successfully

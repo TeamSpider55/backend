@@ -65,16 +65,10 @@
 				"header": [],
 				"body": {
 					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "userName",
-							"value": "spidertest55",
-							"type": "text"
-						}
-					]
+					"urlencoded": []
 				},
 				"url": {
-					"raw": "http://localhost:8080/contact/getAllContacts/:userId",
+					"raw": "http://localhost:8080/contact/getAllContacts/:userName",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -83,11 +77,11 @@
 					"path": [
 						"contact",
 						"getAllContacts",
-						":userId"
+						":userName"
 					],
 					"variable": [
 						{
-							"key": "userId",
+							"key": "userName",
 							"value": "spidertest55"
 						}
 					]
@@ -106,21 +100,10 @@
 				"header": [],
 				"body": {
 					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "id",
-							"value": "612e20f5e67c51b4ed06a030",
-							"type": "text"
-						},
-						{
-							"key": "userName",
-							"value": "spidertest55",
-							"type": "text"
-						}
-					]
+					"urlencoded": []
 				},
 				"url": {
-					"raw": "http://localhost:8080/contact/getContact/:userId/:contactId",
+					"raw": "http://localhost:8080/contact/getContact/:userName/:contactId",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -129,12 +112,12 @@
 					"path": [
 						"contact",
 						"getContact",
-						":userId",
+						":userName",
 						":contactId"
 					],
 					"variable": [
 						{
-							"key": "userId",
+							"key": "userName",
 							"value": "spidertest55"
 						},
 						{
@@ -161,7 +144,7 @@
 						},
 						{
 							"key": "contactId",
-							"value": "614c67f3b87bdd7a8cf5f2b9",
+							"value": "614f18f95380035a0c6af1b0",
 							"type": "text"
 						}
 					]
@@ -191,17 +174,17 @@
 					"urlencoded": [
 						{
 							"key": "contactId",
-							"value": "612e20f5e67c51b4ed06a030",
+							"value": "614f18f95380035a0c6af1b0",
 							"type": "text"
 						},
 						{
 							"key": "nickName",
-							"value": "changed nickname",
+							"value": "changed nickname2",
 							"type": "text"
 						},
 						{
 							"key": "familyName",
-							"value": "changed familyName",
+							"value": "changed familyName2",
 							"type": "text"
 						},
 						{
