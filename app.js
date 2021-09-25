@@ -6,7 +6,9 @@ const userRouter = require("./routes/userRouter");
 require("./config/db");
 const scheduleRouter = require("./routes/scheduleRouter");
 const eventRouter = require("./routes/eventRouter");
+const cookieParser = require("cookie-parser");
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -26,15 +26,20 @@ router.post("/login", async (req, res, next) => {
             msg: "unverified account!",
           });
         }
-        // Issue the token upon successful login
-        // Frontend will store token in the cookie and handles redirect
+        // Issue the cookie upon successful login
         const token = utils.issueJWT(user, "20m");
-        return res.status(200).json({
-          token: token.token,
-          expiresIn: token.expiresIn,
-          success: true,
-          msg: "login successful!",
-        });
+        return res
+          .cookie("CRM", token, {
+            // 8 hours
+            expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
+            httpOnly: true,
+            secure: false,
+          })
+          .status(200)
+          .json({
+            success: true,
+            msg: "login successful!",
+          });
       } else {
         return res.status(401).json({
           success: false,

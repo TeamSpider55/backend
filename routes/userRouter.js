@@ -3,7 +3,6 @@ const passport = require("passport");
 const utils = require("../lib/authUtil");
 const User = require("../models/users");
 const Blacklist = require("../models/blacklist");
-const { authenticate } = require("passport");
 
 // Will call the callback parameter in ../config/passport.js/JwtStrategy to verify jwt token
 // Use this on every protected routes
@@ -40,7 +39,12 @@ router.post("/logout", async (req, res) => {
       userId: req.authResult.user._id,
       tokenId: tokenId,
     });
-    return res.json({ success: true, redirect: true });
+    if (req.cookies["CRM"]) {
+      return res
+        .clearCookie("CRM")
+        .status(200)
+        .json({ success: true, redirect: true });
+    }
   }
   res.json({ success: false, redirect: true });
 });
