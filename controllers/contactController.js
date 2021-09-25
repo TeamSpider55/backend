@@ -43,10 +43,11 @@ const getOneContact = async (req, res) => {
 
 // change a contact (POST)
 const updateContact = async (req, res) => {
+  const newContact = req.body //this has all the attributes
+  const id = req.body.contactId
   try {
-    const newContact = req.body //this has all the attributes
-    const id = req.body.contactId
-    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
+    
+    const oneContact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) })
     if (oneContact === null) {
       // no contact found in database
       res.status(404)
@@ -74,11 +75,11 @@ const updateContact = async (req, res) => {
     //   priority: tag.priority,
     // })) let result = 
 
-    await Contact.save()
+    await oneContact.save()
     // contact was found, return as response
     return res.json({
       statusCode: 200,
-      data: result,
+      data: oneContact,
     })
   } catch (err) {
     console.log(err)
