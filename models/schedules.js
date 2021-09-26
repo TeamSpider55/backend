@@ -38,7 +38,19 @@ const scheduleSchema = new mongoose.Schema({
             // potetntially member involve in this meeting 
             // This is strictly
             contacts: [
-                { type: String, required: true}
+                pending = [
+                    {
+                        email:{ type: String, required: true},
+                        // life span indicate how many automail left till this pending expired
+                        lifeSpan:{ type: String, default: "5"}
+                    }
+                ],
+
+                confirm = [
+                    // email of all the participator
+                    { type: String, required: true}
+                ]
+                
             ]  
         }
     ]
