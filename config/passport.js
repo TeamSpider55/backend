@@ -7,10 +7,18 @@ require("dotenv").config();
 // Retrieve public key from the environment variable
 const PUB_KEY = process.env.PUBLIC_KEY.replace(/\\n/g, "\n");
 
+const extractFromCookie = (req) => {
+  let jwt = null;
+  if (req && req.cookies["CRM"]) {
+    // extract token from cookie
+    jwt = req.cookies["CRM"].token;
+  }
+  return jwt;
+};
+
 const options = {
-  // Token will be found in the Authorization header of request
-  // And will be in format of "Bearer Token....." Token is the actual token
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  // Token will be found in cookie
+  jwtFromRequest: extractFromCookie,
   secretOrKey: PUB_KEY,
   algorithms: ["RS256"],
   passReqToCallback: true /* <= Important, so that the verify function can accept 
@@ -31,36 +39,17 @@ const strategy = new JwtStrategy(options, (req, payload, done) => {
           userId: payload.sub,
         });
         if (blacklist) {
-          req.authResult = {
-            user: null,
-            success: false,
-            error: null,
-          };
           done(null, false);
         } else {
-          req.authResult = {
-            user: user,
-            success: true,
-            error: null,
-            payload,
-          };
+          req.user = user;
+          req.payload = payload;
           done(null, user);
         }
       } else {
-        req.authResult = {
-          user: null,
-          success: false,
-          error: null,
-        };
         done(null, false);
       }
     })
     .catch((err) => {
-      req.authResult = {
-        user: null,
-        success: false,
-        error: err,
-      };
       done(err, false);
     });
 });

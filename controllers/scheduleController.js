@@ -1,5 +1,5 @@
 const Schedule = require("../models/schedules");
-const Util = require("../lib/util");
+const Util = require("../lib/timeUtil");
 
 /* Controll I/O from schedule collection ****************************************************************************************************
  */
