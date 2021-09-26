@@ -1,0 +1,248 @@
+{
+	"info": {
+		"_postman_id": "591f676b-cdde-45b6-8635-65747e0312ef",
+		"name": "contact",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "add a contact",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "contacttest3@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "familyName",
+							"value": "Family3",
+							"type": "text"
+						},
+						{
+							"key": "givenName",
+							"value": "Given3",
+							"type": "text"
+						},
+						{
+							"key": "userName",
+							"value": "spidertest55",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/contact/addContact",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contact",
+						"addContact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retrieve all contacts for user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:8080/contact/getAllContacts/:userName",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contact",
+						"getAllContacts",
+						":userName"
+					],
+					"variable": [
+						{
+							"key": "userName",
+							"value": "spidertest55"
+						}
+					]
+				},
+				"description": "retrieves all contacts for a user"
+			},
+			"response": []
+		},
+		{
+			"name": "get one contact",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:8080/contact/getContact/:userName/:contactId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contact",
+						"getContact",
+						":userName",
+						":contactId"
+					],
+					"variable": [
+						{
+							"key": "userName",
+							"value": "spidertest55"
+						},
+						{
+							"key": "contactId",
+							"value": "612e20f5e67c51b4ed06a030"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete a contact",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userName",
+							"value": "spidertest55",
+							"type": "text"
+						},
+						{
+							"key": "contactId",
+							"value": "614f18f95380035a0c6af1b0",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/contact/deleteContact",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contact",
+						"deleteContact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update contact",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "contactId",
+							"value": "614f18f95380035a0c6af1b0",
+							"type": "text"
+						},
+						{
+							"key": "nickName",
+							"value": "changed nickname2",
+							"type": "text"
+						},
+						{
+							"key": "familyName",
+							"value": "changed familyName2",
+							"type": "text"
+						},
+						{
+							"key": "middleName",
+							"value": "changed middleName",
+							"type": "text"
+						},
+						{
+							"key": "givenName",
+							"value": "changed givenName",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "changed email",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "changed phone",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "changed address",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "changed description",
+							"type": "text"
+						},
+						{
+							"key": "note",
+							"value": "changed note",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/contact/updateContact",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contact",
+						"updateContact"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
