@@ -10,10 +10,7 @@ const Blacklist = require("../models/blacklist");
 router.use(passport.authenticate("jwt", { session: false }));
 
 router.get("/change-password", (req, res) => {
-  if (req.authResult.success) {
-    return res.json({ success: true });
-  }
-  return res.json({ success: false });
+  res.json({ success: true });
 });
 
 router.post("/change-password", async (req, res) => {
@@ -32,29 +29,25 @@ router.post("/change-password", async (req, res) => {
 
 // Handles logout
 router.post("/logout", async (req, res) => {
-  if (req.authResult.success) {
-    // add tokenId to blacklist
-    const tokenId = req.authResult.payload.tokenId;
-    const blacklist = await Blacklist.create({
-      userId: req.authResult.user._id,
-      tokenId: tokenId,
-    });
-    if (req.cookies["CRM"]) {
-      return res
-        .clearCookie("CRM")
-        .status(200)
-        .json({ success: true, redirect: true });
-    }
+  // add tokenId to blacklist
+  const tokenId = req.payload.tokenId;
+  const blacklist = await Blacklist.create({
+    userId: req.user._id,
+    tokenId: tokenId,
+  });
+  // deletes the cookie
+  if (req.cookies["CRM"]) {
+    return res
+      .clearCookie("CRM")
+      .status(200)
+      .json({ success: true, redirect: true });
   }
-  res.json({ success: false, redirect: true });
+  res.json({ success: true, redirect: true });
 });
 
 // get detail of a user
 router.get("/profile", async (req, res) => {
-  if (req.authResult.success) {
-    return res.json({ success: true, data: req.user });
-  }
-  res.json({ success: false, data: null });
+  return res.json({ success: true, data: req.user });
 });
 
 module.exports = router;

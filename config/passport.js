@@ -39,36 +39,17 @@ const strategy = new JwtStrategy(options, (req, payload, done) => {
           userId: payload.sub,
         });
         if (blacklist) {
-          req.authResult = {
-            user: null,
-            success: false,
-            error: null,
-          };
           done(null, false);
         } else {
-          req.authResult = {
-            user: user,
-            success: true,
-            error: null,
-            payload,
-          };
+          req.user = user;
+          req.payload = payload;
           done(null, user);
         }
       } else {
-        req.authResult = {
-          user: null,
-          success: false,
-          error: null,
-        };
         done(null, false);
       }
     })
     .catch((err) => {
-      req.authResult = {
-        user: null,
-        success: false,
-        error: err,
-      };
       done(err, false);
     });
 });
