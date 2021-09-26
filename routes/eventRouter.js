@@ -30,13 +30,7 @@ router.post("/remove", async (req, res) => {
     start: parseInt(req.body.start),
     end: parseInt(req.body.end),
   };
-  let removeStatus = await eventController.removeEvent(event, user);
-  res.json({
-    data: removeStatus
-      ? "Remove event successfully!!!"
-      : "Fail to remove event!!!",
-    status: removeStatus,
-  });
+  res.json(await eventController.removeEvent(event, user));
 });
 
 router.get("/retrieve/single/:start/:end/:user", async (req, res) => {
@@ -44,11 +38,7 @@ router.get("/retrieve/single/:start/:end/:user", async (req, res) => {
   let end = parseInt(req.params.end);
 
   let user = req.params.user;
-  let event = await eventController.retrieveEvent(start, end, user);
-  res.json({
-    date: event == null ? {} : event,
-    status: event != null,
-  });
+  res.json(await eventController.retrieveEvent(start, end, user));
 });
 
 router.get("/retrieve/many/:date/:user", async (req, res) => {
@@ -71,20 +61,15 @@ router.post("/reschedule", async (req, res) => {
   let unixNewStart = parseInt(req.body.newStart);
   let unixNewEnd = parseInt(req.body.newEnd);
   let user = req.body.user;
-  let reScheduleStatus = await eventController.rescheduleEvent(
-    unixStart,
-    unixEnd,
-    unixNewStart,
-    unixNewEnd,
-    user
+  res.json(
+    await eventController.rescheduleEvent(
+      unixStart,
+      unixEnd,
+      unixNewStart,
+      unixNewEnd,
+      user
+    )
   );
-
-  res.json({
-    data: reScheduleStatus
-      ? "Reschedule the event successfully!!!"
-      : "Fail to reschedule the event!!!",
-    status: reScheduleStatus,
-  });
 });
 
 router.post("/modify/content", async (req, res) => {
@@ -100,12 +85,7 @@ router.post("/modify/content", async (req, res) => {
   };
   let user = req.body.user;
 
-  let modifyStatus = await eventController.modifyEventContent(newEvent, user);
-
-  res.json({
-    data: modifyStatus ? "Modify Event successfully!!!" : "Fail to modify data",
-    status: modifyStatus,
-  });
+  res.json(await eventController.modifyEventContent(newEvent, user));
 });
 
 // update a tag of a event

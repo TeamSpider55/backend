@@ -5,85 +5,55 @@ const ScheduleController = require("../controllers/scheduleController");
 /* Send the path with URL parameter to indicate that we want to retrieve
  * a single schedule with the date and belong to a user
  */
-router.get("/retrieve/single/:date/:user",(req, res) => {
+router.get("/retrieve/single/:date/:user", async (req, res) => {
     let unixTime = parseInt(req.params.date);
     let user = req.params.user;
-    let schedule = ScheduleController.retrieveSchedule(unixTime, user);
-
-    res.json({
-        date:(schedule == null) ?  {}: schedule,
-        status: (schedule != null)
-    });
+    res.json(await ScheduleController.retrieveSchedule(unixTime, user));
 });
 
 
 /*
  */
-router.get("/retrieve/many/:user", (req, res) => {
+router.get("/retrieve/many/:user", async(req, res) => {
     let user = req.params.user;
-    let schedules = ScheduleController.retrieveAllScheduleByUser(user);
-
-    res.json({
-        data: (schedules == null) ? [] : schedules ,
-        status: (schedules != null)
-    });
+    res.json( await ScheduleController.retrieveAllScheduleByUser(user));
 });
 
 
 
-router.get("/retrieve/many/:user/:start/:end", (req, res) => {
+router.get("/retrieve/many/:user/:start/:end", async(req, res) => {
     let concreteUser = req.params.user;
     let start = req.params.start;
     let end = req.params.end;
 
-    let schedules = ScheduleController.retrieveAllScheduleBetween(concreteUser, start, end);
+    res.json(await  ScheduleController.retrieveAllScheduleBetween(concreteUser, start, end));
 
-    res.json({
-        data: (schedules == null) ? [] : schedules,
-        status: (schedules != null)
-    });
 });
 
 
 
-router.post("/add", async (req, res) => {
+router.post("/add", async(req, res) => {
     let unixTime = parseInt(req.body.date);
     let concreteUser = req.body.user;
-
-    let schedule = await ScheduleController.addSchedule(unixTime, concreteUser);
-
-    res.json({
-        data: (schedule == null) ? "Add schedule fail!!!" : "Add schedule successfully!!!",
-        status: (schedule != null)
-    });
+    res.json( await ScheduleController.addSchedule(unixTime, concreteUser));
         
 });
 
 
 
-router.post("/remove/single", async (req, res) => {
+router.post("/remove/single", async(req, res) => {
     let unixTime = parseInt(req.body.date);
     let concreteUser = req.body.user;
 
-    let statusVal = await ScheduleController.removeSchedule(unixTime, concreteUser);
-
-    res.json({
-        data: (statusVal) ? "Remove successfully!!!" : "Fail to remove!!!",
-        status: statusVal
-    });
+    res.json( await ScheduleController.removeSchedule(unixTime, concreteUser));
 });
 
 
 
-router.post("/remove/many/user", async (req, res) => {
+router.post("/remove/many/user", async(req, res) => {
     let concreteUser = req.body.user;
 
-    let deleteNum = await ScheduleController.removeAllSchedule(concreteUser);
-    let successMess = "Remove Schedule: " + deleteNum + " is removed from the collection!!!";
-    res.json({
-        data: (deleteNum > 0) ? successMess : "Fail to delete the schedule!!!",
-        status: (deleteNum > 0)
-    });
+    res.json(await ScheduleController.removeAllSchedule(concreteUser));
 });
 
 
@@ -93,12 +63,6 @@ router.post("/remove/many/user/between", async (req, res) => {
     let end = parseInt(req.body.end);
 
     
-    let deleteNum = await ScheduleController.removeAllScheduleBetween(concreteUser, start, end);
-    let successMess = "Remove Schedule: " + deleteNum + " is removed from the collection!!!";
-    res.json({
-        data: (deleteNum > 0) ? successMess : "Fail to delete the schedule!!!",
-        status: (deleteNum > 0)
-    });
+    res.json( await ScheduleController.removeAllScheduleBetween(concreteUser, start, end));
 });
-
 module.exports = router;
