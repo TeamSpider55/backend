@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 require('./models')
-//const contactRouter = require('./routes/contactRouter')
+
 const contactRouter = require('./routers/contactRouter')
 //const userRouter = require('./routers/userRouter')
 const bodyParser = require('body-parser')
@@ -9,15 +9,6 @@ const mongoose = require('mongoose')
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/contact', contactRouter)
-// app.use('/user', userRouter)
-
-// app.get('/', (req, res) => {
-//   res.redirect('/user')
-// })
-
-// app.get('/contact', (req, res) => {
-//   res.redirect('/contact')
-// })
 
 const port = process.env.PORT || 8080
 

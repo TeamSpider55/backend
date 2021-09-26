@@ -17,15 +17,5 @@ const userSchema = new mongoose.Schema({
   memo: [{ type: String }],
 })
 
-// // customerSchema password hash
-// customerSchema.methods.generateHash = function (password) {
-//   return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
-// };
-
-// // checks if password is valid
-// customerSchema.methods.validPassword = function (password) {
-//   return bcrypt.compareSync(password, this.password);
-// };
-
 const User = mongoose.model('User', userSchema)
 module.exports = User
