@@ -1,21 +1,29 @@
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt-nodejs')
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  userName: { type: String, required: true, unique: true },
+  userId: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   nickName: { type: String },
   familyName: { type: String, required: true },
   middleName: { type: String },
   givenName: { type: String, required: true },
-  password: { type: String, required: true },
   phone: { type: String, required: true },
   address: { type: String, required: true }, //maybe we can pull weather information?
-  contacts: [{ type: String }], //pull from clientSchema of client are we doing 1 guy login or?
-  //what if we specified here with bool that client is also a user? then if so we know which schemas to pull from?
-  tags: [{ type: String }],
-  memo: [{ type: String }],
-})
+  status: {
+    type: String,
+    enum: ["PENDING", "ACTIVE"],
+    required: true,
+    default: "ACTIVE",
+  },
+  confirmationCode: { type: String, unique: true },
 
-const User = mongoose.model('User', userSchema)
-module.exports = User
+  client: [{ type: String }], //pull from clientSchema of client are we doing 1 guy login or?
+
+  tags: [{ type: String }],
+  salt: { type: String, required: true },
+  hash: { type: String, required: true },
+  blacklistTokens: [String],
+});
+
+const User = mongoose.model("User", userSchema);
+module.exports = User;
