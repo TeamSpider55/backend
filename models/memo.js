@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const memoSchema = new mongoose.Schema({
   // what should the memo key be:
@@ -16,7 +16,7 @@ const memoSchema = new mongoose.Schema({
   body: { type: String, required: true },
   images: [
     // maybe store some the URL of the image attack to this memo store
-    // this might not needed if the body is an HTML formatted, it contain the tag reference the image
+    // this might not needed if the body is an HTML formatted, it contain tag reference the image
     { type: String },
   ],
   // maybe we can also tag it? use to search
@@ -26,5 +26,5 @@ const memoSchema = new mongoose.Schema({
   contacts: [{ type: String }],
 });
 
-const Memo = mongoose.model("Memo", memoSchema);
+const Memo = mongoose.model('Memo', memoSchema);
 module.exports = Memo;

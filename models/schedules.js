@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // may be we want to put more stuff into the calender
 // this slot contain everything requ
@@ -22,8 +22,8 @@ const scheduleSchema = new mongoose.Schema({
       // -> i want to use enum but does not enforce ( from my research)
       type: {
         type: String,
-        enum: ["personal", "collaborate"],
-        default: "personal",
+        enum: ['personal', 'collaborate'],
+        default: 'personal',
         required: true,
       },
 
@@ -36,5 +36,5 @@ const scheduleSchema = new mongoose.Schema({
 });
 // ensure the combination of date + user is unique
 scheduleSchema.index({ date: 1, user: 1 }, { unique: true });
-const Schedule = mongoose.model("Schedule", scheduleSchema);
+const Schedule = mongoose.model('Schedule', scheduleSchema);
 module.exports = Schedule;

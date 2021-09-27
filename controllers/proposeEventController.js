@@ -2,10 +2,10 @@
  * -> this is my own implementation of when2meet
  */
 
-const mongoose = require("mongoose");
-const Propose = require("../models/proposeEvent");
-const EventController = require("./eventController");
-const ScheduleController = require("./scheduleController");
+const mongoose = require('mongoose');
+const Propose = require('../models/proposeEvent');
+const EventController = require('./eventController');
+const ScheduleController = require('./scheduleController');
 
 const proposeEventController = {
   /* Add the version of the proposed event to data base

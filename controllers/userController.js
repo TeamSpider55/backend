@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
-const Contact = require('../models/contacts')
-const User = require('../models/users')
+const mongoose = require('mongoose');
+const Contact = require('../models/contacts');
+const User = require('../models/users');
 
 const createUser = async (o) => {
   try {
@@ -13,7 +13,7 @@ const createUser = async (o) => {
 
 const findUserByEmail = async (email) => {
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email });
     return user;
   } catch (err) {
     return null;
@@ -22,7 +22,7 @@ const findUserByEmail = async (email) => {
 
 const findUserById = async (userId) => {
   try {
-    const user = await User.findOne({ userId: userId });
+    const user = await User.findOne({ userId });
     return user;
   } catch (err) {
     return null;
@@ -30,64 +30,63 @@ const findUserById = async (userId) => {
 };
 
 const activateUser = async (confirmationCode) => {
-  const user = await User.findOne({ confirmationCode: confirmationCode });
+  const user = await User.findOne({ confirmationCode });
   if (!user) {
     return;
   }
   try {
     await User.updateOne(
-      { confirmationCode: confirmationCode },
-      { $set: { status: "ACTIVE" }, $unset: { confirmationCode: "" } }
+      { confirmationCode },
+      { $set: { status: 'ACTIVE' }, $unset: { confirmationCode: '' } },
     );
   } catch (err) {
     console.log(err);
   }
 };
 
-
 // find all contacts for specific user
 const getContactsForUser = async (req, res) => {
-  const userName = req.params.userName
+  const { userName } = req.params;
   try {
     const user = await User.findOne({
-      userName: userName,
-    })
-    //id is contactId in this context
+      userName,
+    });
+    // id is contactId in this context
     const contacts = await Promise.all(
       user.contacts.map(async (id) => {
-        var contact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
-        return contact
-      })
-    )
+        const contact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean();
+        return contact;
+      }),
+    );
     if (user === null) {
       // no User found in database
-      res.status(404)
+      res.status(404);
       return res.json({
         statusCode: 404,
-      })
+      });
     }
     if (contacts === null) {
       // no contact found in database: 404
-      res.status(404)
+      res.status(404);
       return res.json({
         statusCode: 404,
-      })
+      });
     }
     // user was found, return as response
     return res.json({
       statusCode: 200,
       data: contacts,
-    })
+    });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     // error occurred
-    res.status(400)
+    res.status(400);
     return res.json({
       statusCode: 400,
       data: err,
-    })
+    });
   }
-}
+};
 
 module.exports = {
   createUser,

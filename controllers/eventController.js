@@ -1,7 +1,7 @@
-const ScheduleController = require("./ScheduleController");
-const Util = require("../lib/timeUtil");
+const ScheduleController = require('./scheduleController');
+const Util = require('../lib/timeUtil');
 
-let eventController = {
+const eventController = {
   /* Check if the event overlapse with any event in the existEvents
    * @param: {Object} where we want to insert into the schedule document
    * @param: {Array} of the existed schedule
@@ -10,10 +10,11 @@ let eventController = {
   ValidateEvent: (event, existEvents) => {
     if (event.end <= event.start) return false;
     if (existEvents != null && existEvents.length > 0) {
-      for (var exist of existEvents) {
+      for (let i = 0; i < existEvents.length; i += 1) {
+        const exist = existEvents[i];
         if (
-          (event.end > exist.start && event.start <= exist.end) ||
-          (event.start > exist.start && event.start <= exist.end)
+          (event.end > exist.start && event.start <= exist.end)
+          || (event.start > exist.start && event.start <= exist.end)
         ) {
           return false;
         }
@@ -34,27 +35,27 @@ let eventController = {
     if (eventA.start > eventB.end) {
       return 1;
     }
-    console.log("Found a invalid pair of event:" + eventA + ", " + eventB);
+    // console.log(`Found a invalid pair of event:${eventA}, ${eventB}`);
     return 0;
   },
 
   /* method to compare two event.
    * given that the event is belong to the same user
-   * the start + end will be enough to identify the event, since there wont be any over lapsing event.
+   * the start+end will be enough to identify the event, since there wont be any over lapsing event.
    * @param: {Object} the target event
    * @param: {Object} the event that is being compare to
    * @return: {bool} true if they have same start/end
    */
   isEqual: (event, existEvent) => {
     try {
-      if (event.start != existEvent.start) {
+      if (event.start !== existEvent.start) {
         return false;
       }
-      if (event.end != existEvent.end) {
+      if (event.end !== existEvent.end) {
         return false;
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return false;
     }
     return true;
@@ -66,23 +67,22 @@ let eventController = {
    * @return: {bool} true if adding is successfully
    */
   AddEventUseSchedule: async (event, schedule) => {
-    let errMess = "Propose Event is overlapse with an existed event!!!";
-    let adjEvent = event;
+    const errMess = 'Propose Event is overlapse with an existed event!!!';
+    const adjEvent = event;
     adjEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjEvent.start);
     adjEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjEvent.end);
 
-    let validation = eventController.ValidateEvent(event, schedule.events);
+    const validation = eventController.ValidateEvent(event, schedule.events);
     if (validation) {
-      console.log(schedule);
       if (schedule.events == null) schedule.events = [];
       schedule.events.push(adjEvent);
       await schedule.save();
     }
     return validation
       ? {
-          data: "Successfully add the event to the schedule!!!",
-          statusCode: 200,
-        }
+        data: 'Successfully add the event to the schedule!!!',
+        statusCode: 200,
+      }
       : { data: errMess, statusCode: 400 };
   },
 
@@ -92,16 +92,15 @@ let eventController = {
    * @param: {String} the user where this event belong to
    */
   AddEvent: async (event, user) => {
-    let adjDate = Util.extractUnixOfYYYY_MM_DD(event.start);
+    const adjDate = Util.extractUnixOfYYYY_MM_DD(event.start);
 
     let response = await ScheduleController.retrieveSchedule(adjDate, user);
-    console.log(response);
-    if (response.statusCode == "400")
-      response = await ScheduleController.addSchedule(adjDate, user);
+    if (response.statusCode === '400') response = await ScheduleController.addSchedule(adjDate, user);
 
-    return response.statusCode == 400
+    const result = response.statusCode === 400
       ? response
       : await eventController.AddEventUseSchedule(event, response.data);
+    return result;
   },
 
   /* Remove the event from the schedule.
@@ -112,18 +111,18 @@ let eventController = {
    */
   removeEventUseSchedule: async (event, schedule) => {
     let deleted = false;
-    for (var i = 0; i < schedule.events.length; i++) {
+    for (let i = 0; i < schedule.events.length; i += 1) {
       if (eventController.isEqual(event, schedule.events[i])) {
         schedule.events.splice(i, 1);
         deleted = true;
       }
     }
-    if (schedule.events.length == 0) {
+    if (schedule.events.length === 0) {
       await ScheduleController.removeSchedule(schedule.data, schedule.user);
     } else if (deleted) schedule.save();
     return deleted
-      ? { data: "Successfully delete the event!!!", statusCode: 200 }
-      : { data: "Fail to delete the event!!!", statusCode: 400 };
+      ? { data: 'Successfully delete the event!!!', statusCode: 200 }
+      : { data: 'Fail to delete the event!!!', statusCode: 400 };
   },
 
   /* Remove an event belong to a user
@@ -132,16 +131,18 @@ let eventController = {
    */
   removeEvent: async (event, user) => {
     let response = null;
-    let adjDate = Util.extractUnixOfYYYY_MM_DD(event.start);
-    let adjEvent = event;
+    const adjDate = Util.extractUnixOfYYYY_MM_DD(event.start);
+    const adjEvent = event;
     adjEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(event.start);
     adjEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(event.end);
 
     response = await ScheduleController.retrieveSchedule(adjDate, user);
 
-    return response.statusCode == 400
-      ? { data: "The event does not exist !!!", statusCode: 400 }
+    const result = response.statusCode === 400
+      ? { data: 'The event does not exist !!!', statusCode: 400 }
       : await eventController.removeEventUseSchedule(event, response.data);
+
+    return result;
   },
 
   /* Retrieve the even of a user with the match start and end
@@ -150,22 +151,24 @@ let eventController = {
    * @param: {String} the id of the user
    */
   retrieveEvent: async (start, end, user) => {
-    let isEq = (a, b) => a == Util.extractUnixOfYYYY_MM_DD_HH_MM(b);
-    let adjDate = Util.extractUnixOfYYYY_MM_DD(start);
-    let response = await ScheduleController.retrieveSchedule(adjDate, user);
+    const isEq = (a, b) => a === Util.extractUnixOfYYYY_MM_DD_HH_MM(b);
+    const adjDate = Util.extractUnixOfYYYY_MM_DD(start);
+    const response = await ScheduleController.retrieveSchedule(adjDate, user);
     let val = null;
 
-    if (response.statusCode == 200) {
-      for (var event of response.data.events) {
-        if (isEq(start, event.start) && isEq(end, event.end))
+    if (response.statusCode === 200) {
+      for (let i = 0; i < response.data.events.length(); i += 1) {
+        const event = response.data.events[i];
+        if (isEq(start, event.start) && isEq(end, event.end)) {
           val = { data: event, statusCode: 200 };
+        }
       }
     }
     return val == null
       ? {
-          data: "No schedule found with the same date as event!!!",
-          statusCode: 400,
-        }
+        data: 'No schedule found with the same date as event!!!',
+        statusCode: 400,
+      }
       : val;
   },
 
@@ -175,14 +178,14 @@ let eventController = {
    * @return {Array} of the event
    */
   retrieveSortedEventsInSchedule: async (schedule, isSort) => {
-    let list = schedule.events;
+    const list = schedule.events;
 
     return schedule.events.lenth > 0
-      ? { data: "Scheduled day with no event!!!", statusCode: 400 }
+      ? { data: 'Scheduled day with no event!!!', statusCode: 400 }
       : {
-          data: isSort ? list.sort(eventController.compare) : list,
-          statusCode: 200,
-        };
+        data: isSort ? list.sort(eventController.compare) : list,
+        statusCode: 200,
+      };
   },
 
   /* retrieve all the event of a day
@@ -191,18 +194,19 @@ let eventController = {
    * @param: {bool} indicate if we want to sort the return list of event
    */
   retrieveSortedEventsInDay: async (unixTime, user, isSort) => {
-    let adjDate = Util.extractUnixOfYYYY_MM_DD(unixTime);
-    let response = await ScheduleController.retrieveSchedule(adjDate, user);
+    const adjDate = Util.extractUnixOfYYYY_MM_DD(unixTime);
+    const response = await ScheduleController.retrieveSchedule(adjDate, user);
 
-    return response.statusCode == 400
+    const result = response.statusCode === 400
       ? {
-          data: "There are no scheduled event in that day!!!",
-          statusCode: false,
-        }
+        data: 'There are no scheduled event in that day!!!',
+        statusCode: false,
+      }
       : await eventController.retrieveSortedEventsInSchedule(
-          response.data,
-          isSort
-        );
+        response.data,
+        isSort,
+      );
+    return result;
   },
 
   /* Move a event to another time slot -> this will need to be optimise
@@ -219,24 +223,23 @@ let eventController = {
     unixEnd,
     unixNewStart,
     unixNewEnd,
-    user
+    user,
   ) => {
     let flag = 400;
-    let checkDateVal = (a, b) =>
-      Util.extractUnixOfYYYY_MM_DD(start) ==
-      Util.extractUnixOfYYYY_MM_DD(newStart);
+    const checkDateVal = (a, b) => Util.extractUnixOfYYYY_MM_DD(start)
+      === Util.extractUnixOfYYYY_MM_DD(newStart);
 
     let start = Util.extractUnixOfYYYY_MM_DD_HH_MM(unixStart);
-    let end = Util.extractUnixOfYYYY_MM_DD_HH_MM(unixEnd);
+    const end = Util.extractUnixOfYYYY_MM_DD_HH_MM(unixEnd);
     let newStart = Util.extractUnixOfYYYY_MM_DD_HH_MM(unixNewStart);
-    let newEnd = Util.extractUnixOfYYYY_MM_DD_HH_MM(unixNewEnd);
-    let eventRes = await eventController.retrieveEvent(
+    const newEnd = Util.extractUnixOfYYYY_MM_DD_HH_MM(unixNewEnd);
+    const eventRes = await eventController.retrieveEvent(
       unixStart,
       unixEnd,
-      user
+      user,
     );
 
-    if (eventRes.statusCode == 200) {
+    if (eventRes.statusCode === 200) {
       if (checkDateVal(start, newStart) && checkDateVal(end, newEnd)) {
         if (
           (await eventController.removeEvent(eventRes.data, user)).statusCode
@@ -255,9 +258,9 @@ let eventController = {
         }
       }
     }
-    return flag == 200
-      ? { data: "Successfully reschedule an event!!!", statusCode: 200 }
-      : { data: "Fail to reschedule!!!", statusCode: 400 };
+    return flag === 200
+      ? { data: 'Successfully reschedule an event!!!', statusCode: 200 }
+      : { data: 'Fail to reschedule!!!', statusCode: 400 };
   },
 
   /* Same as modify time of the event. But the newStart and newEnd must be in the future
@@ -267,30 +270,32 @@ let eventController = {
     unixEnd,
     unixNewStart,
     unixNewEnd,
-    user
+    user,
   ) => {
-    return unixNewStart < Date.now() || unixNewEnd < Date.now()
+    const result = unixNewStart < Date.now() || unixNewEnd < Date.now()
       ? await eventController.modifiedEventTime(
-          unixStart,
-          unixEnd,
-          unixNewStart,
-          unixNewEnd,
-          user
-        )
-      : { data: "Rescheduled time must be in the future!!!", statusCode: 400 };
+        unixStart,
+        unixEnd,
+        unixNewStart,
+        unixNewEnd,
+        user,
+      )
+      : { data: 'Rescheduled time must be in the future!!!', statusCode: 400 };
+    return result;
   },
 
   /* [not tested] content is {tittle, note, type, category}
    * tag will have the whole set of method dealing with it. So does contacts
-   * @param: {Object} consist of field indicate above. for which one of them is not needed to modied, set to null
+   * @param: {Object} consist of field indicate above.
    * @param: {Object} old event that exist in collection
    * @param: {String} id of the user
    * @return: {bool} true if we able to modify the document
    */
   modifyEventContent: async (newEvent, user) => {
     // retrieve the schedule
-    let date = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
-    let schedule = await ScheduleController.retrieveSchedule(date, user);
+    const date = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
+    const schedule = await ScheduleController.retrieveSchedule(date, user);
+    let altered = false;
     newEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.start);
     newEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.end);
     if (schedule == null) {
@@ -298,28 +303,31 @@ let eventController = {
     }
 
     // find the event
-    for (var i = 0; i < schedule.events.length; i++) {
+    for (let i = 0; i < schedule.events.length; i += 1) {
       if (
-        schedule.events[i].start == newEvent.start &&
-        schedule.events[i].end == newEvent.end
+        schedule.events[i].start === newEvent.start
+        && schedule.events[i].end === newEvent.end
       ) {
-        schedule.events[i].title =
-          newEvent.title != null ? newEvent.title : schedule.events[i].title;
-        schedule.events[i].note =
-          newEvent.note != null ? newEvent.note : schedule.events[i].note;
-        schedule.events[i].type =
-          newEvent.type != null ? newEvent.type : schedule.events[i].type;
-        schedule.events[i].category =
-          newEvent.category != null
-            ? newEvent.category
-            : schedule.events[i].category;
-        schedule.events[i].tags =
-          newEvent.tags != null ? newEvent.tags : schedule.events[i].tags;
-        await schedule.save();
-        return true;
+        schedule.events[i].title = newEvent.title != null
+          ? newEvent.title : schedule.events[i].title;
+
+        schedule.events[i].note = newEvent.note != null
+          ? newEvent.note : schedule.events[i].note;
+
+        schedule.events[i].type = newEvent.type != null
+          ? newEvent.type : schedule.events[i].type;
+
+        schedule.events[i].category = newEvent.category != null
+          ? newEvent.category
+          : schedule.events[i].category;
+
+        schedule.events[i].tags = newEvent.tags != null
+          ? newEvent.tags : schedule.events[i].tags;
+        altered = true;
       }
     }
-    return false;
+    await schedule.save();
+    return altered;
   },
 };
 

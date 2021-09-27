@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const imageSchema = mongoose.Schema({
   filename: { type: String, required: true, unique: true },
@@ -6,5 +6,5 @@ const imageSchema = mongoose.Schema({
   createdAt: { type: Date, default: Date.now() },
 });
 
-const Image = mongoose.model("Image", imageSchema);
+const Image = mongoose.model('Image', imageSchema);
 module.exports = Image;

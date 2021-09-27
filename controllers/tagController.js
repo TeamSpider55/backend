@@ -1,8 +1,8 @@
-const Tag = require("../models/tags");
-const User = require("../models/users");
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const Tag = require('../models/tags');
+const User = require('../models/users');
 
-let tagController = {
+const tagController = {
   // Get a single tag via object id
   getsingleTag: async (tagId) => {
     try {
@@ -15,13 +15,12 @@ let tagController = {
 
   // Get all tags from an array of tag ids
   getMultipleTags: async (tagIds) => {
-    const tags = [];
     try {
       // find tag via objectId one by one
-      for (tagId of tagIds) {
-        let tag = await Tag.findOne({ _id: mongoose.Types.ObjectId(tagId) });
-        tags.push(tag);
-      }
+      const tags = tagIds.map(async (tagId) => {
+        const tag = await Tag.findOne({ _id: mongoose.Types.ObjectId(tagId) });
+        return tag;
+      });
       return tags;
     } catch (err) {
       return null;
@@ -42,7 +41,6 @@ let tagController = {
       }
       return null;
     } catch (err) {
-      console.log(err);
       return null;
     }
   },
@@ -52,7 +50,7 @@ let tagController = {
     try {
       const tag = await Tag.updateOne(
         { _id: mongoose.Types.ObjectId(tagId) },
-        { $set: { ...tagInfo } }
+        { $set: { ...tagInfo } },
       );
       return tag;
     } catch (err) {

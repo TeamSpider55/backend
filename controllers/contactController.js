@@ -1,7 +1,7 @@
-const Contact = require("../models/contacts");
-const router = require("express").Router();
-const tagController = require("../controllers/tagController");
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const Contact = require('../models/contacts');
+const User = require('../models/users');
+const tagController = require('./tagController');
 
 // update a tag of a event
 const updateContactTag = async (req, res) => {
@@ -18,7 +18,7 @@ const updateContactTag = async (req, res) => {
       statusCode: 200,
     });
   }
-  res.json({
+  return res.json({
     data: null,
     statusCode: 500,
   });
@@ -27,7 +27,7 @@ const updateContactTag = async (req, res) => {
 // create a tag to a contact
 const addTagToContact = async (req, res) => {
   // find the contact
-  const contactId = req.body.contactId;
+  const { contactId, userId } = req.body;
   const contact = await Contact.findOne({
     _id: mongoose.Types.ObjectId(contactId),
   });
@@ -61,7 +61,7 @@ const addTagToContact = async (req, res) => {
 // get tags for a contact
 const getTagsFromContact = async (req, res) => {
   // find the contact
-  const contactId = req.body.contactId;
+  const { contactId } = req.body;
   const contact = await Contact.findOne({
     _id: mongoose.Types.ObjectId(contactId),
   });
@@ -79,18 +79,18 @@ const getTagsFromContact = async (req, res) => {
 // delete a tag
 const deleteTagFromContact = async (req, res) => {
   // find the contact
-  const contactId = req.body.contactId;
+  const { contactId, userId } = req.body;
   const contact = await Contact.findOne({
     _id: mongoose.Types.ObjectId(contactId),
   });
-  var returnObj;
+  let returnObj;
 
   if (contact) {
     // The id for the tag to delete
-    const tagId = req.body.tagId;
+    const { tagId } = req.body;
 
     // filter out the tag to be deleted
-    let tags = contact.tags.filter((id) => id !== tagId);
+    const tags = contact.tags.filter((id) => id !== tagId);
 
     // update tags of the contact
     contact.tags = tags;
@@ -121,11 +121,11 @@ const deleteTagFromContact = async (req, res) => {
 
 // find one contact by their id
 const getOneContact = async (req, res) => {
-  const userName = req.params.userName;
-  const contactId = req.params.contactId;
+  const { userName } = req.params;
+  const { contactId } = req.params;
   try {
     const user = await User.findOne({
-      userName: userName,
+      userName,
     });
     const oneContact = await Contact.findOne({
       _id: mongoose.Types.ObjectId(contactId),
@@ -150,7 +150,6 @@ const getOneContact = async (req, res) => {
       data: oneContact,
     });
   } catch (err) {
-    console.log(err);
     // error occurred
     res.status(400);
     return res.json({
@@ -162,8 +161,8 @@ const getOneContact = async (req, res) => {
 
 // change a contact (POST)
 const updateContact = async (req, res) => {
-  const newContact = req.body; //this has all the attributes
-  const contactId = req.body.contactId;
+  const newContact = req.body; // this has all the attributes
+  const { contactId } = req.body;
   try {
     const oneContact = await Contact.findOne({
       _id: mongoose.Types.ObjectId(contactId),
@@ -202,7 +201,6 @@ const updateContact = async (req, res) => {
       data: oneContact,
     });
   } catch (err) {
-    console.log(err);
     // error occurred
     res.status(400);
     return res.json({
@@ -213,11 +211,11 @@ const updateContact = async (req, res) => {
 };
 
 const deleteOneContact = async (req, res) => {
-  const userName = req.body.userName;
-  const contactId = req.body.contactId;
+  const { userName } = req.body;
+  const { contactId } = req.body;
   try {
     const user = await User.findOne({
-      userName: userName,
+      userName,
     });
     const oneContact = await Contact.findOne({
       _id: mongoose.Types.ObjectId(contactId),
@@ -246,7 +244,6 @@ const deleteOneContact = async (req, res) => {
       data: user,
     });
   } catch (err) {
-    console.log(err);
     // error occurred
     res.status(400);
     return res.json({
@@ -258,13 +255,13 @@ const deleteOneContact = async (req, res) => {
 
 // add a contact, given their email, family name, given name
 const addContact = async (req, res) => {
-  const userName = req.body.userName;
-  const email = req.body.email;
-  const familyName = req.body.familyName;
-  const givenName = req.body.givenName;
+  const { userName } = req.body;
+  const { email } = req.body;
+  const { familyName } = req.body;
+  const { givenName } = req.body;
   try {
     const user = await User.findOne({
-      userName: userName,
+      userName,
     });
     if (user === null) {
       // no User found in database
@@ -274,22 +271,21 @@ const addContact = async (req, res) => {
       });
     }
     const contact = await Contact.create({
-      email: email,
-      familyName: familyName,
-      givenName: givenName,
+      email,
+      familyName,
+      givenName,
       tags: [],
     });
     user.contacts.push(contact._id);
     await user.save();
 
-    //contact added successfully
+    // contact added successfully
     return res.json({
       statusCode: 200,
       data: contact,
     });
   } catch (err) {
-    console.log(err);
-    //error occured with adding contact
+    // error occured with adding contact
     res.status(400);
     return res.json({
       statusCode: 400,

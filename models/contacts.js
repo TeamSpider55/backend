@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const contactSchema = new mongoose.Schema({
   image: { type: String },
@@ -14,5 +14,5 @@ const contactSchema = new mongoose.Schema({
   tags: [{ type: String }],
 });
 
-const Contact = mongoose.model("Contact", contactSchema);
+const Contact = mongoose.model('Contact', contactSchema);
 module.exports = Contact;
