@@ -2,6 +2,7 @@ const Contact = require("../models/contacts");
 const router = require("express").Router();
 const tagController = require("../controllers/tagController");
 const mongoose = require("mongoose");
+const User = require('../models/users')
 
 // update a tag of a event
 const updateContactTag = async (req, res) => {

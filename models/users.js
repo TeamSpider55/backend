@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   confirmationCode: { type: String, unique: true },
 
-  client: [{ type: String }], //pull from clientSchema of client are we doing 1 guy login or?
+  contacts: [{ type: String }], //pull from clientSchema of client are we doing 1 guy login or?
 
   tags: [{ type: String }],
   salt: { type: String, required: true },
