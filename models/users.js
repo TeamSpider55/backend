@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  userId: { type: String, required: true, unique: true },
+  userName: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   nickName: { type: String },
   familyName: { type: String, required: true },
@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   confirmationCode: { type: String, unique: true },
 
-  client: [{ type: String }], //pull from clientSchema of client are we doing 1 guy login or?
+  contacts: [{ type: String }], //pull from clientSchema of client are we doing 1 guy login or?
 
   tags: [{ type: String }],
   salt: { type: String, required: true },

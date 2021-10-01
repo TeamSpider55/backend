@@ -288,37 +288,38 @@ let eventController = {
    * @return: {bool} true if we able to modify the document
    */
   modifyEventContent: async (newEvent, user) => {
-    let flag = 400;
+    // retrieve the schedule
     let date = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
-    let res = await ScheduleController.retrieveSchedule(date, user);
-
+    let schedule = await ScheduleController.retrieveSchedule(date, user);
     newEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.start);
     newEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.end);
-
-    if (res.statusCode == 200) {
-      for (var i = 0; i < res.data.events.length; i++) {
-        if (
-          res.data.events[i].start == newEvent.start &&
-          res.data.events[i].end == newEvent.end
-        ) {
-          res.data.events[i].title =
-            newEvent.title != null ? newEvent.title : res.data.events[i].title;
-          res.data.events[i].note =
-            newEvent.note != null ? newEvent.note : res.data.events[i].note;
-          res.data.events[i].type =
-            newEvent.type != null ? newEvent.type : res.data.events[i].type;
-          res.data.events[i].category =
-            newEvent.category != null
-              ? newEvent.category
-              : res.data.events[i].category;
-          await res.data.save();
-          flag = 200;
-        }
-      }
-      return flag == 200
-        ? { data: "Successfully modify the event data!!!", statusCode: flag }
-        : { data: "Fail to modify the event data!!!", statusCode: flag };
+    if (schedule == null) {
+      return false;
     }
+
+    // find the event
+    for (var i = 0; i < schedule.events.length; i++) {
+      if (
+        schedule.events[i].start == newEvent.start &&
+        schedule.events[i].end == newEvent.end
+      ) {
+        schedule.events[i].title =
+          newEvent.title != null ? newEvent.title : schedule.events[i].title;
+        schedule.events[i].note =
+          newEvent.note != null ? newEvent.note : schedule.events[i].note;
+        schedule.events[i].type =
+          newEvent.type != null ? newEvent.type : schedule.events[i].type;
+        schedule.events[i].category =
+          newEvent.category != null
+            ? newEvent.category
+            : schedule.events[i].category;
+        schedule.events[i].tags =
+          newEvent.tags != null ? newEvent.tags : schedule.events[i].tags;
+        await schedule.save();
+        return true;
+      }
+    }
+    return false;
   },
 };
 
