@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
+const axios = require('axios');
 
 // routes
 const authRouter = require("./routes/authRouter");

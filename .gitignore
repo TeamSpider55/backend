@@ -9,6 +9,8 @@ test2.js
 /.pnp
 .pnp.js
 
+/design
+
 # testing
 /coverage
 
@@ -26,5 +28,5 @@ yarn-debug.log
 yarn-error.log
 package-lock.json
 .env
-ContactAPI Postman Collection.JSON
+ContactAPI\ Postman\ Collection.JSON 
 /design
