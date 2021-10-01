@@ -77,9 +77,6 @@ router.post('/register', async (req, res) => {
     email, userName, familyName, givenName, password, phone, address,
   } = req.body;
 
-  // get the confimation code
-  const confirmationCode = utils.generateConfirmationCode(email);
-
   // User with same email or userName found, decline registration request
   const userWithSameEmail = await User.findOne({ email });
   if (userWithSameEmail) {
@@ -95,6 +92,10 @@ router.post('/register', async (req, res) => {
       msg: 'user id is taken, try another id please!',
     });
   }
+
+  // get the confimation code
+  const confirmationCode = utils.generateConfirmationCode(email);
+
   const { salt, hash } = utils.generatePassword(password);
   const credentials = {
     email,

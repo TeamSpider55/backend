@@ -1,5 +1,5 @@
 genKeyPair.js
-test.js
+../test.js
 test2.js
 *.pem
 *.txt
@@ -9,7 +9,6 @@ test2.js
 /.pnp
 .pnp.js
 
-/design
 
 # testing
 /coverage
