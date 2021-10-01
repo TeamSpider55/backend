@@ -31,6 +31,8 @@ app.use("/event", eventRouter);
 
 const port = process.env.PORT || 8080;
 
+app.get("/", (req, res) => res.send("Hello World!"));
+
 app.listen(port, () => {
   console.log(`The app is listening on port ${port}!`);
 });
