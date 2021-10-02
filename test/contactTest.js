@@ -5,10 +5,7 @@ const mongoose = require("mongoose");
 const Contact = require("../models/contacts");
 const router = require("express").Router();
 const User = require('../models/users')
-// const contactController = require("../controllers/contactController");
-// const userController = require("../controllers/userController");
-// const Contact = require("../models/contacts");
-// const User = require('../models/users');
+
 
 describe('Get contacts for user', () => {
     it('Should return the all contacts for a user', async () => {
@@ -61,7 +58,7 @@ describe('Add & Update Contact', () => {
         newContact = result.data.data._id;
         expect(result.data.statusCode).to.be.eq(200);
     });
-    it('Should Fail to add a contact', async () => {
+    it('Should fail to add a contact', async () => {
         try{
             const result = await axios.post('http://localhost:8080/contact/addContact', {
             userName: 'spidertest53',
