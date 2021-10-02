@@ -9,6 +9,7 @@ require("dotenv").config();
 
 
 let dailyEmailSchedule = util.extractH_M_S(process.env.DAILY_AUTOMATE_TASK_TIME);
+
 let emailNotification= Boolean(process.env.EMAIL_NOTIFICATION_STATUS);
 
 /* Reference: https://stackoverflow.com/questions/64996008/update-attributes-in-env-file-in-node-js

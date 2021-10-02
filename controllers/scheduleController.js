@@ -130,8 +130,8 @@ let scheduleController1 = {
     try {
       report = await Schedule.deleteMany({
         $and: [
-          { date: { $gte: Util.extractUnixOfYYYY_MM_DD(start) } },
-          { date: { $lte: Util.extractUnixOfYYYY_MM_DD(end) } },
+          { date: { $gte: Util.extractUnixOfYYYY_MM_DD(start) }},
+          { date: { $lte: Util.extractUnixOfYYYY_MM_DD(end) }},
         ],
         user: concreteUser,
       });

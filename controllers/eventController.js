@@ -34,7 +34,7 @@ let eventController = {
     if (eventA.start > eventB.end) {
       return 1;
     }
-    console.log("Found a invalid pair of event:" + eventA + ", " + eventB);
+    //console.log("Found a invalid pair of event:" + eventA + ", " + eventB);
     return 0;
   },
 
@@ -47,6 +47,8 @@ let eventController = {
    */
   isEqual: (event, existEvent) => {
     try {
+      console.log(event);
+      console.log("C:" + existEvent);
       if (event.start != existEvent.start) {
         return false;
       }
@@ -54,7 +56,7 @@ let eventController = {
         return false;
       }
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return false;
     }
     return true;
@@ -73,11 +75,12 @@ let eventController = {
 
     let validation = eventController.ValidateEvent(event, schedule.events);
     if (validation) {
-      console.log(schedule);
+      //console.log(schedule);
       if (schedule.events == null) schedule.events = [];
       schedule.events.push(adjEvent);
       await schedule.save();
     }
+
     return validation
       ? {
           data: "Successfully add the event to the schedule!!!",
@@ -86,6 +89,7 @@ let eventController = {
       : { data: errMess, statusCode: 400 };
   },
 
+ 
   /* Given a new event is create, find the collection where it potential be added to
    * -> event will only be added if there are no clash with the existed events
    * @param: {Object} the propose event
@@ -95,13 +99,13 @@ let eventController = {
     let adjDate = Util.extractUnixOfYYYY_MM_DD(event.start);
 
     let response = await ScheduleController.retrieveSchedule(adjDate, user);
-    console.log(response);
-    if (response.statusCode == "400")
+    //console.log(response);
+    if (response.statusCode == 400)
       response = await ScheduleController.addSchedule(adjDate, user);
 
-    return response.statusCode == 400
-      ? response
-      : await eventController.AddEventUseSchedule(event, response.data);
+    return await eventController.AddEventUseSchedule(event, response.data);
+      //  response
+      //: 
   },
 
   /* Remove the event from the schedule.
