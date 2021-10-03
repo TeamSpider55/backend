@@ -8,8 +8,8 @@ describe('Testing Authentication', () => {
     let token;
 
     // testing log in
-    it('Should get the Success message', () => {
-        return axios.post('http://localhost:8080/auth/login', {
+    it('Should get the Success message', (done) => {
+        axios.post('http://localhost:8080/auth/login', {
             id: '123',
             password: '123'
         }, { 
@@ -18,6 +18,7 @@ describe('Testing Authentication', () => {
             // Extract the token from the cookie
             token = result.headers['set-cookie'][0].split(';')[0].slice(4);
             expect(result.data.success).to.be.eq(true);
+            done();
         })
         // Login success
     });
