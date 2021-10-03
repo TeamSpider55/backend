@@ -47,8 +47,6 @@ let eventController = {
    */
   isEqual: (event, existEvent) => {
     try {
-      console.log(event);
-      console.log("C:" + existEvent);
       if (event.start != existEvent.start) {
         return false;
       }
@@ -123,7 +121,7 @@ let eventController = {
       }
     }
     if (schedule.events.length == 0) {
-      await ScheduleController.removeSchedule(schedule.data, schedule.user);
+      await ScheduleController.removeSchedule(schedule.date, schedule.user);
     } else if (deleted) schedule.save();
     return deleted
       ? { data: "Successfully delete the event!!!", statusCode: 200 }
@@ -252,8 +250,8 @@ let eventController = {
           ) {
             flag = 200;
           } else {
-            event.start = start;
-            event.end = start;
+            eventRes.data.start = start;
+            eventRes.data.end = start;
             await eventController.AddEvent(eventRes.data, user);
           }
         }
@@ -295,34 +293,37 @@ let eventController = {
     let flag = 400;
     let date = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
     let res = await ScheduleController.retrieveSchedule(date, user);
-
+    //console.log("schedule:" + res.data);
     newEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.start);
     newEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.end);
-
     if (res.statusCode == 200) {
+
       for (var i = 0; i < res.data.events.length; i++) {
         if (
-          res.data.events[i].start == newEvent.start &&
-          res.data.events[i].end == newEvent.end
+          parseInt(res.data.events[i].start) == newEvent.start &&
+          parseInt(res.data.events[i].end) == newEvent.end
         ) {
+         
           res.data.events[i].title =
-            newEvent.title != null ? newEvent.title : res.data.events[i].title;
+            (newEvent.title != undefined && newEvent.title != null) ? newEvent.title : res.data.events[i].title;
           res.data.events[i].note =
-            newEvent.note != null ? newEvent.note : res.data.events[i].note;
+            (newEvent.note != undefined && newEvent.note != null ) ? newEvent.note : res.data.events[i].note;
           res.data.events[i].type =
-            newEvent.type != null ? newEvent.type : res.data.events[i].type;
+            (newEvent.type != undefined && newEvent.type != null) ? newEvent.type : res.data.events[i].type;
           res.data.events[i].category =
-            newEvent.category != null
+            (newEvent.category != undefined &&newEvent.category != null)
               ? newEvent.category
               : res.data.events[i].category;
-          await res.data.save();
+          
+          res.data.save();
           flag = 200;
         }
       }
-      return flag == 200
+      
+    }
+    return flag == 200
         ? { data: "Successfully modify the event data!!!", statusCode: flag }
         : { data: "Fail to modify the event data!!!", statusCode: flag };
-    }
   },
 };
 

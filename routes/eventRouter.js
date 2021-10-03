@@ -110,7 +110,6 @@ router.post("/modify/content", async (req, res) => {
     ],
   };
   let user = req.body.user;
-
   res.json(await eventController.modifyEventContent(newEvent, user));
 });
 
