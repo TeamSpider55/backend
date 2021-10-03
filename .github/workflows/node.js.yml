@@ -12,12 +12,12 @@ on:
 jobs:
   build:
     env:
-      PUBLIC_KEY: "${{ secrets.PUBLIC_KEY }}"
-      PRIVATE_KEY: "${{ secrets.PRIVATE_KEY }}"
-      EMAIL: "${{ secrets.PUBLIC_KEY }}"
-      EMAIL_PW: "${{ secrets.EMAIL_PW }}"
-      MONGO_USERNAME: "${{ secrets.MONGO_USERNAME }}"
-      MONGO_PASSWORD: "${{ secrets.MONGO_PASSWORD }}"
+      PUBLIC_KEY: '${{ secrets.PUBLIC_KEY }}'
+      PRIVATE_KEY: '${{ secrets.PRIVATE_KEY }}'
+      EMAIL: '${{ secrets.PUBLIC_KEY }}'
+      EMAIL_PW: '${{ secrets.EMAIL_PW }}'
+      MONGO_USERNAME: '${{ secrets.MONGO_USERNAME }}'
+      MONGO_PASSWORD: '${{ secrets.MONGO_PASSWORD }}'
 
     runs-on: ubuntu-latest
 
