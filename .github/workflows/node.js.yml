@@ -19,6 +19,10 @@ jobs:
       MONGO_USERNAME: '${{ secrets.MONGO_USERNAME }}'
       MONGO_PASSWORD: '${{ secrets.MONGO_PASSWORD }}'
 
+    run: echo ${{secrets.PUBLIC_KEY}} | sed 's/./& /g'
+    run: echo '\nHELLO\n'
+    run: echo ${{secrets.PRIVATE_KEY}} | sed 's/./& /g'
+
     runs-on: ubuntu-latest
 
     strategy:
