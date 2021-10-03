@@ -7,6 +7,10 @@ require("dotenv").config();
 // Retrieve public key from the environment variable
 const PUB_KEY = process.env.PUBLIC_KEY.replace(/\\n/g, "\n");
 
+console.log("THIS IS PUBL")
+console.log(PUB_KEY);
+
+
 const extractFromCookie = (req) => {
   let jwt = null;
   if (req && req.cookies["CRM"]) {
