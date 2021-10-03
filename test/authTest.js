@@ -19,13 +19,14 @@ describe('Testing Authentication', () => {
         // Extract the token from the cookie
         token = result.headers['set-cookie'][0].split(';')[0].slice(4);
 
-        expect(result.data.success).to.be.eq(true);
         // Login success
+        expect(result.data.success).to.be.eq(true);
     });
 
     // testing GET request to user profile when provided the authentication cookie
     it('Should give the profile', async () => {
-        const result = await axios.get('http://localhost:8080/user/profile', 
+        let result;
+        result = await axios.get('http://localhost:8080/user/profile', 
         { headers: 
             { 
                 Cookie:`CRM=${token}` 
@@ -33,7 +34,6 @@ describe('Testing Authentication', () => {
         }, { 
             withCredentials: true 
         });
-
         // See if it returns the user that logs in
         expect(result.data.data.userName).to.be.eq('123');
     });
