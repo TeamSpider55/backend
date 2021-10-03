@@ -8,13 +8,14 @@ describe('Testing Authentication', () => {
     let token;
 
     // testing log in
-    it('Should get the Success message', async () => {
+    it('Should get the Success message', async (done) => {
         const result = await axios.post('http://localhost:8080/auth/login', {
             id: '123',
             password: '123'
         }, { 
             withCredentials: true 
         });
+        done()
 
         // Extract the token from the cookie
         token = result.headers['set-cookie'][0].split(';')[0].slice(4);
@@ -24,7 +25,7 @@ describe('Testing Authentication', () => {
     });
 
     // testing GET request to user profile when provided the authentication cookie
-    it('Should give the profile', async () => {
+    it('Should give the profile', async (done) => {
         let result;
         result = await axios.get('http://localhost:8080/user/profile', 
         { headers: 
@@ -34,6 +35,8 @@ describe('Testing Authentication', () => {
         }, { 
             withCredentials: true 
         });
+        done();
+        
         // See if it returns the user that logs in
         expect(result.data.data.userName).to.be.eq('123');
     });
