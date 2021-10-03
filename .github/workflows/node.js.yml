@@ -12,8 +12,8 @@ on:
 jobs:
   build:
     env:
-      PUBLIC_KEY: '${{ secrets.PUBLIC_KEY }}'
-      PRIVATE_KEY: '${{ secrets.PRIVATE_KEY }}'
+      PUBLIC_KEY: "${{ secrets.PUBLIC_KEY }}"
+      PRIVATE_KEY: "${{ secrets.PRIVATE_KEY }}"
       EMAIL: '${{ secrets.EMAIL }}'
       EMAIL_PW: '${{ secrets.EMAIL_PW }}'
       MONGO_USERNAME: '${{ secrets.MONGO_USERNAME }}'
