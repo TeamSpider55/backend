@@ -14,10 +14,10 @@ jobs:
     env:
       PUBLIC_KEY: '${{ secrets.PUBLIC_KEY }}'
       PRIVATE_KEY: '${{ secrets.PRIVATE_KEY }}'
-      EMAIL: ${{ secrets.EMAIL }}
-      EMAIL_PW: ${{ secrets.EMAIL_PW }}
-      MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
-      MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+      EMAIL: '${{ secrets.EMAIL }}'
+      EMAIL_PW: '${{ secrets.EMAIL_PW }}'
+      MONGO_USERNAME: '${{ secrets.MONGO_USERNAME }}'
+      MONGO_PASSWORD: '${{ secrets.MONGO_PASSWORD }}'
 
     runs-on: ubuntu-latest
 
