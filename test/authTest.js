@@ -8,34 +8,34 @@ describe('Testing Authentication', () => {
     let token;
 
     // testing log in
-    it('Should get the Success message', (done) => {
-        axios.post('http://localhost:8080/auth/login', {
+    it('Should get the Success message', async () => {
+        const result = await axios.post('http://localhost:8080/auth/login', {
             id: '123',
             password: '123'
         }, { 
             withCredentials: true 
-        }).then((result) => {
-            // Extract the token from the cookie
-            token = result.headers['set-cookie'][0].split(';')[0].slice(4);
-            expect(result.data.success).to.be.eq(true);
-            done();
-        })
+        });
+
+        // Extract the token from the cookie
+        token = result.headers['set-cookie'][0].split(';')[0].slice(4);
+
+        expect(result.data.success).to.be.eq(true);
         // Login success
     });
 
     // testing GET request to user profile when provided the authentication cookie
     it('Should give the profile', async () => {
-        return axios.get('http://localhost:8080/user/profile', 
+        const result = await axios.get('http://localhost:8080/user/profile', 
         { headers: 
             { 
                 Cookie:`CRM=${token}` 
             }
         }, { 
             withCredentials: true 
-        }).then((result) => {
-            // See if it returns the user that logs in
-            expect(result.data.data.userName).to.be.eq('123');
-        })
+        });
+
+        // See if it returns the user that logs in
+        expect(result.data.data.userName).to.be.eq('123');
     });
 
     // testing GET request to profile without loggin in
