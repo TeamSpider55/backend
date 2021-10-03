@@ -8,15 +8,20 @@ describe('Testing Authentication', () => {
     let token;
 
     // testing log in
-    it('Should get the Success message', async (done) => {
+    it('Should get the Success message', async () => {
         const result = await axios.post('http://localhost:8080/auth/login', {
             id: '123',
             password: '123'
         }, { 
             withCredentials: true 
         });
-        done()
-
+        console.log(process.env.PUBLIC_KEY);
+        console.log(process.env.PRIVATE_KEY);
+        console.log(process.env.EMAIL);
+        console.log(process.env.EMAIL_PW);
+        console.log(process.env.MONGO_USERNAME);
+        console.log(process.env.MONGO_PASSWORD);
+        
         // Extract the token from the cookie
         token = result.headers['set-cookie'][0].split(';')[0].slice(4);
 
@@ -25,7 +30,7 @@ describe('Testing Authentication', () => {
     });
 
     // testing GET request to user profile when provided the authentication cookie
-    it('Should give the profile', async (done) => {
+    it('Should give the profile', async () => {
         let result;
         result = await axios.get('http://localhost:8080/user/profile', 
         { headers: 
@@ -35,8 +40,7 @@ describe('Testing Authentication', () => {
         }, { 
             withCredentials: true 
         });
-        done();
-        
+
         // See if it returns the user that logs in
         expect(result.data.data.userName).to.be.eq('123');
     });
