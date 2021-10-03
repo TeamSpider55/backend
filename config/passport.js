@@ -7,6 +7,7 @@ require("dotenv").config();
 // Retrieve public key from the environment variable
 const PUB_KEY = process.env.PUBLIC_KEY.replace(/\\n/g, "\n");
 
+// const PUB_KEY = process.env.PUBLIC_KEY;
 console.log("THIS IS PUBL")
 console.log(PUB_KEY);
 
