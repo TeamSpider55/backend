@@ -15,13 +15,6 @@ describe('Testing Authentication', () => {
         }, { 
             withCredentials: true 
         });
-        console.log(process.env.PUBLIC_KEY);
-        console.log(process.env.PRIVATE_KEY);
-        console.log(process.env.EMAIL);
-        console.log(process.env.EMAIL_PW);
-        console.log(process.env.MONGO_USERNAME);
-        console.log(process.env.MONGO_PASSWORD);
-        
         // Extract the token from the cookie
         token = result.headers['set-cookie'][0].split(';')[0].slice(4);
 
