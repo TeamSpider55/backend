@@ -26,3 +26,6 @@ yarn-debug.log
 yarn-error.log
 ContactAPI\ Postman\ Collection.JSON 
 /design
+
+routes/imageRouter.js
+controllers/imageController.js
