@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
             // 8 hours
             expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
             httpOnly: true,
-            secure: false,
+            secure: true,
           })
           .status(200)
           .json({

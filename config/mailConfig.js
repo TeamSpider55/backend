@@ -1,15 +1,15 @@
-const nodemailer = require("nodemailer");
-require("dotenv").config();
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 const user = process.env.EMAIL;
 const pw = process.env.EMAIL_PW;
 
 const transport = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: 'smtp.gmail.com',
   port: 465,
   secure: true,
   auth: {
-    user: user,
+    user,
     pass: pw,
   },
 });
@@ -19,7 +19,7 @@ const sendConfirmationEmail = (name, email, confirmationCode) => {
     .sendMail({
       from: user,
       to: email,
-      subject: "Confirm your OneThread account registration",
+      subject: 'Confirm your OneThread account registration',
       html: `<h1>Email Confirmation</h1>
         <h2>Hello ${name}</h2>
         <p>Thank you for registering. Please verify your account by clicking on the following link</p>
@@ -34,7 +34,7 @@ const sendPasswordResetEmail = (name, email, link) => {
     .sendMail({
       from: user,
       to: email,
-      subject: "Confirm your OneThread account registration",
+      subject: 'Confirm your OneThread account registration',
       html: `<h1>Password Reset</h1>
         <h2>G'day ${name}</h2>
         <p>Please follow the link below to reset your password</p>
