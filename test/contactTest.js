@@ -5,15 +5,12 @@ const mongoose = require("mongoose");
 const Contact = require("../models/contacts");
 const router = require("express").Router();
 const User = require('../models/users')
-// const contactController = require("../controllers/contactController");
-// const userController = require("../controllers/userController");
-// const Contact = require("../models/contacts");
-// const User = require('../models/users');
+
 
 describe('Get contacts for user', () => {
     let token;
     // testing GET request to user profile when provided the authentication cookie
-    // testing GET request to user profile when provided the authentication cookie
+
 
     before(async function() {
         const result = await axios.post('http://localhost:8080/auth/login', {
@@ -39,23 +36,7 @@ describe('Get contacts for user', () => {
         expect(result.data.statusCode).to.be.eq(200);
         
     });
-    // it('Should fail returning all contacts because user invalid', async () => {
-    //     try{
-    //         const result = await axios.get('http://localhost:8080/contact/getAllContacts', 
-    //         { headers: 
-    //             { 
-    //                 Cookie:`CRM=${token}`
-    //             }
-    //         }, { 
-    //             withCredentials: true 
-    //         });
-            
-    //     }catch(err){
-    //         result = err.response;
-    //     }
-    //     expect(result.data.statusCode).to.be.eq(404);
-        
-    // });
+
     it('Should return one contact for a user', async () => {
         const result = await axios.get('http://localhost:8080/contact/getContact/612e20f5e67c51b4ed06a030', 
         { headers: 
@@ -301,24 +282,4 @@ describe('Delete Contact', () => {
         });
         expect(result.data.statusCode).to.be.eq(200);
     });
-    // it('Should fail to delete a contact', async () => {
-    //     try{
-    //         const result = await axios.delete('http://localhost:8080/contact/deleteContact', { data: { 
-    //             userName: 'spidertest54',
-    //             contactId: newContact
-    //         }
-    //         }
-    //         , 
-    //         { headers: 
-    //             { 
-    //                 Cookie:`CRM=${token}`
-    //             }
-    //         }, { 
-    //             withCredentials: true 
-    //         });
-    //     } catch (err) {
-    //         result = err.response;
-    //     }
-    //     expect(result.data.statusCode).to.be.eq(404);
-    // });
 });
