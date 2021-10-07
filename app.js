@@ -12,9 +12,6 @@ const scheduleRouter = require("./routes/scheduleRouter");
 const eventRouter = require("./routes/eventRouter");
 const userRouter = require("./routes/userRouter");
 
-// db
-require("./config/db");
-
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,11 +25,5 @@ app.use("/contact", contactRouter);
 app.use("/user", userRouter);
 app.use("/schedule", scheduleRouter);
 app.use("/event", eventRouter);
-
-const port = process.env.PORT || 8080;
-
-app.listen(port, () => {
-  console.log(`The app is listening on port ${port}!`);
-});
 
 module.exports = app;

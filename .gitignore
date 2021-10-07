@@ -1,6 +1,4 @@
 genKeyPair.js
-../test.js
-test2.js
 *.pem
 *.txt
 # dependencies
@@ -26,6 +24,7 @@ yarn-debug.log
 yarn-error.log
 ContactAPI\ Postman\ Collection.JSON 
 /design
+/unused
 
 routes/imageRouter.js
 controllers/imageController.js
