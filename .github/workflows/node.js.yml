@@ -37,8 +37,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: echo ${{secrets.PUBLIC_KEY}} | sed 's/./& /g'
-    - run: echo '\nWORLD\n'
-    - run: echo ${{secrets.PRIVATE_KEY}} | sed 's/./& /g'
     - run: npm ci
     - run: npm test
