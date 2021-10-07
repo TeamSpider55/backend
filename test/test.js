@@ -29,9 +29,12 @@ const db = mongoose.createConnection(MONGO_URL,
 
 const User = db.model('User', userSchema);
 
-describe('Test Backend API', () => {
+describe('Test Backend API', function() {
+    let server;
+
     // set things up before testing (inputting dummy data)
     before(async function () {
+        this.timeout(16000);
 
         // start local server
         server = app.listen(5050);
@@ -41,8 +44,10 @@ describe('Test Backend API', () => {
         await User.insertMany(testData.users);
     });
 
-    // clean up after testing
-    after(async () => {
+    // clean up dummy data in testing DB after tests have run
+    after(async function() {
+        this.timeout(16000);
+        
         await User.deleteMany({});
 
         await db.close();
@@ -50,7 +55,7 @@ describe('Test Backend API', () => {
     });
 
     describe('User registering, logging in and getting profile', () => {
-        it("test", async () => {
+        it("test", async function() {
             console.log(await User.find());
             expect([1, 2, 3].indexOf(4)).to.equal(-1);
         })
