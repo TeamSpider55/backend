@@ -117,5 +117,37 @@ describe('Test Authentication API', function() {
             expect(result.data.statusCode).to.be.eq(200);
             expect(result.data.data.length).to.be.eq(3)
         });
+
+        it('Should fail returning all contacts because user invalid', async function() {
+            try {
+                await axios.get('http://localhost:5050/contact/getAllContacts/invalido');
+            } catch(err) {
+                result = err.response;
+            }
+            expect(result.data.statusCode).to.be.eq(404);
+        });
+
+        it('Should return one contact for a user', async function() {
+            const result = await axios.get('http://localhost:5050/contact/getContact/123/61556e08e050338e94d23601');
+            expect(result.data.statusCode).to.be.eq(200);
+        });
+
+        it('Should fail because contact is null', async function() {
+            try {
+                await axios.get('http://localhost:5050/contact/getContact/123/61554d08e050338e94d23601');
+            } catch (err) {
+                result = err.response;
+            }
+            expect(result.data.statusCode).to.be.eq(404);
+        });
+
+        it('Should fail because user is null', async function() {
+            try {
+                await axios.get('http://localhost:5050/contact/getContact/12345/61556e08e050338e94d23601');
+            } catch (err) {
+                result = err.response;
+            }
+            expect(result.data.statusCode).to.be.eq(404);
+        });
     });
 });
