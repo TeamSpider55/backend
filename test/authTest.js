@@ -6,6 +6,7 @@ const axios = require('axios');
 const app = require('../app');
 const testData = require('./testData');
 const User = require('../models/users');
+const Contact = require('../models/contacts');
 
 // this is the user to the Mongo database
 const TEST_MONGO_USERNAME = "spider55";
@@ -20,7 +21,7 @@ mongoose.connect(
   { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
-describe('Test Backend API', function() {
+describe('Test Authentication API', function() {
     this.timeout(8000);
     let server;
 
@@ -31,11 +32,13 @@ describe('Test Backend API', function() {
         server = app.listen(5050);
 
         await User.insertMany(testData.users);
+        await Contact.insertMany(testData.contacts);
     });
 
     // clean up dummy data in testing DB after tests have run
     after(async function() {
 
+        await Contact.deleteMany({});
         await User.deleteMany({});
 
         await mongoose.connection.close();
@@ -103,6 +106,16 @@ describe('Test Backend API', function() {
                 }
             );
             expect(result.data.success).to.be.eq(false);
+        });
+    });
+
+    describe('Get contacts for user', function () {
+        it('Should return the all contacts for a logged in user', async function() {
+            const result = await axios.get('http://localhost:5050/contact/getAllContacts/123');
+
+            // expecting 3 contacts as in test data
+            expect(result.data.statusCode).to.be.eq(200);
+            expect(result.data.data.length).to.be.eq(3)
         });
     });
 });

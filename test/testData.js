@@ -5,7 +5,7 @@ users = [
   {
     _id: mongoose.Types.ObjectId('614ed15c606c0c1398b83a70'),
     userName: '123',
-    email: 'onethreadauth@gmail.com',
+    email: 'john.doe@gmail.com',
     nickName: 'nick',
     givenName: 'given',
     middleName: 'middle',
@@ -20,16 +20,52 @@ users = [
       "61556e08e050338e94d23601",
       "6158496b9c2f38b16c37fc4f",
       "6159518327877d1500b47908",
-      "615e9f498ba40ad7f8703bf6",
-      "615e9fc552c7b8e828e09a8c",
-      "615e9ffeb85bf8419c8d1eb1",
-      "615ea0545a18e5e6c01272d7",
     ],
     tags: [],
     blacklistTokens: [],
   }
 ];
 
+contacts = [
+  {
+    _id: mongoose.Types.ObjectId('61556e08e050338e94d23601'),
+    email: "email@gmail.com",
+    familyName: "family",
+    givenName: "given1",
+    middleName: "middle",
+    phone: "+1234567890",
+    address: "2 Apple Street",
+    description: "A cool person",
+    note: "what is a note?",
+    tags: [],
+  },
+  {
+    _id: mongoose.Types.ObjectId('6158496b9c2f38b16c37fc4f'),
+    email: "email@gmail.com",
+    familyName: "family",
+    givenName: "given2",
+    middleName: "middle",
+    phone: "+1234567890",
+    address: "2 Apple Street",
+    description: "A cool person",
+    note: "what is a note?",
+    tags: [],
+  },
+  {
+    _id: mongoose.Types.ObjectId('6159518327877d1500b47908'),
+    email: "email@gmail.com",
+    familyName: "family",
+    givenName: "given3",
+    middleName: "middle",
+    phone: "+1234567890",
+    address: "2 Apple Street",
+    description: "A cool person",
+    note: "what is a note?",
+    tags: [],
+  }
+]
+
 module.exports = {
   users,
+  contacts,
 }
