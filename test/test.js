@@ -109,7 +109,7 @@ describe('Test Authentication API', function() {
         });
     });
 
-    describe('Get contacts for user', function () {
+    describe('Get contacts for user', function() {
         it('Should return the all contacts for a logged in user', async function() {
             const result = await axios.get('http://localhost:5050/contact/getAllContacts/123');
 
@@ -144,6 +144,103 @@ describe('Test Authentication API', function() {
         it('Should fail because user is null', async function() {
             try {
                 await axios.get('http://localhost:5050/contact/getContact/12345/61556e08e050338e94d23601');
+            } catch (err) {
+                result = err.response;
+            }
+            expect(result.data.statusCode).to.be.eq(404);
+        });
+    });
+
+    describe('Add & Update Contact', function() {
+        let newContact;
+
+        it('Should add a contact succesfully', async () => {
+            const result = await axios.post('http://localhost:5050/contact/addContact', {
+                userName: '123',
+                email: 'autoTest@autotest.com',
+                givenName: 'auto',
+                familyName: 'testing'
+            });
+            newContact = result.data.data._id;
+            expect(result.data.statusCode).to.be.eq(200);
+        });
+
+        it('Should fail to add a contact (invalid user)', async () => {
+            try{
+                const result = await axios.post('http://localhost:5050/contact/addContact', {
+                userName: '123423423',
+                email: 'autoTest@autotest.com',
+                givenName: 'auto',
+                familyName: 'testing'
+            });
+            }catch(err){
+                result = err.response;
+            }
+            expect(result.data.statusCode).to.be.eq(404);
+        });
+
+        it('Should update a contact succesfully', async () => {
+            const result = await axios.post('http://localhost:5050/contact/updateContact', {
+                contactId: newContact,
+                nickName: 'autoTest@autotest.com',
+                givenName: 'auto',
+                middleName: 'auto testing',
+                familyName: 'testing',
+                email: 'changed',
+                phone: 'changed',
+                address: 'changed',
+                description: 'changed',
+                note: 'changed',
+            });
+            expect(result.data.statusCode).to.be.eq(200);
+        });
+
+        it('Should fail to update a contact', async () => {
+            try{
+                const result = await axios.post('http://localhost:5050/contact/updateContact', {
+                    contactId: '61585037940c4edc9cd6e669',
+                    nickName: 'autoTest@autotest.com',
+                    givenName: 'auto',
+                    middleName: 'auto testing',
+                    familyName: 'testing',
+                    email: 'changed',
+                    phone: 'changed',
+                    address: 'changed',
+                    description: 'changed',
+                    note: 'changed',
+                });
+            } catch (err) {
+                result = err.response;
+            }
+            expect(result.data.statusCode).to.be.eq(404);
+        });
+    });
+
+    describe('Delete Contact', () => {
+        it('Should delete a contact succesfully', async () => {
+            const result = await axios.delete(
+                'http://localhost:5050/contact/deleteContact',
+                {
+                    data: { 
+                        userName: '123',
+                        contactId: '6158496b9c2f38b16c37fc4f'
+                    }
+                }
+            );
+            expect(result.data.statusCode).to.be.eq(200);
+        });
+        
+        it('Should fail to delete a an already deleted contact', async () => {
+            try{
+                const result = await axios.delete(
+                    'http://localhost:5050/contact/deleteContact',
+                    {
+                        data: { 
+                            userName: '123123123123',
+                            contactId: '6158496b9c2f38b16c37fc4f'
+                        }
+                    }
+                );
             } catch (err) {
                 result = err.response;
             }
