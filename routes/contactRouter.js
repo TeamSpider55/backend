@@ -10,7 +10,7 @@ router.get("/getContact/:contactId", contactController.getOneContact);
 router.get("/getAllContacts", userController.getContactsForUser);
 router.post("/updateContact", contactController.updateContact);
 router.post("/addContact", contactController.addContact);
-router.delete("/deleteContact", contactController.deleteOneContact);
+router.post("/deleteContact", contactController.deleteOneContact);
 
 // update a tag of a event
 router.post("/tag/updateTag", contactController.updateContactTag);

@@ -266,20 +266,30 @@ describe('Delete Contact', () => {
         console.log(newContact);
     })
     it('Should delete a contact succesfully', async () => {
-        const result = await axios.delete('http://localhost:8080/contact/deleteContact', 
+        const result = await axios.post('http://localhost:8080/contact/deleteContact' , {
+            contactId: newContact
+        }, 
         { headers: 
             { 
                 Cookie:`CRM=${token}`
             }
-        },
-        { 
+        }, { 
             withCredentials: true 
-        },
-        { data: 
-            { 
-                contactId: newContact
-            }
         });
+        // , 
+        // { headers: 
+        //     { 
+        //         Cookie:`CRM=${token}`
+        //     }
+        // },
+        // { 
+        //     withCredentials: true 
+        // },
+        // { data: 
+        //     { 
+        //         contactId: newContact
+        //     }
+        // });
         expect(result.data.statusCode).to.be.eq(200);
     });
 });
