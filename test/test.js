@@ -38,8 +38,11 @@ describe('Test Authentication API', function() {
     // clean up dummy data in testing DB after tests have run
     after(async function() {
 
-        await Contact.deleteMany({});
-        await User.deleteMany({});
+        const contactIds = testData.contacts.map(c => c._id);
+        const userIds = testData.users.map(u => u._id);
+
+        await Contact.deleteMany({ _id: contactIds });
+        await User.deleteMany({ _id: userIds });
 
         await mongoose.connection.close();
         await server.close();
