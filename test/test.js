@@ -3,7 +3,7 @@ const expect = chai.expect;
 const mongoose = require('mongoose');
 const axios = require('axios');
 
-const app = require('../app');
+const app = require('../appProgram');
 const testData = require('./testData');
 const User = require('../models/users');
 const Contact = require('../models/contacts');
