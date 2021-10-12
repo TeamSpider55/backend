@@ -3,7 +3,7 @@ const expect = chai.expect;
 const mongoose = require('mongoose');
 const axios = require('axios');
 
-const app = require('../app');
+const app = require('../appProgram');
 const testData = require('./testData');
 const User = require('../models/users');
 const Contact = require('../models/contacts');
@@ -38,8 +38,11 @@ describe('Test Authentication API', function() {
     // clean up dummy data in testing DB after tests have run
     after(async function() {
 
-        await Contact.deleteMany({});
-        await User.deleteMany({});
+        const contactIds = testData.contacts.map(c => c._id);
+        const userIds = testData.users.map(u => u._id);
+
+        await Contact.deleteMany({ _id: contactIds });
+        await User.deleteMany({ _id: userIds });
 
         await mongoose.connection.close();
         await server.close();
