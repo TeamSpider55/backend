@@ -3,11 +3,14 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 
-router.get("/getContact/:userName/:contactId", contactController.getOneContact);
-router.get("/getAllContacts/:userName", userController.getContactsForUser);
+const passport = require("passport");
+router.use(passport.authenticate("jwt", { session: false }));
+
+router.get("/getContact/:contactId", contactController.getOneContact);
+router.get("/getAllContacts", userController.getContactsForUser);
 router.post("/updateContact", contactController.updateContact);
 router.post("/addContact", contactController.addContact);
-router.delete("/deleteContact", contactController.deleteOneContact);
+router.post("/deleteContact", contactController.deleteOneContact);
 
 // update a tag of a event
 router.post("/tag/updateTag", contactController.updateContactTag);

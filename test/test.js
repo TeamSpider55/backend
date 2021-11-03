@@ -113,8 +113,28 @@ describe('Test Authentication API', function() {
     });
 
     describe('Get contacts for user', function() {
+        let token;
+
+        beforeEach(async function() {
+            const result = await axios.post('http://localhost:5050/auth/login', {
+                id: '123',
+                password: '123'
+            });
+            
+            // Extract the token from the cookie
+            token = result.headers['set-cookie'][0].split(';')[0].slice(4);
+        });
+
         it('Should return the all contacts for a logged in user', async function() {
-            const result = await axios.get('http://localhost:5050/contact/getAllContacts/123');
+            const result = await axios.get(
+                'http://localhost:5050/contact/getAllContacts/',
+                {
+                    headers: { 
+                        Cookie:`CRM=${token}` 
+                    }
+                },
+                { withCredentials: true }
+            );
 
             // expecting 3 contacts as in test data
             expect(result.data.statusCode).to.be.eq(200);
@@ -123,21 +143,42 @@ describe('Test Authentication API', function() {
 
         it('Should fail returning all contacts because user invalid', async function() {
             try {
-                await axios.get('http://localhost:5050/contact/getAllContacts/invalido');
+                await axios.get(
+                    'http://localhost:5050/contact/getAllContacts/', {
+                    headers: { 
+                        Cookie:`CRM=` 
+                    }
+                },
+                { withCredentials: true }
+            );
             } catch(err) {
                 result = err.response;
             }
-            expect(result.data.statusCode).to.be.eq(404);
+            expect(result.data).to.be.eq('Unauthorized');
         });
 
         it('Should return one contact for a user', async function() {
-            const result = await axios.get('http://localhost:5050/contact/getContact/123/61556e08e050338e94d23601');
+            const result = await axios.get(
+                'http://localhost:5050/contact/getContact/61556e08e050338e94d23601', {
+                    headers: { 
+                        Cookie:`CRM=${token}` 
+                    },
+                },
+                { withCredentials: true },
+            );
             expect(result.data.statusCode).to.be.eq(200);
         });
 
         it('Should fail because contact is null', async function() {
             try {
-                await axios.get('http://localhost:5050/contact/getContact/123/61554d08e050338e94d23601');
+                await axios.get(
+                    'http://localhost:5050/contact/getContact/61554d08e050338e94d23601', {
+                        headers: { 
+                            Cookie:`CRM=${token}`
+                        }
+                    },
+                    { withCredentials: true },
+                );
             } catch (err) {
                 result = err.response;
             }
@@ -146,16 +187,35 @@ describe('Test Authentication API', function() {
 
         it('Should fail because user is null', async function() {
             try {
-                await axios.get('http://localhost:5050/contact/getContact/12345/61556e08e050338e94d23601');
+                await axios.get(
+                    'http://localhost:5050/contact/getContact/61556e08e050338e94d23601', {
+                        headers: { 
+                            Cookie:`CRM=` 
+                        }
+                    },
+                    { withCredentials: true }
+                );
             } catch (err) {
                 result = err.response;
             }
-            expect(result.data.statusCode).to.be.eq(404);
+            expect(result.data).to.be.eq('Unauthorized');
         });
     });
 
     describe('Add & Update Contact', function() {
         let newContact;
+        let token;
+
+        beforeEach(async function() {
+            const result = await axios.post('http://localhost:5050/auth/login', {
+                id: '123',
+                password: '123'
+            });
+            
+            // Extract the token from the cookie
+            token = result.headers['set-cookie'][0].split(';')[0].slice(4);
+        });
+
 
         it('Should add a contact succesfully', async () => {
             const result = await axios.post('http://localhost:5050/contact/addContact', {
@@ -163,7 +223,13 @@ describe('Test Authentication API', function() {
                 email: 'autoTest@autotest.com',
                 givenName: 'auto',
                 familyName: 'testing'
-            });
+            }, {
+                headers: { 
+                    Cookie:`CRM=${token}` 
+                }
+            },
+            { withCredentials: true }
+            );
             newContact = result.data.data._id;
             expect(result.data.statusCode).to.be.eq(200);
         });
@@ -175,11 +241,17 @@ describe('Test Authentication API', function() {
                 email: 'autoTest@autotest.com',
                 givenName: 'auto',
                 familyName: 'testing'
-            });
+            }, {
+                headers: { 
+                    Cookie:`CRM=` 
+                }
+            },
+            { withCredentials: true }
+            );
             }catch(err){
                 result = err.response;
             }
-            expect(result.data.statusCode).to.be.eq(404);
+            expect(result.data).to.be.eq('Unauthorized');
         });
 
         it('Should update a contact succesfully', async () => {
@@ -194,7 +266,13 @@ describe('Test Authentication API', function() {
                 address: 'changed',
                 description: 'changed',
                 note: 'changed',
-            });
+            }, {
+                headers: { 
+                    Cookie:`CRM=${token}` 
+                }
+            },
+            { withCredentials: true }
+            );
             expect(result.data.statusCode).to.be.eq(200);
         });
 
@@ -211,7 +289,13 @@ describe('Test Authentication API', function() {
                     address: 'changed',
                     description: 'changed',
                     note: 'changed',
-                });
+                }, {
+                        headers: { 
+                            Cookie:`CRM=${token}` 
+                        }
+                },
+                { withCredentials: true }
+                );
             } catch (err) {
                 result = err.response;
             }
@@ -220,29 +304,49 @@ describe('Test Authentication API', function() {
     });
 
     describe('Delete Contact', () => {
+        let token;
+
+        beforeEach(async function() {
+            const result = await axios.post('http://localhost:5050/auth/login', {
+                id: '123',
+                password: '123'
+            });
+            
+            // Extract the token from the cookie
+            token = result.headers['set-cookie'][0].split(';')[0].slice(4);
+        });
+
+
         it('Should delete a contact succesfully', async () => {
-            const result = await axios.delete(
+            const result = await axios.post(
                 'http://localhost:5050/contact/deleteContact',
                 {
-                    data: { 
-                        userName: '123',
-                        contactId: '6158496b9c2f38b16c37fc4f'
+                    userName: '123',
+                    contactId: '6158496b9c2f38b16c37fc4f'
+                }, {
+                    headers: { 
+                        Cookie:`CRM=${token}` 
                     }
-                }
+                },
+                { withCredentials: true }
             );
             expect(result.data.statusCode).to.be.eq(200);
         });
         
         it('Should fail to delete a an already deleted contact', async () => {
             try{
-                const result = await axios.delete(
+                const result = await axios.post(
                     'http://localhost:5050/contact/deleteContact',
                     {
-                        data: { 
-                            userName: '123123123123',
-                            contactId: '6158496b9c2f38b16c37fc4f'
+                        userName: '123123123123',
+                        contactId: '6158496b9c2f38b16c37fc4f'
+                    },
+                    {
+                        headers: { 
+                            Cookie:`CRM=${token}` 
                         }
-                    }
+                    },
+                    { withCredentials: true }
                 );
             } catch (err) {
                 result = err.response;

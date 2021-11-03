@@ -122,12 +122,9 @@ const deleteTagFromContact = async (req, res) => {
 
 // find one contact by their id
 const getOneContact = async (req, res) => {
-  const userName = req.params.userName;
   const contactId = req.params.contactId;
   try {
-    const user = await User.findOne({
-      userName: userName,
-    });
+    const user = req.user;
     const oneContact = await Contact.findOne({
       _id: mongoose.Types.ObjectId(contactId),
     }).lean();
@@ -214,12 +211,9 @@ const updateContact = async (req, res) => {
 };
 
 const deleteOneContact = async (req, res) => {
-  const userName = req.body.userName;
   const contactId = req.body.contactId;
   try {
-    const user = await User.findOne({
-      userName: userName,
-    });
+    const user = req.user;
     const oneContact = await Contact.findOne({
       _id: mongoose.Types.ObjectId(contactId),
     }).lean();
@@ -259,14 +253,11 @@ const deleteOneContact = async (req, res) => {
 
 // add a contact, given their email, family name, given name
 const addContact = async (req, res) => {
-  const userName = req.body.userName;
   const email = req.body.email;
   const familyName = req.body.familyName;
   const givenName = req.body.givenName;
   try {
-    const user = await User.findOne({
-      userName: userName,
-    });
+    const user = req.user;
     if (user === null) {
       // no User found in database
       res.status(404);
