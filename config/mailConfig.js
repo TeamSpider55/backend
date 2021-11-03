@@ -44,6 +44,19 @@ const sendPasswordResetEmail = (name, email, link) => {
     .catch((err) => console.log(err));
 };
 
+const sendConfirmParticipator = (name, email, confirmationCode, tittle) => {
+  transport
+  .sendMail({
+    from: user,
+    to: email,
+    subject: `Confirm: ${tittle}!!!`,
+    html: `<h1>Hi ${name}, You have been invited to Attend an event ~!!!</h1>
+      <p>Please follow the link below to confirm your position!!!</p>
+      <a href=http://localhost:8081/event/confirmation/${confirmationCode}> Confirm </a>
+      </div>`,
+
+  })
+}
 module.exports = {
   sendConfirmationEmail,
   sendPasswordResetEmail,
