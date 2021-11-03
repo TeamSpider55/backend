@@ -185,7 +185,7 @@ const updateContact = async (req, res) => {
     oneContact.note = newContact.note;
     oneContact.organization = newContact.organization;
     oneContact.jobTitle = newContact.jobTitle;
-    oneContact.dateAdded = newContact.dateAdded;
+    //oneContact.dateAdded = newContact.dateAdded;
     oneContact.image = newContact.image;
     //oneContact.tags = newContact.tags;
 
