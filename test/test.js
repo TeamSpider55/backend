@@ -7,6 +7,7 @@ const app = require('../appProgram');
 const testData = require('./testData');
 const User = require('../models/users');
 const Contact = require('../models/contacts');
+const { Console } = require('console');
 
 // this is the user to the Mongo database
 const TEST_MONGO_USERNAME = "spider55";
@@ -112,79 +113,143 @@ describe('Test Authentication API', function() {
         });
     });
 
-    describe('Get contacts for user', function() {
-        it('Should return the all contacts for a logged in user', async function() {
-            const result = await axios.get('http://localhost:5050/contact/getAllContacts/123');
+    
+});
 
-            // expecting 3 contacts as in test data
-            expect(result.data.statusCode).to.be.eq(200);
-            expect(result.data.data.length).to.be.eq(3)
-        });
+describe('Get contacts for user', function() {
+    this.timeout(8000);
+    let server;
+    let token;
+    // set things up before testing (inputting dummy data)
+    before(async function () {
+        // start local server for testing
+        server = app.listen(5050);
 
-        it('Should fail returning all contacts because user invalid', async function() {
-            try {
-                await axios.get('http://localhost:5050/contact/getAllContacts/invalido');
-            } catch(err) {
-                result = err.response;
-            }
-            expect(result.data.statusCode).to.be.eq(404);
-        });
+        await User.insertMany(testData.users);
+        await Contact.insertMany(testData.contacts);
 
-        it('Should return one contact for a user', async function() {
-            const result = await axios.get('http://localhost:5050/contact/getContact/123/61556e08e050338e94d23601');
-            expect(result.data.statusCode).to.be.eq(200);
-        });
+        
+        // testing GET request to user profile when provided the authentication cookie
 
-        it('Should fail because contact is null', async function() {
-            try {
-                await axios.get('http://localhost:5050/contact/getContact/123/61554d08e050338e94d23601');
-            } catch (err) {
-                result = err.response;
-            }
-            expect(result.data.statusCode).to.be.eq(404);
+        const result = await axios.post('http://localhost:5050/auth/login', {
+            id: '123',
+            password: '123'
+        }, { 
+            withCredentials: true 
         });
-
-        it('Should fail because user is null', async function() {
-            try {
-                await axios.get('http://localhost:5050/contact/getContact/12345/61556e08e050338e94d23601');
-            } catch (err) {
-                result = err.response;
-            }
-            expect(result.data.statusCode).to.be.eq(404);
-        });
+        // Extract the token from the cookie
+        token = result.headers['set-cookie'][0].split(';')[0].slice(4);
     });
 
-    describe('Add & Update Contact', function() {
-        let newContact;
+    // clean up dummy data in testing DB after tests have run
+    after(async function() {
 
-        it('Should add a contact succesfully', async () => {
-            const result = await axios.post('http://localhost:5050/contact/addContact', {
-                userName: '123',
-                email: 'autoTest@autotest.com',
-                givenName: 'auto',
-                familyName: 'testing'
-            });
-            newContact = result.data.data._id;
-            expect(result.data.statusCode).to.be.eq(200);
-        });
+        const contactIds = testData.contacts.map(c => c._id);
+        const userIds = testData.users.map(u => u._id);
 
-        it('Should fail to add a contact (invalid user)', async () => {
-            try{
-                const result = await axios.post('http://localhost:5050/contact/addContact', {
-                userName: '123423423',
-                email: 'autoTest@autotest.com',
-                givenName: 'auto',
-                familyName: 'testing'
-            });
-            }catch(err){
-                result = err.response;
+        await Contact.deleteMany({ _id: contactIds });
+        await User.deleteMany({ _id: userIds });
+
+        await mongoose.connection.close();
+        await server.close();
+    });
+    
+    
+    
+    it('Should return the all contacts for a logged in user', async function() {
+        const result = await axios.get('http://localhost:5050/contact/getAllContacts', 
+        { headers: 
+            { 
+                Cookie:`CRM=${token}`
             }
-            expect(result.data.statusCode).to.be.eq(404);
+        }, { 
+            withCredentials: true 
         });
+        expect(result.data.statusCode).to.be.eq(200);
+        
+    });
 
-        it('Should update a contact succesfully', async () => {
+    it('Should fail returning all contacts because user invalid', async function() {
+        try {
+            await axios.get('http://localhost:5050/contact/getAllContacts/invalido');
+        } catch(err) {
+            result = err.response;
+        }
+        expect(result.data.statusCode).to.be.eq(404);
+    });
+
+    it('Should return one contact for a user', async function() {
+        const result = await axios.get('http://localhost:5050/contact/getContact/123/61556e08e050338e94d23601');
+        expect(result.data.statusCode).to.be.eq(200);
+    });
+
+    it('Should fail because contact is null', async function() {
+        try {
+            await axios.get('http://localhost:5050/contact/getContact/123/61554d08e050338e94d23601');
+        } catch (err) {
+            result = err.response;
+        }
+        expect(result.data.statusCode).to.be.eq(404);
+    });
+
+    it('Should fail because user is null', async function() {
+        try {
+            await axios.get('http://localhost:5050/contact/getContact/12345/61556e08e050338e94d23601');
+        } catch (err) {
+            result = err.response;
+        }
+        expect(result.data.statusCode).to.be.eq(404);
+    });
+});
+
+describe('Add & Update Contact', function() {
+    let newContact;
+
+    it('Should add a contact succesfully', async () => {
+        const result = await axios.post('http://localhost:5050/contact/addContact', {
+            userName: '123',
+            email: 'autoTest@autotest.com',
+            givenName: 'auto',
+            familyName: 'testing'
+        });
+        newContact = result.data.data._id;
+        expect(result.data.statusCode).to.be.eq(200);
+    });
+
+    it('Should fail to add a contact (invalid user)', async () => {
+        try{
+            const result = await axios.post('http://localhost:5050/contact/addContact', {
+            userName: '123423423',
+            email: 'autoTest@autotest.com',
+            givenName: 'auto',
+            familyName: 'testing'
+        });
+        }catch(err){
+            result = err.response;
+        }
+        expect(result.data.statusCode).to.be.eq(404);
+    });
+
+    it('Should update a contact succesfully', async () => {
+        const result = await axios.post('http://localhost:5050/contact/updateContact', {
+            contactId: newContact,
+            nickName: 'autoTest@autotest.com',
+            givenName: 'auto',
+            middleName: 'auto testing',
+            familyName: 'testing',
+            email: 'changed',
+            phone: 'changed',
+            address: 'changed',
+            description: 'changed',
+            note: 'changed',
+        });
+        expect(result.data.statusCode).to.be.eq(200);
+    });
+
+    it('Should fail to update a contact', async () => {
+        try{
             const result = await axios.post('http://localhost:5050/contact/updateContact', {
-                contactId: newContact,
+                contactId: '61585037940c4edc9cd6e669',
                 nickName: 'autoTest@autotest.com',
                 givenName: 'auto',
                 middleName: 'auto testing',
@@ -195,59 +260,41 @@ describe('Test Authentication API', function() {
                 description: 'changed',
                 note: 'changed',
             });
-            expect(result.data.statusCode).to.be.eq(200);
-        });
-
-        it('Should fail to update a contact', async () => {
-            try{
-                const result = await axios.post('http://localhost:5050/contact/updateContact', {
-                    contactId: '61585037940c4edc9cd6e669',
-                    nickName: 'autoTest@autotest.com',
-                    givenName: 'auto',
-                    middleName: 'auto testing',
-                    familyName: 'testing',
-                    email: 'changed',
-                    phone: 'changed',
-                    address: 'changed',
-                    description: 'changed',
-                    note: 'changed',
-                });
-            } catch (err) {
-                result = err.response;
-            }
-            expect(result.data.statusCode).to.be.eq(404);
-        });
+        } catch (err) {
+            result = err.response;
+        }
+        expect(result.data.statusCode).to.be.eq(404);
     });
+});
 
-    describe('Delete Contact', () => {
-        it('Should delete a contact succesfully', async () => {
+describe('Delete Contact', () => {
+    it('Should delete a contact succesfully', async () => {
+        const result = await axios.delete(
+            'http://localhost:5050/contact/deleteContact',
+            {
+                data: { 
+                    userName: '123',
+                    contactId: '6158496b9c2f38b16c37fc4f'
+                }
+            }
+        );
+        expect(result.data.statusCode).to.be.eq(200);
+    });
+    
+    it('Should fail to delete a an already deleted contact', async () => {
+        try{
             const result = await axios.delete(
                 'http://localhost:5050/contact/deleteContact',
                 {
                     data: { 
-                        userName: '123',
+                        userName: '123123123123',
                         contactId: '6158496b9c2f38b16c37fc4f'
                     }
                 }
             );
-            expect(result.data.statusCode).to.be.eq(200);
-        });
-        
-        it('Should fail to delete a an already deleted contact', async () => {
-            try{
-                const result = await axios.delete(
-                    'http://localhost:5050/contact/deleteContact',
-                    {
-                        data: { 
-                            userName: '123123123123',
-                            contactId: '6158496b9c2f38b16c37fc4f'
-                        }
-                    }
-                );
-            } catch (err) {
-                result = err.response;
-            }
-            expect(result.data.statusCode).to.be.eq(404);
-        });
+        } catch (err) {
+            result = err.response;
+        }
+        expect(result.data.statusCode).to.be.eq(404);
     });
 });

@@ -45,13 +45,10 @@ const activateUser = async (confirmationCode) => {
 };
 
 
-// find all contacts for specific user
+/// find all contacts for specific user
 const getContactsForUser = async (req, res) => {
-  const userName = req.params.userName
   try {
-    const user = await User.findOne({
-      userName: userName,
-    })
+    const user = req.user;
     if (user === null) {
       // no User found in database
       res.status(404)
@@ -60,9 +57,10 @@ const getContactsForUser = async (req, res) => {
       })
     }
     //id is contactId in this context
+    
     const contacts = await Promise.all(
       user.contacts.map(async (id) => {
-        var contact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
+        var contact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean();
         return contact
       })
     )
