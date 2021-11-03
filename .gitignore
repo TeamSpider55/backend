@@ -1,6 +1,4 @@
 genKeyPair.js
-test.js
-test2.js
 *.pem
 *.txt
 # dependencies
@@ -8,7 +6,6 @@ test2.js
 /.pnp
 .pnp.js
 
-/design
 
 # testing
 /coverage
@@ -22,9 +19,13 @@ test2.js
 .env.development.local
 .env.test.local
 .env.production.local
-
 npm-debug.log
 yarn-debug.log
 yarn-error.log
+ContactAPI\ Postman\ Collection.JSON 
+/design
+/unused
 
+routes/imageRouter.js
+controllers/imageController.js
 .env

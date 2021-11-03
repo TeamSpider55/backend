@@ -8,16 +8,15 @@ const EventController = require("./eventController");
 const ScheduleController = require("./scheduleController");
 
 const proposeEventController = {
-
-    /* Add the version of the proposed event to data base
-     * That event should not be deloy yet
-     */
-    init: async (eventDetail) => {
-        try{
-            return await Propose.create(eventDetail);
-        } catch (err){
-            console.log(err);
-        }return null;
+  /* Add the version of the proposed event to data base
+   * That event should not be deloy yet
+   */
+  init: async (eventDetail) => {
+    try {
+      return await Propose.create(eventDetail);
+    } catch (err) {
+      console.log(err);
     }
-    
+    return null;
+  },
 };

@@ -1,8 +1,14 @@
+/*const axios = require('axios');
+const expect = require('chai').expect;
+require('../app');
+
 describe(
     "Unit testing for the event API!!!", function(){
 
-        const axios = require('axios');
-        const expect = require('chai').expect;
+
+        let token;
+        // testing GET request to user profile when provided the authentication cookie
+        // testing GET request to user profile when provided the authentication cookie
 
         let dataInCache = (data) => {
             for(var i of inputInDb){
@@ -20,7 +26,16 @@ describe(
         let hourCollection = [];
         let userCollection = ["d", "e", "f"];
 
-        before(function(){
+        before(async function() {
+            const result = await axios.post('http://localhost:8080/auth/login', {
+                id: '123',
+                password: '123'
+            }, { 
+                withCredentials: true 
+            });
+    
+            // Extract the token from the cookie
+            token = result.headers['set-cookie'][0].split(';')[0].slice(4);
             for(var i=0; i <3; i++){
                 //console.log((i + 1) * 1000 * 60 * 60 * 24);
                 dateCollection.push((i + 1) * 1000 * 60 * 60 * 24) ;
@@ -31,6 +46,11 @@ describe(
                 hourCollection.push((i) * 1000 * 60 * 6) ;
             }
         });
+        
+        before(async function() {
+            
+        })
+
 
         describe(
             "Assert the correctness of the 'Add' route",
@@ -53,8 +73,14 @@ describe(
 
                         let res = await axios.post(
                             'http://localhost:8080/event/add',
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
                         
                         expect(res.data.statusCode).to.deep.equal(200);
                         inputInDb.push({
@@ -81,8 +107,14 @@ describe(
 
                         let res = await axios.post(
                             'http://localhost:8080/event/add',
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
                         
                         expect(res.data.statusCode).to.deep.equal(400);
                     }
@@ -105,8 +137,14 @@ describe(
 
                         let res = await axios.post(
                             'http://localhost:8080/event/add',
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
                         
                         expect(res.data.statusCode).to.deep.equal(200);
                         inputInDb.push({
@@ -135,8 +173,14 @@ describe(
 
                             let res = await axios.post(
                                 'http://localhost:8080/event/add',
-                                data
-                            );
+                                data, 
+                                { headers: 
+                                    { 
+                                        Cookie:`CRM=${token}`
+                                    }
+                                }, { 
+                                    withCredentials: true 
+                            });
                             
                             expect(res.data.statusCode).to.deep.equal(200);
                             inputInDb.push({
@@ -170,8 +214,14 @@ describe(
     
                         let res = await axios.post(
                             'http://localhost:8080/event//modify/content',
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
                         expect(res.data.statusCode).to.deep.equal(200);
                     }
                 );
@@ -196,8 +246,14 @@ describe(
 
                             let res = await axios.post(
                                 'http://localhost:8080/event/remove',
-                                data
-                            );
+                                data, 
+                                { headers: 
+                                    { 
+                                        Cookie:`CRM=${token}`
+                                    }
+                                }, { 
+                                    withCredentials: true 
+                            });
                             expect(res.data.statusCode).to.deep.equal(200);
                         }
 
@@ -216,8 +272,14 @@ describe(
 
                         let res = await axios.post(
                             'http://localhost:8080/event/remove',
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
                         expect(res.data.statusCode).to.deep.equal(400);
                         
 
@@ -226,4 +288,4 @@ describe(
         );
 
     }
-);
+);*/

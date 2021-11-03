@@ -1,13 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const ScheduleController = require("../controllers/scheduleController");
+const passport = require("passport");
+router.use(passport.authenticate("jwt", { session: false }));
 
 /* Send the path with URL parameter to indicate that we want to retrieve
  * a single schedule with the date and belong to a user
  */
 router.get("/retrieve/single/:date/:user", async (req, res) => {
     let unixTime = parseInt(req.params.date);
-    let user = req.params.user;
+    let user = req.body.user;
     res.json(await ScheduleController.retrieveSchedule(unixTime, user));
 });
 
@@ -15,7 +17,7 @@ router.get("/retrieve/single/:date/:user", async (req, res) => {
 /*
  */
 router.get("/retrieve/many/:user", async(req, res) => {
-    let user = req.params.user;
+    let user = req.body.user;
     res.json( await ScheduleController.retrieveAllScheduleByUser(user));
 });
 

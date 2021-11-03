@@ -1,9 +1,16 @@
-/*describe(
-    "Unit testing for the scheduling!!!", function() {
-        const axios = require('axios');
-        const expect = require('chai').expect;
-        require('../app');
+const axios = require('axios');
+const expect = require('chai').expect;
+require('../app');
+
+let token;
+
+describe(
+    "Unit testing for the scheduling!!!",  function() {
+        
+    
         let inputInDb = [];
+        // testing GET request to user profile when provided the authentication cookie
+        // testing GET request to user profile when provided the authentication cookie
 
         let dataInCache = (data) => {
             for(var i of inputInDb){
@@ -17,22 +24,33 @@
             }return false;
         }
 
-        / attempt to input a correct packet to the system.
+        /* attempt to input a correct packet to the system.
             scenario can happen:
             [1] -> scheudle with the spec is already in the DB: fail
             [2] -> schedule does not exist within the db: successfull
             [3] -> Cant enter in to the database : fail <- one of the independent test.
-        /
+        */
         // generate 3 different set of date
         let dateCollection = [];
         let userCollection = ["a", "b", "c"];
 
-        before(function() {
+        before(async function() {
+            const result = await axios.post('http://localhost:8080/auth/login', {
+                id: '123',
+                password: '123'
+            }, { 
+                withCredentials: true 
+            });
+            
+    
+            // Extract the token from the cookie
+            token = result.headers['set-cookie'][0].split(';')[0].slice(4);
             for(var i=0; i <3; i++){
                 //console.log((i + 1) * 1000 * 60 * 60 * 24);
                 dateCollection.push((i + 1) * 1000 * 60 * 60 * 24) ;
             }
         })
+
 
         describe(
             "Assertion the correctness of the 'Add' route",
@@ -49,8 +67,15 @@
 
                             let res = await axios.post(
                                 'http://localhost:8080/schedule/add',
-                                data
-                            );
+                                data, 
+                                { headers: 
+                                    { 
+                                        Cookie:`CRM=${token}`
+                                    }
+                                }, { 
+                                    withCredentials: true 
+                            });
+                        
                             
                             expect(res.data.statusCode).to.deep.equal(200);
                             inputInDb.push(res.data.data);
@@ -71,7 +96,14 @@
                         let res = await axios.post(
                             'http://localhost:8080/schedule/add',
                             data
-                        );
+                        , 
+                        { headers: 
+                            { 
+                                Cookie:`CRM=${token}`
+                            }
+                        }, { 
+                            withCredentials: true 
+                        });
                             
                         expect(res.data.statusCode).to.deep.equal(400);
 
@@ -92,8 +124,15 @@
                         
                         let res = await axios.post(
                             'http://localhost:8080/schedule/add',
-                            data
-                        );
+                            data, 
+                        { headers: 
+                            { 
+                                Cookie:`CRM=${token}`
+                            }
+                        }, { 
+                            withCredentials: true 
+                        });
+                        
                             
                         expect(res.data.statusCode).to.deep.equal(200);
                         inputInDb.push(res.data.data);
@@ -116,8 +155,14 @@
                         for(var date of dateCollection)
                            
                             res = await axios.get(
-                                `http://localhost:8080/schedule/retrieve/single/${date}/${userCollection[0]}`
-                            );
+                                `http://localhost:8080/schedule/retrieve/single/${date}/${userCollection[0]}`, 
+                                { headers: 
+                                    { 
+                                        Cookie:`CRM=${token}`
+                                    }
+                                }, { 
+                                    withCredentials: true 
+                            });
                             
                             var i = dataInCache(res.data.data) ;
                             expect(i).to.deep.equal(true);
@@ -127,8 +172,14 @@
                     "[Expect: failure] Retrieve a schedule of a User at a set date, which is definitely not in data base.",
                     async () => {                       
                         let res = await axios.get(
-                            `http://localhost:8080/schedule/retrieve/single/-1/${userCollection[0]}`
-                        );
+                            `http://localhost:8080/schedule/retrieve/single/-1/${userCollection[0]}`, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
                         expect(res.data.statusCode).to.deep.equal(400);
                         expect(res.data.data).to.deep.equal('No schedule Wed Dec 31 1969 10:00:00 GMT+1000 (Australian Eastern Daylight Time)!!!');
                     }
@@ -138,8 +189,14 @@
                     "[Expect: success] Retrieve schedule(s) of a User between a date - ensure data of the response is correct",
                     async () => {
                         res = await axios.get(
-                            `http://localhost:8080/schedule/retrieve/many/${userCollection[0]}/${(1) * 1000 * 60 * 60 * 24}/${(3) * 1000 * 60 * 60 * 24}`
-                        );    
+                            `http://localhost:8080/schedule/retrieve/many/${userCollection[0]}/${(1) * 1000 * 60 * 60 * 24}/${(3) * 1000 * 60 * 60 * 24}`, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
                         
                         expect(res.data.data.length).to.deep.equal(3);
                         
@@ -152,8 +209,14 @@
                     "[Expect: failure] Retrieve schedule(s) of a User between a date - who is not in data base",
                     async () => {
                         res = await axios.get(
-                            `http://localhost:8080/schedule/retrieve/many/${userCollection[3]}/${(1) * 1000 * 60 * 60 * 24}/${(3) * 1000 * 60 * 60 * 24}`
-                        );    
+                            `http://localhost:8080/schedule/retrieve/many/${userCollection[3]}/${(1) * 1000 * 60 * 60 * 24}/${(3) * 1000 * 60 * 60 * 24}`, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
                         
                         expect(res.data.statusCode).to.deep.equal(400);
                         expect(res.data.data).to.deep.equal('No schedule for undefined between the indicate date');
@@ -165,8 +228,14 @@
 
                     async () => {
                         res = await axios.get(
-                            `http://localhost:8080/schedule/retrieve/many/${userCollection[0]}`
-                        );
+                            `http://localhost:8080/schedule/retrieve/many/${userCollection[0]}`, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
 
                         expect(res.data.data.length).to.deep.equal(3);
 
@@ -181,8 +250,14 @@
 
                     async () => {
                         res = await axios.get(
-                            `http://localhost:8080/schedule/retrieve/many/${userCollection[2]}`
-                        );
+                            `http://localhost:8080/schedule/retrieve/many/${userCollection[2]}`, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
 
                         expect(res.data.statusCode).to.deep.equal(400);
                         expect(res.data.data).to.deep.equal('No schedule for c');
@@ -207,8 +282,14 @@
 
                         let res = await axios.post(
                             "http://localhost:8080/schedule/remove/single",
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
 
                         expect(res.data.data).to.deep.equal(1);
                     }
@@ -224,8 +305,14 @@
 
                         let res = await axios.post(
                             "http://localhost:8080/schedule/remove/single",
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
 
                         expect(res.data.data).to.deep.equal(0);
                     }
@@ -244,8 +331,14 @@
 
                         let res = await axios.post(
                             "http://localhost:8080/schedule/remove/many/user/between",
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
 
                         expect(res.data.data).to.deep.equal(3);
                     }
@@ -265,8 +358,14 @@
     
                             await axios.post(
                                 'http://localhost:8080/schedule/add',
-                                data
-                            );
+                                data, 
+                                { headers: 
+                                    { 
+                                        Cookie:`CRM=${token}`
+                                    }
+                                }, { 
+                                    withCredentials: true 
+                            });
                 
                         }
 
@@ -276,8 +375,14 @@
 
                         let res = await axios.post(
                             "http://localhost:8080/schedule/remove/many/user",
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
 
                         expect(res.data.data).to.deep.equal(3);
                     }
@@ -294,8 +399,14 @@
 
                         let res = await axios.post(
                             "http://localhost:8080/schedule/remove/many/user",
-                            data
-                        );
+                            data, 
+                            { headers: 
+                                { 
+                                    Cookie:`CRM=${token}`
+                                }
+                            }, { 
+                                withCredentials: true 
+                        });
                         
                         expect(res.data.data).to.deep.equal(0);
                     }
@@ -305,4 +416,4 @@
     
     }
 
-);*/
+);
