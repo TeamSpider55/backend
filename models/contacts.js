@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const contactSchema = new mongoose.Schema({
-  image: { type: String },
   nickName: { type: String },
   familyName: { type: String, required: true },
   middleName: { type: String },
@@ -11,8 +10,16 @@ const contactSchema = new mongoose.Schema({
   address: { type: String },
   description: { type: String },
   note: { type: String },
-  tags: [{ type: String }],
+  organization: { type: String },
+  jobTitle: { type: String },
+  dateAdded: { type: String },
+  image: { type: String },
+  //tags: [{ type: String }],
 });
 
 const Contact = mongoose.model("Contact", contactSchema);
 module.exports = Contact;
+
+
+    
+    

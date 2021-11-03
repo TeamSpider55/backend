@@ -183,15 +183,11 @@ const updateContact = async (req, res) => {
     oneContact.address = newContact.address;
     oneContact.description = newContact.description;
     oneContact.note = newContact.note;
-    oneContact.tags = newContact.tags;
-    // oneContact.tags = newContact.tags.map((tag) => ({
-    //   //Do we map for tags array? how do we do it if they are changing the other stuff
-    //   _id: mongoose.Types.ObjectId(),
-    //   tagId: tag.tagId,
-    //   description: tag.description,
-    //   color: tag.color,
-    //   priority: tag.priority,
-    // })) let result =
+    oneContact.organization = newContact.organization;
+    oneContact.jobTitle = newContact.jobTitle;
+    oneContact.dateAdded = newContact.dateAdded;
+    oneContact.image = newContact.image;
+    //oneContact.tags = newContact.tags;
 
     await oneContact.save();
     // contact was found, return as response
