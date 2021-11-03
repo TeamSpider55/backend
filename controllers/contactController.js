@@ -265,6 +265,7 @@ const addContact = async (req, res) => {
       email: email,
       familyName: familyName,
       givenName: givenName,
+      dateAdded: new Date(), // date added is now
       tags: [],
     });
     user.contacts.push(contact._id);
