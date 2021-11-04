@@ -41,7 +41,6 @@ router.post('/login', async (req, res) => {
         return res
           .cookie('CRM', token, {
             // 8 hours
-            domain: 'https://deploy-preview-30--heuristic-jang-9b6b9e.netlify.app/',
             sameSite: "none",
             expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
             httpOnly: true,
