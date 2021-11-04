@@ -12,16 +12,16 @@ const scheduleRouter = require("./routes/scheduleRouter");
 const eventRouter = require("./routes/eventRouter");
 const userRouter = require("./routes/userRouter");
 
-const whitelist = [
-  'http://localhost:3000/',
-  'http://localhost:8080/',
-  'https://heuristic-jang-9b6b9e.netlify.app',
-];
+// const whitelist = [
+//   'http://localhost:3000/',
+//   'http://localhost:8080/',
+//   'https://heuristic-jang-9b6b9e.netlify.app',
+// ];
 
 app.set('trust proxy', 1);
 
 app.use(cors({
-  origin: "https://deploy-preview-30--heuristic-jang-9b6b9e.netlify.app",
+  origin: "https://spider55-fe.herokuapp.com/",
   credentials: true,
 }));
 
