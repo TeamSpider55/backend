@@ -21,7 +21,7 @@ const userRouter = require("./routes/userRouter");
 app.set('trust proxy', 1);
 
 app.use(cors({
-  origin: "https://spider55-fe.herokuapp.com/",
+  origin: "https://spider55-fe.herokuapp.com",
   credentials: true,
 }));
 
