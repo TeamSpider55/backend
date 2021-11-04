@@ -12,7 +12,11 @@ const scheduleRouter = require("./routes/scheduleRouter");
 const eventRouter = require("./routes/eventRouter");
 const userRouter = require("./routes/userRouter");
 
-const whitelist = ['http://localhost:3000/', 'http://localhost:8080/'];
+const whitelist = [
+  'http://localhost:3000/',
+  'http://localhost:8080/',
+  'https://heuristic-jang-9b6b9e.netlify.app/',
+];
 
 app.use(cors({
   origin: function(origin, callback){
