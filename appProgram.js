@@ -23,7 +23,7 @@ app.use(cors({
     let pattern = /https:\/\/deploy-preview-\d+--heuristic-jang-9b6b9e\.netlify\.app/gm;
     // allow requests with no origin 
     if(!origin) return callback(null, true);
-    if(whitelist.indexOf(origin) === -1 || origin.match(pattern)){
+    if(whitelist.indexOf(origin) === -1 && !origin.match(pattern)){
       var message = 'The CORS policy for this origin doesn\'t ' +
                 'allow access from the origin ' + origin;
       return callback(new Error(message), false);
