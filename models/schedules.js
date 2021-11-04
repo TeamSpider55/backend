@@ -34,6 +34,7 @@ const scheduleSchema = new mongoose.Schema({
     },
   ],
 });
+
 // ensure the combination of date + user is unique
 scheduleSchema.index({ date: 1, user: 1 }, { unique: true });
 const Schedule = mongoose.model("Schedule", scheduleSchema);
