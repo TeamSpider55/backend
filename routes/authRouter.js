@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
           });
         }
         // Issue the cookie upon successful login
-        const token = utils.issueJWT(user, '20m');
+        const token = utils.issueJWT(user, '8h');
         return res
           .cookie('CRM', token, {
             // 8 hours
