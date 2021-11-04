@@ -41,7 +41,7 @@ router.post('/login', async (req, res) => {
         return res
           .cookie('CRM', token, {
             // 8 hours
-            domain: "https://spider55-api.herokuapp.com/",
+            domain: "https://spider55-api.herokuapp.com",
             sameSite: "none",
             expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
             httpOnly: true,
