@@ -15,7 +15,7 @@ const userRouter = require("./routes/userRouter");
 const whitelist = [
   'http://localhost:3000/',
   'http://localhost:8080/',
-  'https://heuristic-jang-9b6b9e.netlify.app/',
+  'https://heuristic-jang-9b6b9e.netlify.app',
 ];
 
 app.use(cors({
