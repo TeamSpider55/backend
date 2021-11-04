@@ -5,6 +5,9 @@ const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const cors = require('cors');
 
+// run the automator
+require('./config/automator');
+
 // routes
 const authRouter = require("./routes/authRouter");
 const contactRouter = require("./routes/contactRouter");
