@@ -4,6 +4,7 @@ const app = express();
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+require("dotenv").config();
 
 // routes
 const authRouter = require("./routes/authRouter");
@@ -18,11 +19,15 @@ const userRouter = require("./routes/userRouter");
 //   'https://heuristic-jang-9b6b9e.netlify.app',
 // ];
 
+const url = process.env.PORT
+  ? "https://spider55-fe.herokuapp.com"
+  : "http://localhost:3000";
+
 app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: "http://localhost:3000/",
+    origin: url,
     credentials: true,
   })
 );

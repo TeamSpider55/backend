@@ -4,8 +4,8 @@ require("dotenv").config();
 const user = process.env.EMAIL;
 const pw = process.env.EMAIL_PW;
 const url = process.env.PORT
-  ? "http://localhost:8080/auth/verify"
-  : "https://spider55-api.herokuapp.com/auth/verify";
+  ? "https://spider55-api.herokuapp.com/auth/verify"
+  : "http://localhost:8080/auth/verify";
 
 const transport = nodemailer.createTransport({
   host: "smtp.gmail.com",
