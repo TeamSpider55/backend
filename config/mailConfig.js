@@ -3,6 +3,9 @@ require("dotenv").config();
 
 const user = process.env.EMAIL;
 const pw = process.env.EMAIL_PW;
+const url = process.env.PORT
+  ? "https://spider55-api.herokuapp.com/auth/verify"
+  : "http://localhost:8080/auth/verify";
 
 const transport = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -23,7 +26,7 @@ const sendConfirmationEmail = (name, email, confirmationCode) => {
       html: `<h1>Email Confirmation</h1>
         <h2>Hello ${name}</h2>
         <p>Thank you for registering. Please verify your account by clicking on the following link</p>
-        <a href=http://localhost:8080/auth/verify/${confirmationCode}> Click here</a>
+        <a href=${url}/${confirmationCode}> Click here</a>
         </div>`,
     })
     .catch((err) => console.log(err));
