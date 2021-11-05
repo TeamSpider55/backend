@@ -16,6 +16,7 @@ router.get("/change-password", (req, res) => {
 router.post("/change-password", async (req, res) => {
   const newPassowrd = req.body.password;
   const { salt, hash } = utils.generatePassword(newPassowrd);
+  const user = req.user;
   try {
     // reset the user password
     user.salt = salt;
@@ -23,6 +24,7 @@ router.post("/change-password", async (req, res) => {
     await user.save();
     res.json({ success: true });
   } catch (err) {
+    console.log(err);
     res.json({ success: false });
   }
 });

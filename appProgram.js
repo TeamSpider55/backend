@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
-const cors = require('cors');
+const cors = require("cors");
 
 // routes
 const authRouter = require("./routes/authRouter");
@@ -18,12 +18,14 @@ const userRouter = require("./routes/userRouter");
 //   'https://heuristic-jang-9b6b9e.netlify.app',
 // ];
 
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
-app.use(cors({
-  origin: "https://spider55-fe.herokuapp.com",
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000/",
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json());
