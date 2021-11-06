@@ -42,7 +42,7 @@ const activateUser = async (confirmationCode) => {
     return true;
   } catch (err) {
     console.log(err);
-    return err;
+    return false;
   }
 };
 
