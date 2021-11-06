@@ -139,8 +139,8 @@ router.get("/verify/:confirmationCode", async (req, res) => {
   if (!user || user.status !== "PENDING") {
     return res.status(404).json({ success: false });
   }
-  userController.activateUser(req.params.confirmationCode);
-  return res.status(200).json({ success: true });
+  const result = await userController.activateUser(req.params.confirmationCode);
+  return res.status(200).json({ success: result });
 });
 
 // send a magic link to reset password

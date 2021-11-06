@@ -30,17 +30,19 @@ const findUserById = async (userId) => {
 };
 
 const activateUser = async (confirmationCode) => {
-  const user = await User.findOne({ confirmationCode: confirmationCode });
-  if (!user) {
-    return;
-  }
   try {
+    const user = await User.findOne({ confirmationCode: confirmationCode });
+    if (!user) {
+      return;
+    }
     await User.updateOne(
       { confirmationCode: confirmationCode },
       { $set: { status: "ACTIVE" }, $unset: { confirmationCode: "" } }
     );
+    return true;
   } catch (err) {
     console.log(err);
+    return false;
   }
 };
 
