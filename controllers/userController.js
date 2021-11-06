@@ -33,7 +33,7 @@ const activateUser = async (confirmationCode) => {
   try {
     const user = await User.findOne({ confirmationCode: confirmationCode });
     if (!user) {
-      return;
+      return false;
     }
     await User.updateOne(
       { confirmationCode: confirmationCode },
@@ -42,7 +42,7 @@ const activateUser = async (confirmationCode) => {
     return true;
   } catch (err) {
     console.log(err);
-    return false;
+    return err;
   }
 };
 
