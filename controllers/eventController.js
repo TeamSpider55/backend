@@ -1,5 +1,6 @@
 const ScheduleController = require("./scheduleController");
 const Util = require("../lib/timeUtil");
+const Schedule = require("../models/schedules");
 
 let eventController = {
   /* Check if the event overlapse with any event in the existEvents
@@ -283,36 +284,37 @@ let eventController = {
    * @param: {String} id of the user
    * @return: {bool} true if we able to modify the document
    */
-  modifyEventContent: async (newEvent, user) => {
+  modifyEventContent: async (newEvent, cuser) => {
     // retrieve the schedule
-    let date = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
-    let schedule = await ScheduleController.retrieveSchedule(date, user);
+    let cdate = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
+    let schedule = await Schedule.findOne({date: cdate,user: cuser});
+    //await ScheduleController.retrieveSchedule(date, user);
     newEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.start);
     newEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.end);
     if (schedule == null) {
       return false;
     }
     // find the event
-    for (var i = 0; i < schedule.data.events.length; i++) {
+    for (var i = 0; i < schedule.events.length; i++) {
       if (
-        schedule.data.events[i].start == newEvent.start &&
-        schedule.data.events[i].end == newEvent.end
+        schedule.events[i].start == newEvent.start &&
+        schedule.events[i].end == newEvent.end
       ) {
         console.log("========================================================================");
-        schedule.data.events[i].title =
-          newEvent.title != null ? newEvent.title : schedule.data.events[i].title;
-        schedule.data.events[i].note =
-          newEvent.note != null ? newEvent.note : schedule.data.events[i].note;
-        schedule.data.events[i].type =
-          newEvent.type != null ? newEvent.type : schedule.data.events[i].type;
-        schedule.data.events[i].tags =
-          newEvent.tags != null ? newEvent.tags : schedule.data.events[i].tags;
-        console.log(schedule.data);
-        await schedule.data.save();
-        return true;
+        schedule.events[i].title =
+          newEvent.title != null ? newEvent.title : schedule.events[i].title;
+        schedule.events[i].note =
+          newEvent.note != null ? newEvent.note : schedule.events[i].note;
+        schedule.events[i].type =
+          newEvent.type != null ? newEvent.type : schedule.events[i].type;
+        schedule.events[i].tags =
+          newEvent.tags != null ? newEvent.tags : schedule.events[i].tags;
+        console.log(schedule);
+        await schedule.save();
+        return {data:"Successfully modify an event", statusCode: 200};
       }
     }
-    return false;
+    return {data:"Unable to modify an event", statusCode: 400};
   },
   /**
    *  Retrieve all the event happen tomorrow
