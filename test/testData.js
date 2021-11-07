@@ -37,6 +37,9 @@ contacts = [
     address: "2 Apple Street",
     description: "A cool person",
     note: "what is a note?",
+    dateAdded: "Thu Nov 04 2021 01:33:45 GMT+1100 (Australian Eastern Daylight Time)",
+    organization: "Microsoft",
+    jobTitle: "Software Engineer",
     tags: [],
   },
   {
@@ -49,6 +52,9 @@ contacts = [
     address: "2 Apple Street",
     description: "A cool person",
     note: "what is a note?",
+    dateAdded: "Thu Nov 04 2021 01:33:45 GMT+1100 (Australian Eastern Daylight Time)",
+    organization: "Microsoft",
+    jobTitle: "Software Engineer",
     tags: [],
   },
   {
@@ -61,6 +67,9 @@ contacts = [
     address: "2 Apple Street",
     description: "A cool person",
     note: "what is a note?",
+    dateAdded: "Thu Nov 04 2021 01:33:45 GMT+1100 (Australian Eastern Daylight Time)",
+    organization: "Microsoft",
+    jobTitle: "Software Engineer",
     tags: [],
   }
 ]
