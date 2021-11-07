@@ -34,7 +34,6 @@ let eventController = {
     if (eventA.start > eventB.end) {
       return 1;
     }
-    console.log("Found a invalid pair of event:" + eventA + ", " + eventB);
     return 0;
   },
 
@@ -54,7 +53,6 @@ let eventController = {
         return false;
       }
     } catch (err) {
-      console.log(err);
       return false;
     }
     return true;
@@ -73,7 +71,6 @@ let eventController = {
 
     let validation = eventController.ValidateEvent(event, schedule.events);
     if (validation) {
-      console.log(schedule);
       if (schedule.events == null) schedule.events = [];
       schedule.events.push(adjEvent);
       await schedule.save();
@@ -95,7 +92,6 @@ let eventController = {
     let adjDate = Util.extractUnixOfYYYY_MM_DD(event.start);
 
     let response = await ScheduleController.retrieveSchedule(adjDate, user);
-    console.log(response);
     if (response.statusCode == "400")
       response = await ScheduleController.addSchedule(adjDate, user);
 
@@ -296,31 +292,35 @@ let eventController = {
     if (schedule == null) {
       return false;
     }
-
     // find the event
-    for (var i = 0; i < schedule.events.length; i++) {
+    for (var i = 0; i < schedule.data.events.length; i++) {
       if (
-        schedule.events[i].start == newEvent.start &&
-        schedule.events[i].end == newEvent.end
+        schedule.data.events[i].start == newEvent.start &&
+        schedule.data.events[i].end == newEvent.end
       ) {
-        schedule.events[i].title =
-          newEvent.title != null ? newEvent.title : schedule.events[i].title;
-        schedule.events[i].note =
-          newEvent.note != null ? newEvent.note : schedule.events[i].note;
-        schedule.events[i].type =
-          newEvent.type != null ? newEvent.type : schedule.events[i].type;
-        schedule.events[i].category =
-          newEvent.category != null
-            ? newEvent.category
-            : schedule.events[i].category;
-        schedule.events[i].tags =
-          newEvent.tags != null ? newEvent.tags : schedule.events[i].tags;
-        await schedule.save();
+        console.log("========================================================================");
+        schedule.data.events[i].title =
+          newEvent.title != null ? newEvent.title : schedule.data.events[i].title;
+        schedule.data.events[i].note =
+          newEvent.note != null ? newEvent.note : schedule.data.events[i].note;
+        schedule.data.events[i].type =
+          newEvent.type != null ? newEvent.type : schedule.data.events[i].type;
+        schedule.data.events[i].tags =
+          newEvent.tags != null ? newEvent.tags : schedule.data.events[i].tags;
+        console.log(schedule.data);
+        await schedule.data.save();
         return true;
       }
     }
     return false;
   },
+  /**
+   *  Retrieve all the event happen tomorrow
+   */
+  retrieveDueEvent: async () => {
+    
+  }
+
 };
 
 module.exports = eventController;
