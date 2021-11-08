@@ -1,6 +1,8 @@
 const EventController = require('mongoose');
 const emailValidator = require('../lib/emailUtil');
 const EmailUtil = require('../lib/emailUtil');
+const ParticipantExpiration = require("../models/participantExpiration");
+
 // Manipulate participant
 const participantController = {
 
@@ -128,6 +130,42 @@ const participantController = {
                 ? {data: 'Wrong Type!!', statusCode: 400}
                 : {data: 'Successfully alter the participant\'s email!!', statusCode: 400}
             : res;
+    },
+    
+    /**
+     * retrieve participant detail
+     * @param {string} email 
+     * @param {string} link 
+     * @returns 
+     */
+    RetrievePendingParticipant: async(email, link) => {
+        return await ParticipantExpiration.findOne({
+            participant: email,
+            invitation: link
+        });
+
+    },
+
+    /**
+     * remove a participant (and move them to confirm)
+     * @param {string} email 
+     * @param {string} link 
+     */
+    RemovePendingParticipant: async(email, link) => {
+        await ParticipantExpiration.deleteOne({
+            participant: email,
+            invitation: link
+        });
+    },
+
+    /**
+     * remove all the participant that is pending 5 day ago
+     * @param {int} index the index of the expired date (5 day from cur index in .env) 
+     */
+    RemoveExpiredParticipant: async(index) => {
+        await ParticipantExpiration.deleteMany({
+            index: index
+        });
     }
 }
 
