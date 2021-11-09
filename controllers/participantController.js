@@ -2,6 +2,8 @@ const EventController = require('mongoose');
 const emailValidator = require('../lib/emailUtil');
 const EmailUtil = require('../lib/emailUtil');
 const ParticipantExpiration = require("../models/participantExpiration");
+const authUtil = require("../lib/authUtil");
+const mailer = require("../config/mailConfig");
 
 // Manipulate participant
 const participantController = {
@@ -20,10 +22,33 @@ const participantController = {
         let syntaxFlag = EmailUtil.validate(email);
         if(res.statusCode == 200 
                 && syntaxFlag){
-            (status == 'pending')        
-                ? res.data.contacts.pending.push(newParticipants)
-                : res.data.contacts.confirm.push(newParticipants);
+            if(status == 'pending')
+            {        
+                res.data.contacts.pending.push(newParticipants)
+                
+                // send invitation
+                let invitationLink = authUtil.generateConfirmationCode(email);
+                mailer.sendInvitationLink(start, invitationLink);
+
+                // cache the pending participant.
+                await ParticipantExpiration.create(
+                    {
+                        index: 0,
+                        user: user,
+                        email: email,
+                        start: start,
+                        end: end,
+                        invitation: invitationLink
+                    }
+                );
+
+            }
+            else {
+                res.data.contacts.confirm.push(newParticipants);
+            }
             res.data.save();
+
+        
         }
         return (res.statusCode )
             ? (syntaxFlag) 
@@ -41,12 +66,21 @@ const participantController = {
      * @param {String} email 
      * @returns the pre-determined format packet
      */
-    confirmParticipant: async(start, end, user, email) => {
+    confirmParticipant: async(invitation) => {
 
+        let result = await ParticipantExpiration.findOne({
+            invitation:invitation
+        });
+        if(result == null){
+            return {data: 'The position does not exist!!!', statusCode: 400};
+        }
+        let start = result.start;
+        let end = result.end;
+        let user = result.user;
         let res = await this.retrieveEvent(start, end, user);
         let expiredFlag = true
         // search for the participant among the list of all pending
-        if(res.statusCode == 200 ){
+        if(res.statusCode == 200 && this.RemovePendingParticipant()){
             for(var i =0; i < res.data.contacts.pending.length; i++){
                 // if the email is not expired, it will live in pending
                 if(res.data.contacts.pending[i].email === email){
@@ -152,21 +186,29 @@ const participantController = {
      * @param {string} link 
      */
     RemovePendingParticipant: async(email, link) => {
-        await ParticipantExpiration.deleteOne({
+        let result = await ParticipantExpiration.deleteOne({
             participant: email,
             invitation: link
         });
+
+        return (result && result.ok == 1) ? true : false;
     },
 
     /**
      * remove all the participant that is pending 5 day ago
      * @param {int} index the index of the expired date (5 day from cur index in .env) 
      */
-    RemoveExpiredParticipant: async(index) => {
+    PopExpiredParticipant: async(index) => {
+        let result = await ParticipantExpiration.find(
+            { index: index}
+        )
         await ParticipantExpiration.deleteMany({
             index: index
         });
-    }
+
+        return result;
+    },
+
 }
 
 module.exports = participantController;

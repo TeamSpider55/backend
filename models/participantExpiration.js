@@ -5,9 +5,11 @@ const internal = require("stream");
 const participantExpiration = new mongoose.Schema({
     // participant expiration is a circular array consist of 5 day
     index: {type: Number, require: true},
-    participator: {type: String,     require: true},
     user: {type: String, require:true},
-    invitation: String
+    email: {type: String, require:true},
+    start: {type:Number, required:true} ,
+    end: {type:Number, required:true} ,
+    invitation: String //invitation: "start"_"end"
     
     
     
