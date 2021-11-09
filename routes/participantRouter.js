@@ -21,6 +21,6 @@ router.post("/add", async(req, res) => {
 
 router.post("/confirm/:invitation", async (req, res) => {
     let link = req.params.invitation;
-
-    participantController.confirmParticipant(req.body.start, req.body);
+    res.json({data: "hellloo----------------------------------------------"});
+    //participantController.confirmParticipant(req.body.start, req.body);
 });
