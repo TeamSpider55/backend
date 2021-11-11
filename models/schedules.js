@@ -30,8 +30,15 @@ const scheduleSchema = new mongoose.Schema({
       tags: [String],
       // potetntially member involve in this meeting
       // This is strictly
-      contacts: [{ type: String, required: true }],
-    },
+      contacts: {
+        confirm: [
+          { type: String, required: true },
+        ],
+        pending: [
+          { type: String, required: true },
+        ]
+      },
+    }
   ],
 });
 
