@@ -1,6 +1,7 @@
 const ScheduleController = require("./scheduleController");
 const Util = require("../lib/timeUtil");
 const Schedule = require("../models/schedules");
+require("../config/db");
 
 let eventController = {
   /* Check if the event overlapse with any event in the existEvents
@@ -140,7 +141,30 @@ let eventController = {
       ? { data: "The event does not exist !!!", statusCode: 400 }
       : await eventController.removeEventUseSchedule(event, response.data);
   },
+  
+  updateEventPaticipant: async (start, end, user, newP, type) => {
+    let response = await ScheduleController.retrieveSchedule(Util.extractUnixOfYYYY_MM_DD(start), user);
 
+    if(response.statusCode == 200){
+      console.log("in");
+      let schedule = response.data;
+
+      for(var i=0; i < schedule.events.length; i++){
+        console.log(schedule.events[i]);
+        if(schedule.events[i].start == start &&
+          schedule.events[i].end == end){
+            
+          for (const tag in change) {
+            
+            schedule.events[i][type][tag] = newP[tag];
+            console.log(schedule.events[i]);
+            console.log(new[tag]);
+          } 
+        }
+      }
+      schedule.save();
+    }
+  },
   /* Retrieve the even of a user with the match start and end
    * @param: {Int} Unix time of the starting
    * @param: {Int} Unix time of the ending
@@ -325,4 +349,5 @@ let eventController = {
 
 };
 
+eventController.updateEventParticipant(360000, 540000,"61663dd9f217f18298fa492b", ["a"], "pending");
 module.exports = eventController;
