@@ -16,16 +16,6 @@ const participantExpiration = new mongoose.Schema({
 
 })
 
-/**
- * Add 5 document to store participant's invitation that
- */
-for(var i=0; i < 5; i++){
-    participantExpiration.create(
-        {
-            index: i,
-            participantList: []
-        }
-    );
-}
+
 const ParticipantExpiration = mongoose.model("ParticipantExpiration", participantExpiration);
 module.exports = ParticipantExpiration;

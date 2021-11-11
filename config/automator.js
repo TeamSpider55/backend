@@ -61,7 +61,7 @@ let automatorOption = {
         }
 
         if(replaceVal("DAILY_AUTOMATE_TASK_TIME", milisSecFromMidNight)){
-            emailSchedule = util.extractH_M_S(milisSecFromMidNight);
+            dailyEmailSchedule = util.extractH_M_S(milisSecFromMidNight);
             return true;
         }return false;
     }
@@ -69,7 +69,7 @@ let automatorOption = {
 
 /* Schedule to run every day @indicated time
  */
-cron.schedule(`${emailSchedule.min} ${emailSchedule.hour} * * *`, () => {
+cron.schedule(`${dailyEmailSchedule.min} ${dailyEmailSchedule.hour} * * *`, () => {
     // remove all the expired pending participant invitation.
     var expired_i = (Integer(process.env.CUR_I) + 5)%5;
     let expiredParticipantList = participantController.PopExpiredParticipant();

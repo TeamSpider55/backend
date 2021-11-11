@@ -14,7 +14,7 @@ const contactRouter = require("./routes/contactRouter");
 const scheduleRouter = require("./routes/scheduleRouter");
 const eventRouter = require("./routes/eventRouter");
 const userRouter = require("./routes/userRouter");
-
+const participantRouter = require("./routes/participantRouter");
 const whitelist = ['http://localhost:3000/', 'http://localhost:8080/'];
 
 app.use(cors({
@@ -44,5 +44,6 @@ app.use("/contact", contactRouter);
 app.use("/user", userRouter);
 app.use("/schedule", scheduleRouter);
 app.use("/event", eventRouter);
+app.use("/participant", participantRouter);
 
 module.exports = app;
