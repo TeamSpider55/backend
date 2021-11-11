@@ -31,7 +31,8 @@ const participantController = {
         let res = await this.retrieveEvent(start, end, user);
         let syntaxFlag = EmailUtil.validate(email);
         if(res.statusCode == 200 
-                && syntaxFlag){
+                && syntaxFlag 
+                && this.checkExist(email, res.data.contacts)){
             if(status == 'pending')
             {        
                 res.data.contacts.pending.push(newParticipants)
