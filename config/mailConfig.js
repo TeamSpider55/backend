@@ -44,7 +44,7 @@ const sendPasswordResetEmail = (name, email, link) => {
     .catch((err) => console.log(err));
 };
 
-const sendInvitationLink = (start, invitationLink) => {
+const sendInvitationLink = (start, email, invitationLink) => {
   transport
     .sendMail({
       from: user,
