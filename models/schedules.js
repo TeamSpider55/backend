@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // may be we want to put more stuff into the calender
-// this slot contain everything requ
+// this slot contain everything require 
 const scheduleSchema = new mongoose.Schema({
   // date can be key since each user's account's day is unique
   // Date will only be "YYYY-MM_DD"
@@ -28,7 +28,7 @@ const scheduleSchema = new mongoose.Schema({
       },
 
       tags: [String],
-      // potetntially member involve in this meeting
+      // potentially member involve in this meeting
       // This is strictly
       contacts: {
         confirm: [

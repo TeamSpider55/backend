@@ -4,10 +4,20 @@ const EmailUtil = require('../lib/emailUtil');
 const ParticipantExpiration = require("../models/participantExpiration");
 const authUtil = require("../lib/authUtil");
 const mailer = require("../config/mailConfig");
+const eventController = require("./eventController"):
 
 // Manipulate participant
 const participantController = {
-
+    checkExist: (email, contract) => {
+        contact.forEach(group => {
+            for (const participant of group) {
+                if(participant.toLowerCase() == email.toLowerCase()){
+                    return false;
+                }
+            }
+        });
+        return true;
+    },
     /**
      * Update the existed event (must)
      * @param {long} start unix value that must be correct up to minute
@@ -41,12 +51,13 @@ const participantController = {
                         invitation: invitationLink
                     }
                 );
-
+                res.data.contacts.pending.push(newParticipants);
+                eventController.updateEventParticipant(start, end, user, res.data.contacts.pending, email);
             }
             else {
                 res.data.contacts.confirm.push(newParticipants);
+                eventController.updateEventParticipant(start, end, user, res.data.contacts.pending, email);
             }
-            res.data.save();
 
         
         }

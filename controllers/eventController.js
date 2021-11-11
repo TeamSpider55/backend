@@ -4,10 +4,10 @@ const Schedule = require("../models/schedules");
 require("../config/db");
 
 let eventController = {
-  /* Check if the event overlapse with any event in the existEvents
+  /* Check if the event overlaps with any event in the existEvents
    * @param: {Object} where we want to insert into the schedule document
    * @param: {Array} of the existed schedule
-   * @return: {bool} true if the event does not overlapse with any existed event
+   * @return: {bool} true if the event does not overlaps with any existed event
    */
   ValidateEvent: (event, existEvents) => {
     if (event.end <= event.start) return false;
@@ -66,7 +66,7 @@ let eventController = {
    * @return: {bool} true if adding is successfully
    */
   AddEventUseSchedule: async (event, schedule) => {
-    let errMess = "Propose Event is overlapse with an existed event!!!";
+    let errMess = "Propose Event is overlaps with an existed event!!!";
     let adjEvent = event;
     adjEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjEvent.start);
     adjEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjEvent.end);
@@ -142,26 +142,20 @@ let eventController = {
       : await eventController.removeEventUseSchedule(event, response.data);
   },
   
-  updateEventPaticipant: async (start, end, user, newP, type) => {
+  updateEventParticipant: async (start, end, user, newP, type) => {
     let response = await ScheduleController.retrieveSchedule(Util.extractUnixOfYYYY_MM_DD(start), user);
 
     if(response.statusCode == 200){
-      console.log("in");
       let schedule = response.data;
 
       for(var i=0; i < schedule.events.length; i++){
-        console.log(schedule.events[i]);
+        
         if(schedule.events[i].start == start &&
-          schedule.events[i].end == end){
-            
-          for (const tag in change) {
-            
-            schedule.events[i][type][tag] = newP[tag];
-            console.log(schedule.events[i]);
-            console.log(new[tag]);
+          schedule.events[i].end == end){   
+          
+          schedule.events[i].contacts[type] = newP;
           } 
-        }
-      }
+        }  
       schedule.save();
     }
   },
@@ -190,7 +184,7 @@ let eventController = {
       : val;
   },
 
-  /* given that we have the reference to the schedule, find all event store in it and sortit
+  /* given that we have the reference to the schedule, find all event store in it and sort it
    * @param: {Object} reference to the document in collection
    * @param: {bool} indicate if we want to sort the return list of event
    * @return {Array} of the event
@@ -233,7 +227,7 @@ let eventController = {
    * @param: {Int} unix time of the new starting
    * @param: {Int} unix time of the new ending
    * @param: {String} id of the user
-   * @return {bool} true if the re-schedulling is successful
+   * @return {bool} true if the re-scheduling is successful
    */
   modifiedEventTime: async (
     unixStart,
@@ -303,15 +297,15 @@ let eventController = {
 
   /* [not tested] content is {tittle, note, type, category}
    * tag will have the whole set of method dealing with it. So does contacts
-   * @param: {Object} consist of field indicate above. for which one of them is not needed to modied, set to null
+   * @param: {Object} consist of field indicate above. for which one of them is not needed to modify, set to null
    * @param: {Object} old event that exist in collection
    * @param: {String} id of the user
    * @return: {bool} true if we able to modify the document
    */
-  modifyEventContent: async (newEvent, cuser) => {
+  modifyEventContent: async (newEvent, user) => {
     // retrieve the schedule
     let cdate = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
-    let schedule = await Schedule.findOne({date: cdate,user: cuser});
+    let schedule = await Schedule.findOne({date: cdate,user: user});
     //await ScheduleController.retrieveSchedule(date, user);
     newEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.start);
     newEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.end);
@@ -324,7 +318,6 @@ let eventController = {
         schedule.events[i].start == newEvent.start &&
         schedule.events[i].end == newEvent.end
       ) {
-        console.log("========================================================================");
         schedule.events[i].title =
           newEvent.title != null ? newEvent.title : schedule.events[i].title;
         schedule.events[i].note =
@@ -349,5 +342,4 @@ let eventController = {
 
 };
 
-eventController.updateEventParticipant(360000, 540000,"61663dd9f217f18298fa492b", ["a"], "pending");
 module.exports = eventController;
