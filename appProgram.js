@@ -15,8 +15,8 @@ const scheduleRouter = require("./routes/scheduleRouter");
 const eventRouter = require("./routes/eventRouter");
 const userRouter = require("./routes/userRouter");
 const participantRouter = require("./routes/participantRouter");
-const whitelist = ['http://localhost:3000/', 'http://localhost:8080/'];
 const insercureParticipantRoute = require("./routes/insecureParticipantRouter");
+const whitelist = ['http://localhost:3000/', 'http://localhost:8080/'];
 app.use(cors({
   origin: function(origin, callback){
     // allow requests with no origin 

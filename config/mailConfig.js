@@ -53,7 +53,7 @@ const sendInvitationLink = (start, email, invitationLink) => {
       html: `<h1>Confirming position</h1>
         <h2>G'day</h2>
         <p>Please follow the link below to confirm position @event:${new Date(start)}</p>
-        <a href=http://localhost:8081/event/confirm/${invitationLink}> Accept</a>
+        <a href=http://localhost:8080/participant_confirm/${invitationLink}> Accept</a>
         </div>`,
     })
     .catch((err) => console.log(err));

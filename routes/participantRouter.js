@@ -9,14 +9,14 @@ router.use(passport.authenticate("jwt", { session: false }));
 router.post("/pending", async(req, res) => {
     let user = req.user._id;
     
-    participantController.pendingParticipant(req.body.start, req.body.end, user, req.body.email, 'pending');
+    res.json(await participantController.pendingParticipant(req.body.start, req.body.end, user, req.body.email, 'pending'));
 });
 
 
 router.post("/add", async(req, res) => {
     let user = req.user._id;
     
-    participantController.pendingParticipant(req.body.start, req.body.end, user, req.body.email, 'confirm');
+    res.json(await participantController.pendingParticipant(req.body.start, req.body.end, user, req.body.email, 'confirm'));
 });
 
 module.exports = router;

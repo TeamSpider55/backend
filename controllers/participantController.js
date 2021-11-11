@@ -8,8 +8,12 @@ const eventController = require("./eventController");
 // Manipulate participant
 const participantController = {
     checkExist: (email, contacts) => {
+        
         for(var group in contacts){
-            for (const participant of group) {
+            if(contacts[group].length == 0){
+                break;
+            }
+            for (const participant of contacts[group]) {
                 if(participant.toLowerCase() == email.toLowerCase()){
                     return false;
                 }
@@ -28,46 +32,48 @@ const participantController = {
     pendingParticipant: async(start, end, user, email, status) => {
 
         let res = await eventController.retrieveEvent(start, end, user);
+        let existFlag = participantController.checkExist(email, res.data.contacts);
         let syntaxFlag = true;//emailValidator.validate(email);
-        console.log("1");
-        if(res.statusCode == 200 
-                && syntaxFlag 
-                && participantController.checkExist(email, res.data.contacts)){
-            console.log("2");
-            if(status == 'pending')
-            {        
-                res.data.contacts.pending.push(email)
+        if(res.statusCode == 200  
+            && existFlag){
+            if(status == 'pending'){        
+                if(syntaxFlag){
+                    res.data.contacts.pending.push(email)
+                    
+                    // send invitation
+                    let invitationLink = authUtil.generateConfirmationCode(email);
+                    mailer.sendInvitationLink(start, email, invitationLink);
+
+                    // cache the pending participant.
+                    await ParticipantExpiration.create(
+                        {
+                            index: 0,
+                            user: user,
+                            email: email,
+                            start: start,
+                            end: end,
+                            invitation: invitationLink
+                        }
+                    );
+                    await eventController.updateEventParticipant(start, end, user, res.data.contacts.pending, 'pending');
+                }
+            }
+            else if(syntaxFlag 
+                && existFlag ) {
                 
-                // send invitation
-                let invitationLink = authUtil.generateConfirmationCode(email);
-                mailer.sendInvitationLink(start, email, invitationLink);
-
-                // cache the pending participant.
-                await ParticipantExpiration.create(
-                    {
-                        index: 0,
-                        user: user,
-                        email: email,
-                        start: start,
-                        end: end,
-                        invitation: invitationLink
-                    }
-                );
-                res.data.contacts.pending.push(email);
-                eventController.updateEventParticipant(start, end, user, res.data.contacts.pending, email);
-            }
-            else {
                 res.data.contacts.confirm.push(email);
-                eventController.updateEventParticipant(start, end, user, res.data.contacts.pending, email);
+                await eventController.updateEventParticipant(start, end, user, res.data.contacts.confirm, 'confirm');
+                
             }
-
-        
         }
-        return (res.statusCode )
-            ? (syntaxFlag) 
+        else{
+            res.statusCode = 400;
+        }
+        return ((res.statusCode == 200)
+            ? ((syntaxFlag) 
                 ? {data: 'Successfully modify the participant list!!!', statusCode: 200}
-                : {data: 'Invalid email syntax!!!', statusCode: 400}
-            : res;
+                : {data: 'Invalid email syntax!!!', statusCode: 400})
+            : {data: 'Existed participant!!!', statusCode: 400});
     },  
 
 
@@ -90,25 +96,28 @@ const participantController = {
         let start = result.start;
         let end = result.end;
         let user = result.user;
-        let res = await this.retrieveEvent(start, end, user);
+        let email = result.email;
+        let res = await eventController.retrieveEvent(start, end, user);
         let expiredFlag = true
         // search for the participant among the list of all pending
+        let status = await participantController.RemovePendingParticipant(invitation);
         if(res.statusCode == 200 
-            && this.RemovePendingParticipant()){
-            
+            && status){
                 for(var i =0; i < res.data.contacts.pending.length; i++){
-                // if the email is not expired, it will live in pending
-                if(res.data.contacts.pending[i].email === email){
-                    res.data.contacts.pending.splice(i,1);
-                    expiredFlag = false;
-                    break;
+                    // if the email is not expired, it will live in pending
+                    if(res.data.contacts.pending[i] == email){
+                        res.data.contacts.pending.splice(i,1);
+                        
+                        await eventController.updateEventParticipant(start, end, user, res.data.contacts.pending, 'pending');
+                        expiredFlag = false;
+                        break;
+                    }
                 }
-            }
-            //if the confirmed participant accept within the allowed time, their position in event is confirmed
-            if(!expiredFlag) {
-                res.data.contacts.confirm.push(email);
-                res.data.save();
-            }
+                //if the confirmed participant accept within the allowed time, their position in event is confirmed
+                if(!expiredFlag) {
+                    res.data.contacts.confirm.push(email);
+                    await eventController.updateEventParticipant(start, end, user, res.data.contacts.confirm, 'confirm');
+                }
         }
         
         return (res.statusCode == 200)
@@ -200,9 +209,8 @@ const participantController = {
      * @param {string} email 
      * @param {string} link 
      */
-    RemovePendingParticipant: async(email, link) => {
+    RemovePendingParticipant: async(link) => {
         let result = await ParticipantExpiration.deleteOne({
-            participant: email,
             invitation: link
         });
 
@@ -225,5 +233,4 @@ const participantController = {
     },
 
 }
-
 module.exports = participantController;
