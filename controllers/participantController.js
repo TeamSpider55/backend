@@ -1,21 +1,20 @@
 const EventController = require('mongoose');
 const emailValidator = require('../lib/emailUtil');
-const EmailUtil = require('../lib/emailUtil');
 const ParticipantExpiration = require("../models/participantExpiration");
 const authUtil = require("../lib/authUtil");
 const mailer = require("../config/mailConfig");
-const eventController = require("./eventController"):
+const eventController = require("./eventController");
 
 // Manipulate participant
 const participantController = {
-    checkExist: (email, contract) => {
-        contact.forEach(group => {
+    checkExist: (email, contacts) => {
+        for(var group in contacts){
             for (const participant of group) {
                 if(participant.toLowerCase() == email.toLowerCase()){
                     return false;
                 }
             }
-        });
+        }
         return true;
     },
     /**
@@ -28,18 +27,20 @@ const participantController = {
      */
     pendingParticipant: async(start, end, user, email, status) => {
 
-        let res = await this.retrieveEvent(start, end, user);
-        let syntaxFlag = EmailUtil.validate(email);
+        let res = await eventController.retrieveEvent(start, end, user);
+        let syntaxFlag = true;//emailValidator.validate(email);
+        console.log("1");
         if(res.statusCode == 200 
                 && syntaxFlag 
-                && this.checkExist(email, res.data.contacts)){
+                && participantController.checkExist(email, res.data.contacts)){
+            console.log("2");
             if(status == 'pending')
             {        
-                res.data.contacts.pending.push(newParticipants)
+                res.data.contacts.pending.push(email)
                 
                 // send invitation
                 let invitationLink = authUtil.generateConfirmationCode(email);
-                mailer.sendInvitationLink(start, invitationLink);
+                mailer.sendInvitationLink(start, email, invitationLink);
 
                 // cache the pending participant.
                 await ParticipantExpiration.create(
@@ -52,11 +53,11 @@ const participantController = {
                         invitation: invitationLink
                     }
                 );
-                res.data.contacts.pending.push(newParticipants);
+                res.data.contacts.pending.push(email);
                 eventController.updateEventParticipant(start, end, user, res.data.contacts.pending, email);
             }
             else {
-                res.data.contacts.confirm.push(newParticipants);
+                res.data.contacts.confirm.push(email);
                 eventController.updateEventParticipant(start, end, user, res.data.contacts.pending, email);
             }
 
@@ -92,8 +93,10 @@ const participantController = {
         let res = await this.retrieveEvent(start, end, user);
         let expiredFlag = true
         // search for the participant among the list of all pending
-        if(res.statusCode == 200 && this.RemovePendingParticipant()){
-            for(var i =0; i < res.data.contacts.pending.length; i++){
+        if(res.statusCode == 200 
+            && this.RemovePendingParticipant()){
+            
+                for(var i =0; i < res.data.contacts.pending.length; i++){
                 // if the email is not expired, it will live in pending
                 if(res.data.contacts.pending[i].email === email){
                     res.data.contacts.pending.splice(i,1);
@@ -124,7 +127,7 @@ const participantController = {
      * @returns the pre-determined format packet
      */
     removeParticipant: async(start, end, user, email, type) => {
-        let res = await this.retrieveEvent(start, end, user);
+        let res = await eventController.retrieveEvent(start, end, user);
 
         if(res.statusCode == 200
                 && type in ['pending', 'confirm']){
@@ -132,7 +135,7 @@ const participantController = {
                 if(res.data.contacts[type][i]=== email){
                     // once found attempt to remove the 
                     res.data.contacts[type][i].splice(i,1);
-                    res.data.save();
+                    eventController.updateEventParticipant(start, end, user, res.data.contract.type, type);
                 }
             }
         }
