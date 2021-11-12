@@ -35,5 +35,6 @@ require("../models/users");
 require("../models/blacklist");
 require("../models/schedules");
 require("../models/images");
+require("../models/participantExpiration");
 
 module.exports = { gfs };
