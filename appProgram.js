@@ -5,14 +5,17 @@ const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const cors = require('cors');
 
+// run the automator
+require('./config/automator');
+
 // routes
 const authRouter = require("./routes/authRouter");
 const contactRouter = require("./routes/contactRouter");
 const scheduleRouter = require("./routes/scheduleRouter");
 const eventRouter = require("./routes/eventRouter");
 const userRouter = require("./routes/userRouter");
-//const insercureParticipantRoute = require("./routes/insecureParticipantRouter");
-//const participantRouter = require("./routes/participantRouter");
+const insercureParticipantRoute = require("./routes/insecureParticipantRouter");
+const participantRouter = require("./routes/participantRouter");
 
 const whitelist = ['http://localhost:3000/', 'http://localhost:8080/'];
 
@@ -43,7 +46,7 @@ app.use("/contact", contactRouter);
 app.use("/user", userRouter);
 app.use("/schedule", scheduleRouter);
 app.use("/event", eventRouter);
-//app.use("/participant_confirm/", insercureParticipantRoute);
-//app.use("/participant", participantRouter);
+app.use("/participant_confirm/", insercureParticipantRoute);
+app.use("/participant", participantRouter);
 
 module.exports = app;
