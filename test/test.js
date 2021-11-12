@@ -401,6 +401,10 @@ describe('Test Authentication API', function() {
                                 "note": "test",
                                 "start": hourCollection[0] + 1000 * 60 * 6,
                                 "end": hourCollection[0] + 1500 * 60 * 6,
+                                "contacts":{
+                                    "confirm":[],
+                                    "pending":[]
+                                },
                                 "type": "personal",
                             };
                             let res = await axios.post(
@@ -428,6 +432,10 @@ describe('Test Authentication API', function() {
                                 "note": "test",
                                 "start": hourCollection[0] + 1000 * 60 * 6,
                                 "end": hourCollection[0] + 1500 * 60 * 6,
+                                "contacts":{
+                                    "confirm":[],
+                                    "pending":[]
+                                },
                                 "type": "personal",
                             };
                             let res = await axios.post(
@@ -453,7 +461,10 @@ describe('Test Authentication API', function() {
                                     "end": hourCollection[i] + 1500 * 60 * 6,
                                     "type": "personal",
                                     "tags": [],
-                                    "contacts":[]
+                                    "contacts":{
+                                        "confirm":[],
+                                        "pending":[]
+                                    }
                                 };
                                 let res = await axios.post(
                                     'http://localhost:5050/event/add',

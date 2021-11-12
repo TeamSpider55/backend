@@ -1,5 +1,6 @@
 const ScheduleController = require("./scheduleController");
 const Util = require("../lib/timeUtil");
+const Schedule = require("../models/schedules");
 
 let eventController = {
   /* Check if the event overlaps with any event in the existEvents
