@@ -325,7 +325,6 @@ let eventController = {
           newEvent.type != null ? newEvent.type : schedule.events[i].type;
         schedule.events[i].tags =
           newEvent.tags != null ? newEvent.tags : schedule.events[i].tags;
-        console.log(schedule);
         await schedule.save();
         return {data:"Successfully modify an event", statusCode: 200};
       }

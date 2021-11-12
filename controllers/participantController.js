@@ -33,7 +33,7 @@ const participantController = {
 
         let res = await eventController.retrieveEvent(start, end, user);
         let existFlag = participantController.checkExist(email, res.data.contacts);
-        let syntaxFlag = true;//emailValidator.validate(email);
+        let syntaxFlag = emailValidator.validate(email);
         if(res.statusCode == 200  
             && existFlag){
             if(status == 'pending'){        
@@ -205,7 +205,7 @@ const participantController = {
     },
 
     /**
-     * remove a participant (and move them to confirm)
+     * remove a participant
      * @param {string} email 
      * @param {string} link 
      */
