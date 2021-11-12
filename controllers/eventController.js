@@ -144,6 +144,23 @@ let eventController = {
       : await eventController.removeEventUseSchedule(event, response.data);
   },
 
+  updateEventParticipant: async (start, end, user, newP, type) => {
+    let response = await ScheduleController.retrieveSchedule(Util.extractUnixOfYYYY_MM_DD(start), user);
+    if(response.statusCode == 200){
+      let schedule = response.data;
+
+      for(var i=0; i < schedule.events.length; i++){
+        
+        if(schedule.events[i].start == start &&
+            schedule.events[i].end == end){ 
+              
+              schedule.events[i].contacts[type] = newP;
+          } 
+        }  
+      await schedule.save();
+    }
+  },
+
   /* Retrieve the even of a user with the match start and end
    * @param: {Int} Unix time of the starting
    * @param: {Int} Unix time of the ending
