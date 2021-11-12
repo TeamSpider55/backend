@@ -15,6 +15,7 @@ let emailNotification= Boolean(process.env.EMAIL_NOTIFICATION_STATUS);
 
 /* Reference: https://stackoverflow.com/questions/64996008/update-attributes-in-env-file-in-node-js
  */
+
 let replaceVal = (key, val) => {
     const VAR = fs.readFileSync("./.env", "utf-8").split(os.EOL);
     
@@ -27,6 +28,8 @@ let replaceVal = (key, val) => {
         } 
     }return false;
 };
+
+
 
 let automatorOption = {
     
@@ -78,6 +81,9 @@ cron.schedule(`${dailyEmailSchedule.min} ${dailyEmailSchedule.hour} * * *`, () =
     {
         participantController.removeParticipant(participant.start, participant.end, participant.user, participant.email, 'pending');
     }
+    // increment the cur index by one
+    replaceVal("CUR_I", (parseInt( process.env.CUR_I) + 1)%5);
+
 
     // this will call method to look at data base for event that is require to send mail
     // let notifyingEvents = eventController.autoNotification();
@@ -92,3 +98,4 @@ cron.schedule(`${dailyEmailSchedule.min} ${dailyEmailSchedule.hour} * * *`, () =
     //}
     
 })
+
