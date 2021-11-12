@@ -117,8 +117,10 @@ let eventController = {
       }
     }
     if (schedule.events.length == 0) {
-      await ScheduleController.removeSchedule(schedule.data, schedule.user);
+      (await ScheduleController.removeSchedule(schedule.date, schedule.user));
     } else if (deleted) schedule.save();
+
+
     return deleted
       ? { data: "Successfully delete the event!!!", statusCode: 200 }
       : { data: "Fail to delete the event!!!", statusCode: 400 };
@@ -252,19 +254,18 @@ let eventController = {
 
     if (eventRes.statusCode == 200) {
       if (checkDateVal(start, newStart) && checkDateVal(end, newEnd)) {
-        if (
-          (await eventController.removeEvent(eventRes.data, user)).statusCode == 200
-        ) {
+        if ((await eventController.removeEvent(eventRes.data, user)).statusCode == 200) {
+          console.log("remove successfully");
           eventRes.data.start = newStart;
           eventRes.data.end = newEnd;
-          if (
-            (await eventController.AddEvent(eventRes.data, user)).statusCode == 200
-          ) {
+          console.log(eventRes.data);
+          if ((await eventController.AddEvent(eventRes.data, user)).statusCode == 200) {
             flag = 200;
           } else {
+            console.log("cant add");
              eventRes.data.start = start;
              eventRes.data.end = end;
-            await eventController.AddEvent(eventRes.data, user);
+            //await eventController.AddEvent(eventRes.data, user);
           }
         }
       }
@@ -323,8 +324,6 @@ let eventController = {
           newEvent.note != null ? newEvent.note : schedule.events[i].note;
         schedule.events[i].type =
           newEvent.type != null ? newEvent.type : schedule.events[i].type;
-        schedule.events[i].tags =
-          newEvent.tags != null ? newEvent.tags : schedule.events[i].tags;
         await schedule.save();
         return {data:"Successfully modify an event", statusCode: 200};
       }

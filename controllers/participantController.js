@@ -5,6 +5,8 @@ const authUtil = require("../lib/authUtil");
 const mailer = require("../config/mailConfig");
 const eventController = require("./eventController");
 
+require("dotenv").config();
+
 // Manipulate participant
 const participantController = {
     checkExist: (email, contacts) => {
@@ -47,7 +49,8 @@ const participantController = {
                     // cache the pending participant.
                     await ParticipantExpiration.create(
                         {
-                            index: 0,
+                            // the pending will be expired in 5 days
+                            index: (process.env.CUR_I + 5) % 5,
                             user: user,
                             email: email,
                             start: start,
@@ -228,7 +231,6 @@ const participantController = {
         await ParticipantExpiration.deleteMany({
             index: index
         });
-
         return result;
     },
 

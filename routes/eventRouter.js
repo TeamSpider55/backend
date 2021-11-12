@@ -82,8 +82,6 @@ router.post("/modify/content", async (req, res) => {
     start: parseInt(req.body.start),
     end: parseInt(req.body.end),
     type: req.body.type,
-    tags: [],
-    contacts: [],
   };
   let user = req.user._id;
   res.json(await eventController.modifyEventContent(newEvent, user));
