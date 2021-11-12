@@ -253,17 +253,17 @@ let eventController = {
     if (eventRes.statusCode == 200) {
       if (checkDateVal(start, newStart) && checkDateVal(end, newEnd)) {
         if (
-          (await eventController.removeEvent(eventRes.data, user)).statusCode
+          (await eventController.removeEvent(eventRes.data, user)).statusCode == 200
         ) {
           eventRes.data.start = newStart;
           eventRes.data.end = newEnd;
           if (
-            (await eventController.AddEvent(eventRes.data, user)).statusCode
+            (await eventController.AddEvent(eventRes.data, user)).statusCode == 200
           ) {
             flag = 200;
           } else {
-            event.start = start;
-            event.end = start;
+             eventRes.data.start = start;
+             eventRes.data.end = end;
             await eventController.AddEvent(eventRes.data, user);
           }
         }
