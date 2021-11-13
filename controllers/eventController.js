@@ -78,7 +78,7 @@ let eventController = {
     }
     return validation
       ? {
-          data: "Successfully add the event to the schedule!!!",
+          data: schedule.events.filter((e) => eventController.isEqual(e, adjEvent))[0]._id,
           statusCode: 200,
         }
       : { data: errMess, statusCode: 400 };

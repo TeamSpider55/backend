@@ -22,7 +22,7 @@ router.post("/add", async (req, res) => {
   };
   let eventStatus = await eventController.AddEvent(event, user);
   res.json({
-    date: eventStatus ? "Add event successfully" : "Fail to add Event",
+    date: eventStatus ? eventStatus.data : "Fail to add Event",
     status: eventStatus,
   });
 });
