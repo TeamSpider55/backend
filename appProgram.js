@@ -3,7 +3,8 @@ const express = require("express");
 const app = express();
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
-const cors = require('cors');
+const cors = require("cors");
+require("dotenv").config();
 
 // run the automator
 require('./config/automator');
@@ -17,21 +18,24 @@ const userRouter = require("./routes/userRouter");
 const insercureParticipantRoute = require("./routes/insecureParticipantRouter");
 const participantRouter = require("./routes/participantRouter");
 
-const whitelist = ['http://localhost:3000/', 'http://localhost:8080/'];
+// const whitelist = [
+//   'http://localhost:3000/',
+//   'http://localhost:8080/',
+//   'https://heuristic-jang-9b6b9e.netlify.app',
+// ];
 
-app.use(cors({
-  origin: function(origin, callback){
-    // allow requests with no origin 
-    if(!origin) return callback(null, true);
-    if(whitelist.indexOf(origin) === -1){
-      var message = 'The CORS policy for this origin doesn\'t ' +
-                'allow access from the particular origin.';
-      return callback(new Error(message), false);
-    }
-    return callback(null, true);
-  },
-  credentials: true,
-}));
+const url = process.env.PORT
+  ? "https://spider55-fe.herokuapp.com"
+  : "http://localhost:3000";
+
+app.set("trust proxy", 1);
+
+app.use(
+  cors({
+    origin: url,
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json());
