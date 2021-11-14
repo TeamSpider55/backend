@@ -58,6 +58,28 @@ router.get("/retrieve/many/:date", async (req, res) => {
   });
 });
 
+router.get("/retrieve/range/:start/:end", async (req, res) => {
+  let startTime = parseInt(req.params.start);
+  let endTime = parseInt(req.params.end);
+  let user = req.user._id;
+  let result = [];
+
+  for (let time of Util.dailyTimeRange(startTime, endTime)) {
+    let eventList = await eventController.retrieveSortedEventsInDay(
+      time,
+      user,
+      true
+    );
+    if (eventList.statusCode !== false) {
+      result = [...result, ...eventList.data];
+    }
+  }
+  res.json({
+    data: result,
+    status: result != [],
+  });
+});
+
 router.post("/reschedule", async (req, res) => {
   let unixStart = parseInt(req.body.start);
   let unixEnd = parseInt(req.body.end);

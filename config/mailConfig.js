@@ -41,7 +41,7 @@ const sendPasswordResetEmail = (name, email, link) => {
       html: `<h1>Password Reset</h1>
         <h2>G'day ${name}</h2>
         <p>Please follow the link below to reset your password</p>
-        <a href=http://localhost:8080/password-reset/${link}> Reset Password</a>
+        <a href=${url}/password-reset/${link}> Reset Password</a>
         </div>`,
     })
     .catch((err) => console.log(err));
@@ -56,7 +56,7 @@ const sendInvitationLink = (start, email, invitationLink) => {
       html: `<h1>Confirming position</h1>
         <h2>G'day</h2>
         <p>Please follow the link below to confirm position @event:${new Date(start)}</p>
-        <a href=http://localhost:8080/participant_confirm/${invitationLink}> Accept</a>
+        <a href=${url}/participant_confirm/${invitationLink}> Accept</a>
         </div>`,
     })
     .catch((err) => console.log(err));
