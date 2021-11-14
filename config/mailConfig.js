@@ -6,6 +6,12 @@ const pw = process.env.EMAIL_PW;
 const url = process.env.PORT
   ? "https://spider55-api.herokuapp.com/auth/verify"
   : "http://localhost:8080/auth/verify";
+const urlReset = process.env.PORT
+  ? "https://spider55-api.herokuapp.com/auth"
+  : "http://localhost:8080/auth";
+const urlInvite = process.env.PORT
+  ? "https://spider55-api.herokuapp.com"
+  : "http://localhost:8080";
 
 const transport = nodemailer.createTransport({
   host: "smtp.gmail.com",
