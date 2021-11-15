@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["PENDING", "ACTIVE"],
     required: true,
-    default: "ACTIVE",
+    default: "PENDING",
   },
   confirmationCode: { type: String, unique: true },
 

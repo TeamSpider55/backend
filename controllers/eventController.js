@@ -1,11 +1,12 @@
-const ScheduleController = require("./ScheduleController");
+const ScheduleController = require("./scheduleController");
 const Util = require("../lib/timeUtil");
+const Schedule = require("../models/schedules");
 
 let eventController = {
-  /* Check if the event overlapse with any event in the existEvents
+  /* Check if the event overlaps with any event in the existEvents
    * @param: {Object} where we want to insert into the schedule document
    * @param: {Array} of the existed schedule
-   * @return: {bool} true if the event does not overlapse with any existed event
+   * @return: {bool} true if the event does not overlaps with any existed event
    */
   ValidateEvent: (event, existEvents) => {
     if (event.end <= event.start) return false;
@@ -34,7 +35,6 @@ let eventController = {
     if (eventA.start > eventB.end) {
       return 1;
     }
-    console.log("Found a invalid pair of event:" + eventA + ", " + eventB);
     return 0;
   },
 
@@ -54,7 +54,6 @@ let eventController = {
         return false;
       }
     } catch (err) {
-      console.log(err);
       return false;
     }
     return true;
@@ -66,21 +65,20 @@ let eventController = {
    * @return: {bool} true if adding is successfully
    */
   AddEventUseSchedule: async (event, schedule) => {
-    let errMess = "Propose Event is overlapse with an existed event!!!";
+    let errMess = "Propose Event is overlaps with an existed event!!!";
     let adjEvent = event;
     adjEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjEvent.start);
     adjEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(adjEvent.end);
 
     let validation = eventController.ValidateEvent(event, schedule.events);
     if (validation) {
-      console.log(schedule);
       if (schedule.events == null) schedule.events = [];
       schedule.events.push(adjEvent);
       await schedule.save();
     }
     return validation
       ? {
-          data: "Successfully add the event to the schedule!!!",
+          data: schedule.events.filter((e) => eventController.isEqual(e, adjEvent))[0]._id,
           statusCode: 200,
         }
       : { data: errMess, statusCode: 400 };
@@ -95,7 +93,6 @@ let eventController = {
     let adjDate = Util.extractUnixOfYYYY_MM_DD(event.start);
 
     let response = await ScheduleController.retrieveSchedule(adjDate, user);
-    console.log(response);
     if (response.statusCode == "400")
       response = await ScheduleController.addSchedule(adjDate, user);
 
@@ -119,8 +116,10 @@ let eventController = {
       }
     }
     if (schedule.events.length == 0) {
-      await ScheduleController.removeSchedule(schedule.data, schedule.user);
+      (await ScheduleController.removeSchedule(schedule.date, schedule.user));
     } else if (deleted) schedule.save();
+
+
     return deleted
       ? { data: "Successfully delete the event!!!", statusCode: 200 }
       : { data: "Fail to delete the event!!!", statusCode: 400 };
@@ -143,7 +142,23 @@ let eventController = {
       ? { data: "The event does not exist !!!", statusCode: 400 }
       : await eventController.removeEventUseSchedule(event, response.data);
   },
+  
+  updateEventParticipant: async (start, end, user, newP, type) => {
+    let response = await ScheduleController.retrieveSchedule(Util.extractUnixOfYYYY_MM_DD(start), user);
+    if(response.statusCode == 200){
+      let schedule = response.data;
 
+      for(var i=0; i < schedule.events.length; i++){
+        
+        if(schedule.events[i].start == start &&
+            schedule.events[i].end == end){ 
+              
+              schedule.events[i].contacts[type] = newP;
+          } 
+        }  
+      await schedule.save();
+    }
+  },
   /* Retrieve the even of a user with the match start and end
    * @param: {Int} Unix time of the starting
    * @param: {Int} Unix time of the ending
@@ -169,7 +184,7 @@ let eventController = {
       : val;
   },
 
-  /* given that we have the reference to the schedule, find all event store in it and sortit
+  /* given that we have the reference to the schedule, find all event store in it and sort it
    * @param: {Object} reference to the document in collection
    * @param: {bool} indicate if we want to sort the return list of event
    * @return {Array} of the event
@@ -212,7 +227,7 @@ let eventController = {
    * @param: {Int} unix time of the new starting
    * @param: {Int} unix time of the new ending
    * @param: {String} id of the user
-   * @return {bool} true if the re-schedulling is successful
+   * @return {bool} true if the re-scheduling is successful
    */
   modifiedEventTime: async (
     unixStart,
@@ -238,19 +253,18 @@ let eventController = {
 
     if (eventRes.statusCode == 200) {
       if (checkDateVal(start, newStart) && checkDateVal(end, newEnd)) {
-        if (
-          (await eventController.removeEvent(eventRes.data, user)).statusCode
-        ) {
+        if ((await eventController.removeEvent(eventRes.data, user)).statusCode == 200) {
+          console.log("remove successfully");
           eventRes.data.start = newStart;
           eventRes.data.end = newEnd;
-          if (
-            (await eventController.AddEvent(eventRes.data, user)).statusCode
-          ) {
+          console.log(eventRes.data);
+          if ((await eventController.AddEvent(eventRes.data, user)).statusCode == 200) {
             flag = 200;
           } else {
-            event.start = start;
-            event.end = start;
-            await eventController.AddEvent(eventRes.data, user);
+            console.log("cant add");
+             eventRes.data.start = start;
+             eventRes.data.end = end;
+            //await eventController.AddEvent(eventRes.data, user);
           }
         }
       }
@@ -282,21 +296,21 @@ let eventController = {
 
   /* [not tested] content is {tittle, note, type, category}
    * tag will have the whole set of method dealing with it. So does contacts
-   * @param: {Object} consist of field indicate above. for which one of them is not needed to modied, set to null
+   * @param: {Object} consist of field indicate above. for which one of them is not needed to modify, set to null
    * @param: {Object} old event that exist in collection
    * @param: {String} id of the user
    * @return: {bool} true if we able to modify the document
    */
   modifyEventContent: async (newEvent, user) => {
     // retrieve the schedule
-    let date = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
-    let schedule = await ScheduleController.retrieveSchedule(date, user);
+    let cdate = Util.extractUnixOfYYYY_MM_DD(newEvent.start);
+    let schedule = await Schedule.findOne({date: cdate,user: user});
+    //await ScheduleController.retrieveSchedule(date, user);
     newEvent.start = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.start);
     newEvent.end = Util.extractUnixOfYYYY_MM_DD_HH_MM(newEvent.end);
     if (schedule == null) {
       return false;
     }
-
     // find the event
     for (var i = 0; i < schedule.events.length; i++) {
       if (
@@ -309,18 +323,19 @@ let eventController = {
           newEvent.note != null ? newEvent.note : schedule.events[i].note;
         schedule.events[i].type =
           newEvent.type != null ? newEvent.type : schedule.events[i].type;
-        schedule.events[i].category =
-          newEvent.category != null
-            ? newEvent.category
-            : schedule.events[i].category;
-        schedule.events[i].tags =
-          newEvent.tags != null ? newEvent.tags : schedule.events[i].tags;
         await schedule.save();
-        return true;
+        return {data:"Successfully modify an event", statusCode: 200};
       }
     }
-    return false;
+    return {data:"Unable to modify an event", statusCode: 400};
   },
+  /**
+   *  Retrieve all the event happen tomorrow
+   */
+  retrieveDueEvent: async () => {
+    
+  }
+
 };
 
 module.exports = eventController;

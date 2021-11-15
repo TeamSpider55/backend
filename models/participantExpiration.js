@@ -1,0 +1,21 @@
+const mongoose = require("mongoose");
+const internal = require("stream");
+
+// this allow for faster and more efficient remove participant
+const participantExpiration = new mongoose.Schema({
+    // participant expiration is a circular array consist of 5 day
+    index: {type: Number, require: true},
+    user: {type: String, require:true},
+    email: {type: String, require:true},
+    start: {type:Number, required:true} ,
+    end: {type:Number, required:true} ,
+    invitation: String //invitation: "start"_"end"
+    
+    
+    
+
+})
+
+
+const ParticipantExpiration = mongoose.model("ParticipantExpiration", participantExpiration);
+module.exports = ParticipantExpiration;

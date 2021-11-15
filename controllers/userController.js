@@ -30,35 +30,27 @@ const findUserById = async (userId) => {
 };
 
 const activateUser = async (confirmationCode) => {
-  const user = await User.findOne({ confirmationCode: confirmationCode });
-  if (!user) {
-    return;
-  }
   try {
+    const user = await User.findOne({ confirmationCode: confirmationCode });
+    if (!user) {
+      return false;
+    }
     await User.updateOne(
       { confirmationCode: confirmationCode },
       { $set: { status: "ACTIVE" }, $unset: { confirmationCode: "" } }
     );
+    return true;
   } catch (err) {
     console.log(err);
+    return false;
   }
 };
 
 
 // find all contacts for specific user
 const getContactsForUser = async (req, res) => {
-  const userName = req.params.userName
   try {
-    const user = await User.findOne({
-      userName: userName,
-    })
-    //id is contactId in this context
-    const contacts = await Promise.all(
-      user.contacts.map(async (id) => {
-        var contact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
-        return contact
-      })
-    )
+    const user = req.user;
     if (user === null) {
       // no User found in database
       res.status(404)
@@ -66,6 +58,14 @@ const getContactsForUser = async (req, res) => {
         statusCode: 404,
       })
     }
+    //id is contactId in this context
+    
+    const contacts = await Promise.all(
+      user.contacts.map(async (id) => {
+        var contact = await Contact.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
+        return contact
+      })
+    )
     if (contacts === null) {
       // no contact found in database: 404
       res.status(404)

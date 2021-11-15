@@ -122,12 +122,9 @@ const deleteTagFromContact = async (req, res) => {
 
 // find one contact by their id
 const getOneContact = async (req, res) => {
-  const userName = req.params.userName;
   const contactId = req.params.contactId;
   try {
-    const user = await User.findOne({
-      userName: userName,
-    });
+    const user = req.user;
     const oneContact = await Contact.findOne({
       _id: mongoose.Types.ObjectId(contactId),
     }).lean();
@@ -186,15 +183,11 @@ const updateContact = async (req, res) => {
     oneContact.address = newContact.address;
     oneContact.description = newContact.description;
     oneContact.note = newContact.note;
-    oneContact.tags = newContact.tags;
-    // oneContact.tags = newContact.tags.map((tag) => ({
-    //   //Do we map for tags array? how do we do it if they are changing the other stuff
-    //   _id: mongoose.Types.ObjectId(),
-    //   tagId: tag.tagId,
-    //   description: tag.description,
-    //   color: tag.color,
-    //   priority: tag.priority,
-    // })) let result =
+    oneContact.organization = newContact.organization;
+    oneContact.jobTitle = newContact.jobTitle;
+    //oneContact.dateAdded = newContact.dateAdded;
+    oneContact.image = newContact.image;
+    //oneContact.tags = newContact.tags;
 
     await oneContact.save();
     // contact was found, return as response
@@ -214,12 +207,9 @@ const updateContact = async (req, res) => {
 };
 
 const deleteOneContact = async (req, res) => {
-  const userName = req.body.userName;
   const contactId = req.body.contactId;
   try {
-    const user = await User.findOne({
-      userName: userName,
-    });
+    const user = req.user;
     const oneContact = await Contact.findOne({
       _id: mongoose.Types.ObjectId(contactId),
     }).lean();
@@ -259,14 +249,11 @@ const deleteOneContact = async (req, res) => {
 
 // add a contact, given their email, family name, given name
 const addContact = async (req, res) => {
-  const userName = req.body.userName;
   const email = req.body.email;
   const familyName = req.body.familyName;
   const givenName = req.body.givenName;
   try {
-    const user = await User.findOne({
-      userName: userName,
-    });
+    const user = req.user;
     if (user === null) {
       // no User found in database
       res.status(404);
@@ -278,6 +265,7 @@ const addContact = async (req, res) => {
       email: email,
       familyName: familyName,
       givenName: givenName,
+      dateAdded: new Date(), // date added is now
       tags: [],
     });
     user.contacts.push(contact._id);

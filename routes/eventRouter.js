@@ -5,8 +5,11 @@ const scheduleController = require("../controllers/scheduleController");
 const tagController = require("../controllers/tagController");
 const Util = require("../lib/timeUtil");
 
+const passport = require("passport");
+router.use(passport.authenticate("jwt", { session: false }));
+
 router.post("/add", async (req, res) => {
-  let user = req.body.user;
+  let user = req.user._id;
   // create the template for that event
   let event = {
     title: req.body.title,
@@ -19,13 +22,13 @@ router.post("/add", async (req, res) => {
   };
   let eventStatus = await eventController.AddEvent(event, user);
   res.json({
-    date: eventStatus ? "Add event successfully" : "Fail to add Event",
+    date: eventStatus ? eventStatus.data : "Fail to add Event",
     status: eventStatus,
   });
 });
 
 router.post("/remove", async (req, res) => {
-  let user = req.body.user;
+  let user = req.user._id;
   let event = {
     start: parseInt(req.body.start),
     end: parseInt(req.body.end),
@@ -33,17 +36,17 @@ router.post("/remove", async (req, res) => {
   res.json(await eventController.removeEvent(event, user));
 });
 
-router.get("/retrieve/single/:start/:end/:user", async (req, res) => {
+router.get("/retrieve/single/:start/:end", async (req, res) => {
   let start = parseInt(req.params.start);
   let end = parseInt(req.params.end);
 
-  let user = req.params.user;
+  let user = req.user._id;
   res.json(await eventController.retrieveEvent(start, end, user));
 });
 
-router.get("/retrieve/many/:date/:user", async (req, res) => {
+router.get("/retrieve/many/:date", async (req, res) => {
   let unixTime = parseInt(req.params.date);
-  let user = req.params.user;
+  let user = req.user._id;
   let eventList = await eventController.retrieveSortedEventsInDay(
     unixTime,
     user,
@@ -55,12 +58,34 @@ router.get("/retrieve/many/:date/:user", async (req, res) => {
   });
 });
 
+router.get("/retrieve/range/:start/:end", async (req, res) => {
+  let startTime = parseInt(req.params.start);
+  let endTime = parseInt(req.params.end);
+  let user = req.user._id;
+  let result = [];
+
+  for (let time of Util.dailyTimeRange(startTime, endTime)) {
+    let eventList = await eventController.retrieveSortedEventsInDay(
+      time,
+      user,
+      true
+    );
+    if (eventList.statusCode !== false) {
+      result = [...result, ...eventList.data];
+    }
+  }
+  res.json({
+    data: result,
+    status: result != [],
+  });
+});
+
 router.post("/reschedule", async (req, res) => {
   let unixStart = parseInt(req.body.start);
   let unixEnd = parseInt(req.body.end);
   let unixNewStart = parseInt(req.body.newStart);
   let unixNewEnd = parseInt(req.body.newEnd);
-  let user = req.body.user;
+  let user = req.user._id;
   res.json(
     await eventController.rescheduleEvent(
       unixStart,
@@ -79,12 +104,8 @@ router.post("/modify/content", async (req, res) => {
     start: parseInt(req.body.start),
     end: parseInt(req.body.end),
     type: req.body.type,
-    category: req.body.category,
-    tags: [],
-    contacts: [],
   };
-  let user = req.body.user;
-
+  let user = req.user._id;
   res.json(await eventController.modifyEventContent(newEvent, user));
 });
 
@@ -114,7 +135,7 @@ router.post("/tag/addTag", async (req, res) => {
   // Unix time from req.body
   const eventStart = req.body.eventStart;
   const eventEnd = req.body.eventEnd;
-  const userId = req.body.userId;
+  const userId = req.user._id;
 
   // Find the event to update tag
   const event = await eventController.retrieveEvent(
@@ -155,7 +176,7 @@ router.post("/tag/getTags", async (req, res) => {
   // Unix time from req.body
   const eventStart = req.body.eventStart;
   const eventEnd = req.body.eventEnd;
-  const userId = req.body.userId;
+  const userId = req.user._id;
 
   // Find the event to retrieve the tag Id array
   const event = await eventController.retrieveEvent(
@@ -177,7 +198,7 @@ router.delete("/tag/deleteTag", async (req, res) => {
   // Unix time from req.body
   const eventStart = req.body.eventStart;
   const eventEnd = req.body.eventEnd;
-  const userId = req.body.userId;
+  const userId = req.user._id;
 
   // The id for the tag to delete
   const tagId = req.body.tagId;
